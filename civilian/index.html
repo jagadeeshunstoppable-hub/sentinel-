@@ -6,10 +6,9 @@
     <title>SENTINEL-X | Civilian Emergency Response & Dispatch (108 / 112)</title>
     <meta name="description" content="SENTINEL-X Civilian Emergency Response Platform — Public-service oriented, clean, trustworthy, Tamil Nadu and India user-centric automated triage and dispatch.">
 
-    <!-- Google Fonts: Inter, Noto Sans Tamil & JetBrains Mono (monospaced strictly for codes/telemetry) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Google Fonts: Inter, Noto Sans Tamil & JetBrains Mono (monospaced strictly for codes/telemetry) -->    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,8 +17,9 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', '"Noto Sans Tamil"', 'system-ui', '-apple-system', 'sans-serif'],
+                        sans: ['Inter', '"Noto Sans Tamil"', '"Noto Sans Devanagari"', 'system-ui', '-apple-system', 'sans-serif'],
                         tamil: ['"Noto Sans Tamil"', 'Inter', 'sans-serif'],
+                        devanagari: ['"Noto Sans Devanagari"', 'Inter', 'sans-serif'],
                         mono: ['"JetBrains Mono"', 'monospace']
                     },
                     colors: {
@@ -49,8 +49,18 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <style>
-        /* Design System Tokens */
+        /* Design System Responsive Tokens */
         :root {
+            --page-padding: clamp(0.75rem, 2vw, 1.5rem);
+            --section-gap: clamp(0.75rem, 1.5vw, 1.25rem);
+            --card-gap: clamp(0.5rem, 1vw, 1rem);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --control-height-sm: 2.25rem;
+            --control-height-md: 2.625rem;
+            --control-height-lg: 3rem;
             --space-1: 4px;
             --space-2: 8px;
             --space-3: 12px;
@@ -67,6 +77,28 @@
 
         *, *::before, *::after {
             box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Prevent any long words, Tamil/Hindi strings, or URLs from creating horizontal scroll */
+        p, h1, h2, h3, h4, h5, h6, span, button, a, div, li {
+            overflow-wrap: anywhere;
+        }
+
+        /* Hide scrollbars for clean UI strips while allowing scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         /* Clean Public Service Aesthetics */
@@ -130,118 +162,127 @@
 <body class="h-full w-full max-w-full bg-[#f8fafc] text-slate-800 font-sans flex flex-col overflow-hidden text-scale-md" id="app-body">
 
     <!-- ======================================================== -->
-    <!-- TOP PUBLIC SERVICE HEADER                                -->
-    <!-- Calm Navy, Language Selector, Mode Switcher, Jury Demo   -->
+    <!-- TOP PUBLIC SERVICE HEADER (TWO-ROW RESPONSIVE ARCHITECTURE)-->
+    <!-- ROW 1: Identity & Primary Global Controls                 -->
+    <!-- ROW 2: Dedicated Responsive Workflow Progress Strip       -->
     <!-- ======================================================== -->
-    <header class="bg-[#1e3a8a] text-white border-b border-blue-900 shadow-sm px-4 lg:px-6 py-2.5 flex items-center justify-between z-40 shrink-0">
+    <header class="bg-[#1e3a8a] text-white border-b border-blue-900 shadow-md z-40 shrink-0 w-full">
         
-        <!-- Left: Official Emblem & Identity -->
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0">
-                <i data-lucide="shield-alert" class="w-6 h-6 text-amber-300"></i>
-            </div>
-            <div>
-                <div class="flex items-center space-x-2">
-                    <span class="font-extrabold text-lg tracking-tight text-white">SENTINEL-X</span>
-                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-700 text-blue-100 border border-blue-600">CIVILIAN AID</span>
-                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-600 text-white hidden sm:inline-block">108 / 112 TN</span>
+        <!-- ROW 1: Main Bar (Brand, Service Identity & Global Controls) -->
+        <div class="px-3 sm:px-5 lg:px-6 py-2 flex items-center justify-between gap-2 sm:gap-4 min-w-0">
+            <!-- Left: Official Emblem & Identity -->
+            <div class="flex items-center space-x-2.5 sm:space-x-3 shrink-0 min-w-0">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-inner">
+                    <i data-lucide="shield-alert" class="w-5 h-5 sm:w-6 sm:h-6 text-amber-300"></i>
                 </div>
-                <div id="app-tagline" class="text-xs text-blue-100 font-normal">Fast. Simple. Saving Lives in Seconds.</div>
+                <div class="min-w-0">
+                    <div class="flex items-center space-x-1.5 sm:space-x-2">
+                        <span class="font-extrabold text-base sm:text-lg tracking-tight text-white whitespace-nowrap">SENTINEL-X</span>
+                        <span class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded bg-blue-700 text-blue-100 border border-blue-600 whitespace-nowrap">CIVILIAN AID</span>
+                        <span class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded bg-emerald-600 text-white hidden md:inline-block whitespace-nowrap">108 / 112 TN</span>
+                    </div>
+                    <div id="app-tagline" class="text-[11px] text-blue-100 font-normal truncate hidden sm:block">Fast. Simple. Saving Lives in Seconds.</div>
+                </div>
+            </div>
+
+            <!-- Right: Accessibility, Language, Mode Selector, Platform Switcher & Mobile Menu -->
+            <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+
+                <!-- Accessibility Controls (Desktop / Laptop) -->
+                <div class="hidden xl:flex items-center bg-blue-900/70 rounded-lg p-0.5 border border-blue-700/80 text-xs shadow-sm">
+                    <button type="button" onclick="setTextScale('sm')" title="Standard Text" class="px-2 py-1 rounded text-blue-200 hover:text-white transition-colors">A-</button>
+                    <button type="button" onclick="setTextScale('md')" title="Medium Text" class="px-2 py-1 rounded text-blue-200 hover:text-white font-bold transition-colors">A</button>
+                    <button type="button" onclick="setTextScale('lg')" title="Large Text" class="px-2 py-1 rounded text-blue-200 hover:text-white font-bold text-sm transition-colors">A+</button>
+                    <button type="button" onclick="toggleHighContrast()" id="btn-contrast" title="Toggle High Contrast" class="px-2 py-1 rounded text-blue-200 hover:text-white flex items-center transition-colors">
+                        <i data-lucide="sun-moon" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <!-- Language Selector (Desktop & Tablet) -->
+                <div class="relative hidden sm:inline-block">
+                    <select id="lang-selector" onchange="changeLanguage(this.value)" class="text-xs font-bold bg-blue-900/90 border border-blue-700 text-white rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-amber-400 focus:outline-none cursor-pointer shadow-sm">
+                        <option value="ta">தமிழ் (Tamil)</option>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="te">తెలుగు (Telugu)</option>
+                        <option value="ml">മലയാളம் (Malayalam)</option>
+                        <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                    </select>
+                </div>
+
+                <!-- Mode Selector: Citizen vs Dispatcher vs Easy (Always visible & Never Clipped) -->
+                <div class="flex items-center bg-blue-950 p-0.5 rounded-lg border border-blue-800 text-xs font-semibold shadow-inner shrink-0">
+                    <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2 sm:px-2.5 py-1 rounded-md transition-all text-blue-200 hover:text-white whitespace-nowrap">
+                        <span id="lbl-citizen-mode">🚨 Citizen</span>
+                    </button>
+                    <button type="button" onclick="setInterfaceMode('dispatcher')" id="btn-view-dispatcher" class="px-2 sm:px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm whitespace-nowrap">
+                        <span id="lbl-dispatcher-mode">🖥️ Dispatcher</span>
+                    </button>
+                    <button type="button" onclick="setInterfaceMode('easy')" id="btn-view-easy" class="px-2 sm:px-2.5 py-1 rounded-md text-amber-300 hover:text-white whitespace-nowrap">
+                        <span id="lbl-easy-mode">👵 Easy</span>
+                    </button>
+                </div>
+
+                <!-- Jury Demo Automation (Desktop / Tablet) -->
+                <button type="button" id="btn-jury-demo" onclick="toggleJuryDemo()" class="hidden md:flex px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold items-center space-x-1 shadow-sm active:scale-95 shrink-0">
+                    <i data-lucide="play" class="w-3.5 h-3.5 fill-current" id="jury-icon"></i>
+                    <span id="lbl-jury-demo">DEMO</span>
+                </button>
+
+                <!-- SIH Compliance Modal Trigger -->
+                <button type="button" onclick="openComplianceModal()" title="View SIH Problem Statement Compliance" class="hidden xl:inline-flex p-1.5 rounded-lg bg-blue-800/80 hover:bg-blue-700 text-blue-100 border border-blue-700 shrink-0">
+                    <i data-lucide="award" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Global Platform Switcher: Direct Route to Industrial Safety & Digital Twin -->
+                <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm shrink-0">
+                    <i data-lucide="factory" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span class="hidden lg:inline">🏭 Industrial Safety →</span>
+                    <span class="lg:hidden">🏭 SCADA</span>
+                </a>
+
+                <!-- Mobile Drawer Menu Toggle (Visible < lg) -->
+                <button type="button" onclick="toggleCivilianMobileMenu()" id="btn-civilian-mobile-menu" aria-label="Toggle Controls Menu" class="lg:hidden p-1.5 rounded-lg bg-blue-900 border border-blue-700 text-white hover:bg-blue-800 transition-colors flex items-center justify-center shrink-0">
+                    <i data-lucide="menu" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Gateway Exit -->
+                <a href="../auth.html" title="Return to Portal Gateway" class="hidden 2xl:inline-flex p-1.5 rounded-lg bg-blue-800/80 hover:bg-blue-700 text-blue-100 border border-blue-700 shrink-0">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
             </div>
         </div>
 
-        <!-- Center: Workflow Stepper (Distress -> Complete) -->
-        <div class="hidden xl:flex items-center space-x-1 px-3 py-1 rounded-full bg-blue-900/60 border border-blue-700/60 text-xs font-medium" id="master-stepper">
-            <span id="st-1" class="step-pill px-2.5 py-0.5 rounded-full bg-red-600 text-white font-bold">1. Distress</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-2" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">2. Understand</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-3" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">3. Assess</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-4" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">4. Prioritize</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-5" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">5. Find Help</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-6" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">6. Dispatch</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-7" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">7. Guide</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-8" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">8. Hospital</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-9" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">9. Monitor</span>
-            <span class="text-blue-300">→</span>
-            <span id="st-10" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">10. Complete</span>
-        </div>
-
-        <!-- Compact Stepper (< xl) to avoid stepper overflow and provide clear status -->
-        <div class="xl:hidden flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-900/80 border border-blue-700/60 text-xs font-semibold text-amber-300">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            <span id="compact-step-label">Step 1: Distress</span>
-        </div>
-
-        <!-- Right: Language Switcher, Accessibility, Modes & Demo -->
-        <div class="flex items-center space-x-2">
-
-            <!-- Accessibility Controls: Text Scale & High Contrast (Desktop) -->
-            <div class="hidden xl:flex items-center bg-blue-900/60 rounded-lg p-0.5 border border-blue-700 text-xs">
-                <button onclick="setTextScale('sm')" title="Standard Text" class="px-2 py-1 rounded text-blue-200 hover:text-white">A-</button>
-                <button onclick="setTextScale('md')" title="Medium Text" class="px-2 py-1 rounded text-blue-200 hover:text-white font-bold">A</button>
-                <button onclick="setTextScale('lg')" title="Large Text" class="px-2 py-1 rounded text-blue-200 hover:text-white font-bold text-sm">A+</button>
-                <button onclick="toggleHighContrast()" id="btn-contrast" title="Toggle High Contrast" class="px-2 py-1 rounded text-blue-200 hover:text-white flex items-center">
-                    <i data-lucide="sun-moon" class="w-3.5 h-3.5"></i>
-                </button>
+        <!-- ROW 2: Dedicated Responsive Workflow Progress Strip -->
+        <div class="bg-[#172554] border-t border-blue-900/80 px-3 sm:px-5 lg:px-6 py-1.5 flex items-center justify-between gap-3 text-xs w-full overflow-hidden">
+            <!-- Horizontally scrollable workflow steps on mobile/tablet, full grid/flex on desktop -->
+            <div class="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1" id="master-stepper" aria-label="Emergency Response Workflow Stages">
+                <span id="st-1" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-extrabold shadow-sm whitespace-nowrap">1. Distress</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-2" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">2. Understand</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-3" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">3. Assess</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-4" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">4. Prioritize</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-5" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">5. Find Help</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-6" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">6. Dispatch</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-7" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">7. Guide</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-8" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">8. Hospital</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-9" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">9. Monitor</span>
+                <span class="text-blue-400/70 shrink-0 select-none">→</span>
+                <span id="st-10" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">10. Complete</span>
             </div>
 
-            <!-- Language Switcher (Desktop / Laptop) -->
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="hidden lg:inline-block text-xs font-semibold bg-blue-900 border border-blue-700 text-white rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-amber-400 focus:outline-none cursor-pointer">
-                <option value="ta">தமிழ் (Tamil)</option>
-                <option value="en">English</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-                <option value="te">తెలుగు (Telugu)</option>
-                <option value="ml">മലയാളம் (Malayalam)</option>
-                <option value="kn">ಕನ್ನಡ (Kannada)</option>
-            </select>
-
-            <!-- Mode Selector: Citizen vs Dispatcher vs Easy Mode (Always Accessible) -->
-            <div class="flex items-center bg-blue-950 p-0.5 rounded-lg border border-blue-800 text-xs font-semibold">
-                <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2.5 py-1 rounded-md transition-all text-blue-200 hover:text-white">
-                    <span id="lbl-citizen-mode">🚨 Citizen</span>
-                </button>
-                <button type="button" onclick="setInterfaceMode('dispatcher')" id="btn-view-dispatcher" class="px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm">
-                    <span id="lbl-dispatcher-mode">🖥️ Dispatcher</span>
-                </button>
-                <button type="button" onclick="setInterfaceMode('easy')" id="btn-view-easy" class="px-2 py-1 rounded-md text-amber-300 hover:text-white">
-                    <span id="lbl-easy-mode">👵 Easy</span>
-                </button>
+            <!-- Compact Active Step Indicator with Pulsing Beacon -->
+            <div class="shrink-0 flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-blue-900/90 border border-blue-700/80 text-[11px] font-bold text-amber-300 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span id="compact-step-label">Step 1: Distress</span>
             </div>
-
-            <!-- Jury Demo Automation (Desktop / Tablet) -->
-            <button id="btn-jury-demo" onclick="toggleJuryDemo()" class="hidden sm:flex px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold items-center space-x-1 shadow-sm active:scale-95">
-                <i data-lucide="play" class="w-3.5 h-3.5 fill-current" id="jury-icon"></i>
-                <span id="lbl-jury-demo">DEMO</span>
-            </button>
-
-            <!-- Problem Statement Compliance Checklist Modal Trigger -->
-            <button onclick="openComplianceModal()" title="View SIH Problem Statement Compliance" class="hidden xl:inline-flex p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
-                <i data-lucide="award" class="w-4 h-4"></i>
-            </button>
-
-            <!-- Global Platform Switcher: Direct Route to Industrial Safety & Digital Twin -->
-            <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm">
-                <i data-lucide="factory" class="w-3.5 h-3.5 text-amber-400"></i>
-                <span class="hidden md:inline">🏭 Industrial Safety →</span>
-                <span class="md:hidden">🏭 SCADA</span>
-            </a>
-
-            <!-- Mobile Drawer Menu Toggle (Visible < lg) -->
-            <button type="button" onclick="toggleCivilianMobileMenu()" id="btn-civilian-mobile-menu" aria-label="Toggle Controls Menu" class="lg:hidden p-1.5 rounded-lg bg-blue-900 border border-blue-700 text-white hover:bg-blue-800 transition-colors flex items-center justify-center">
-                <i data-lucide="menu" class="w-4 h-4"></i>
-            </button>
-
-            <!-- Gateway Exit -->
-            <a href="../auth.html" title="Return to Portal Gateway" class="hidden md:inline-flex p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-            </a>
         </div>
     </header>
 
@@ -314,210 +355,271 @@
     <!-- VIEW A: CITIZEN MODE (CLEAN, CALM, HIGHLY ACCESSIBLE)    -->
     <!-- Simple emergency assistance for Tamil Nadu citizens      -->
     <!-- ======================================================== -->
-    <main id="citizen-view-container" class="flex-1 overflow-y-auto p-4 sm:p-6 max-w-3xl mx-auto w-full space-y-5">
-        
-        <!-- Emergency Help Header -->
-        <div class="text-center space-y-1">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-extrabold uppercase tracking-wide border border-red-200">
-                <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
-                <span>EMERGENCY CITIZEN PORTAL (108 / 112)</span>
-            </span>
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight" id="lbl-citizen-heading">
-                Need Emergency Help?
-            </h1>
-            <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto" id="lbl-citizen-subheading">
-                Are you or someone near you in danger? Tap SOS immediately or choose an option below.
-            </p>
-        </div>
+    <main id="citizen-view-container" class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6 w-full max-w-7xl mx-auto min-h-0">
+        <div class="lg:grid lg:grid-cols-12 lg:gap-6 space-y-5 lg:space-y-0 items-start">
+            
+            <!-- LEFT COLUMN (Cols 1-7): Emergency Triage & Immediate Citizen Action -->
+            <div class="lg:col-span-7 flex flex-col space-y-4 sm:space-y-5 min-w-0">
+                <!-- Emergency Help Header -->
+                <div class="text-center sm:text-left space-y-1">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-extrabold uppercase tracking-wide border border-red-200">
+                        <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+                        <span>EMERGENCY CITIZEN PORTAL (108 / 112)</span>
+                    </span>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight" id="lbl-citizen-heading">
+                        Need Emergency Help?
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-600 max-w-xl" id="lbl-citizen-subheading">
+                        Are you or someone near you in danger? Tap SOS immediately or choose an option below.
+                    </p>
+                </div>
 
-        <!-- 1. Massive Primary SOS Button (Section 5) -->
-        <div class="text-center py-1">
-            <button onclick="triggerCitizenEmergency('sos')" id="btn-citizen-sos" class="w-full max-w-lg mx-auto py-7 px-6 rounded-3xl bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-xl shadow-red-600/30 border-4 border-red-400 active:scale-95 transition-all flex flex-col items-center justify-center space-y-2 cursor-pointer group">
-                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <i data-lucide="alert-circle" class="w-10 h-10 text-white"></i>
+                <!-- 1. Massive Primary SOS Button (Section 13, 14) -->
+                <div class="py-1">
+                    <button type="button" onclick="triggerCitizenEmergency('sos')" id="btn-citizen-sos" class="w-full py-6 sm:py-7 px-4 sm:px-6 rounded-3xl bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-xl shadow-red-600/30 border-4 border-red-400 active:scale-95 transition-all flex flex-col items-center justify-center space-y-2 cursor-pointer group">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="alert-circle" class="w-10 h-10 text-white"></i>
+                        </div>
+                        <span class="text-2xl sm:text-3xl font-black uppercase tracking-wider text-white text-center leading-tight" id="lbl-get-help-btn">
+                            🚨 SOS — GET HELP NOW
+                        </span>
+                        <span class="text-xs sm:text-sm font-semibold text-red-100 text-center" id="lbl-get-help-sub">
+                            1-Tap Instant Police, Fire & Medical Emergency Alert
+                        </span>
+                    </button>
                 </div>
-                <span class="text-2xl sm:text-3xl font-black uppercase tracking-wider text-white" id="lbl-get-help-btn">
-                    🚨 SOS — GET HELP NOW
-                </span>
-                <span class="text-xs sm:text-sm font-semibold text-red-100" id="lbl-get-help-sub">
-                    1-Tap Instant Police, Fire & Medical Emergency Alert
-                </span>
-            </button>
-        </div>
 
-        <!-- SOS Confirmation Card (Section 6 & 7) -->
-        <div id="citizen-sos-confirmation" class="hidden p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-500 space-y-2.5 shadow-md transition-all">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-600 animate-ping"></span>
-                    <h3 class="font-extrabold text-sm text-emerald-950 uppercase tracking-wide" id="lbl-sos-confirmed-title">
-                        ✓ EMERGENCY HELP REQUESTED
-                    </h3>
-                </div>
-                <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-200 text-emerald-900 font-bold" id="citizen-ticket-badge">
-                    #TN-EMG-0814
-                </span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
-                    <span class="text-slate-500 font-medium block text-[10px]">INCIDENT STATUS:</span>
-                    <span class="font-bold text-slate-900" id="citizen-sos-type-label">Emergency SOS Received</span>
-                </div>
-                <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
-                    <span class="text-slate-500 font-medium block text-[10px]">LOCATION:</span>
-                    <span class="font-bold text-emerald-800" id="citizen-sos-loc-label">GPS Locked: Anna Nagar, Chennai (±4.8m)</span>
-                </div>
-            </div>
-            <p class="text-xs text-emerald-900 font-medium" id="citizen-sos-instruction">
-                Help is being coordinated by 108 Emergency Control. Emergency vehicle is being dispatched. Stay on the line if possible.
-            </p>
-            <div class="flex items-center gap-2 pt-1">
-                <button onclick="setInterfaceMode('dispatcher')" class="px-3.5 py-1.5 rounded-lg bg-blue-900 text-white text-xs font-bold hover:bg-blue-800">
-                    View Live Dispatcher Console →
-                </button>
-                <button onclick="openClarificationModal()" id="btn-citizen-clarify" class="px-3.5 py-1.5 rounded-lg bg-white border border-emerald-400 text-emerald-900 text-xs font-bold hover:bg-emerald-100">
-                    Clarify Details
-                </button>
-            </div>
-        </div>
-
-        <!-- 2. The 4 Obvious Primary Actions Grid (Section 2 & 4) -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <!-- 🚨 SOS 1-Tap -->
-            <button onclick="triggerCitizenEmergency('sos')" class="service-card p-3.5 rounded-2xl hover:border-red-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
-                <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                    <i data-lucide="alert-octagon" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <div class="font-extrabold text-xs text-slate-900" id="lbl-action-sos">🚨 SOS Fast</div>
-                    <div class="text-[10px] text-slate-500">1-Tap Distress</div>
-                </div>
-            </button>
-
-            <!-- 🎙 SPEAK EMERGENCY -->
-            <button onclick="openVoiceModal()" class="service-card p-3.5 rounded-2xl hover:border-blue-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
-                <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <i data-lucide="mic" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <div class="font-extrabold text-xs text-slate-900" id="lbl-voice-sos">🎙 Speak</div>
-                    <div class="text-[10px] text-slate-500">Tamil / En / Hindi</div>
-                </div>
-            </button>
-
-            <!-- ⌨ TYPE EMERGENCY -->
-            <button onclick="openTypeEmergencyModal()" class="service-card p-3.5 rounded-2xl hover:border-indigo-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
-                <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    <i data-lucide="keyboard" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <div class="font-extrabold text-xs text-slate-900" id="lbl-type-sos">⌨ Type</div>
-                    <div class="text-[10px] text-slate-500">Quick Text Form</div>
-                </div>
-            </button>
-
-            <!-- 📍 SHARE LOCATION -->
-            <button onclick="openLocationModal()" class="service-card p-3.5 rounded-2xl hover:border-emerald-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
-                <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                    <i data-lucide="map-pin" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <div class="font-extrabold text-xs text-slate-900" id="lbl-share-loc">📍 Location</div>
-                    <div class="text-[10px] text-slate-500 truncate max-w-[100px]" id="citizen-loc-preview">GPS / Landmark</div>
-                </div>
-            </button>
-        </div>
-
-        <!-- 3. Emergency Category Tiles -->
-        <div class="space-y-2.5">
-            <h2 class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center justify-between" id="lbl-types-title">
-                <span>Select Emergency Category</span>
-                <span class="text-[10px] text-slate-400 font-normal">Tap category for targeted crew</span>
-            </h2>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                <button onclick="selectCitizenCategory('catMedical')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
-                    <span class="text-2xl">❤️</span>
-                    <span class="text-xs font-bold text-slate-800" id="lbl-cat-medical">Medical Emergency</span>
-                </button>
-                <button onclick="selectCitizenCategory('catAccident')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
-                    <span class="text-2xl">🚗</span>
-                    <span class="text-xs font-bold text-slate-800" id="lbl-cat-accident">Road Accident</span>
-                </button>
-                <button onclick="selectCitizenCategory('catFire')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
-                    <span class="text-2xl">🔥</span>
-                    <span class="text-xs font-bold text-slate-800" id="lbl-cat-fire">Fire Emergency</span>
-                </button>
-                <button onclick="selectCitizenCategory('catFlood')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
-                    <span class="text-2xl">🌊</span>
-                    <span class="text-xs font-bold text-slate-800" id="lbl-cat-flood">Flood / Disaster</span>
-                </button>
-                <button onclick="selectCitizenCategory('catPolice')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
-                    <span class="text-2xl">👮</span>
-                    <span class="text-xs font-bold text-slate-800" id="lbl-cat-police">Police / Security</span>
-                </button>
-                <button onclick="selectCitizenCategory('catOther')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
-                    <span class="text-2xl">🆘</span>
-                    <span class="text-xs font-bold text-slate-800" id="lbl-cat-other">Other Urgent Help</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- 4. Citizen Live Status & Tracking Card: MY EMERGENCY (Section 33 & 34) -->
-        <div class="service-card rounded-2xl p-4 sm:p-5 border-l-4 border-l-emerald-600 space-y-3 shadow-sm">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
-                <div>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">MY EMERGENCY STATUS</span>
-                    <div class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                        <span id="citizen-status-title">Ambulance En Route (உதவி வழியில் உள்ளது)</span>
+                <!-- SOS Confirmation Card (Section 37) -->
+                <div id="citizen-sos-confirmation" class="hidden p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-500 space-y-2.5 shadow-md transition-all">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-600 animate-ping"></span>
+                            <h3 class="font-extrabold text-sm text-emerald-950 uppercase tracking-wide" id="lbl-sos-confirmed-title">
+                                ✓ EMERGENCY HELP REQUESTED
+                            </h3>
+                        </div>
+                        <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-200 text-emerald-900 font-bold" id="citizen-ticket-badge">
+                            #TN-EMG-0814
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+                            <span class="text-slate-500 font-medium block text-[10px]">INCIDENT STATUS:</span>
+                            <span class="font-bold text-slate-900" id="citizen-sos-type-label">Emergency SOS Received</span>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+                            <span class="text-slate-500 font-medium block text-[10px]">LOCATION:</span>
+                            <span class="font-bold text-emerald-800" id="citizen-sos-loc-label">GPS Locked: Anna Nagar, Chennai (±4.8m)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-emerald-900 font-medium" id="citizen-sos-instruction">
+                        Help is being coordinated by 108 Emergency Control. Emergency vehicle is being dispatched. Stay on the line if possible.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <button type="button" onclick="setInterfaceMode('dispatcher')" class="px-3.5 py-1.5 rounded-lg bg-blue-900 text-white text-xs font-bold hover:bg-blue-800 transition-colors">
+                            View Live Dispatcher Console →
+                        </button>
+                        <button type="button" onclick="openClarificationModal()" id="btn-citizen-clarify" class="px-3.5 py-1.5 rounded-lg bg-white border border-emerald-400 text-emerald-900 text-xs font-bold hover:bg-emerald-100 transition-colors">
+                            Clarify Details
+                        </button>
                     </div>
                 </div>
-                <div class="text-right">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ESTIMATED ARRIVAL</span>
-                    <div class="text-base font-black text-emerald-700" id="citizen-eta-title">04 min 00 sec</div>
-                </div>
-            </div>
 
-            <!-- Unit & Destination -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-0.5">
-                    <span class="text-[10px] text-slate-500 font-medium">ASSIGNED UNIT</span>
-                    <div class="font-bold text-slate-900 text-xs flex items-center gap-1.5" id="citizen-unit-desc">
-                        <span>🚑</span> <span>TN-108-ALS-04 (Advanced Life Support)</span>
-                    </div>
+                <!-- 2. The 4 Obvious Primary Actions Grid (Section 15) -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                    <!-- 🚨 SOS 1-Tap -->
+                    <button type="button" onclick="triggerCitizenEmergency('sos')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                        <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                            <i data-lucide="alert-octagon" class="w-6 h-6"></i>
+                        </div>
+                        <div class="min-w-0 w-full">
+                            <div class="font-extrabold text-xs text-slate-900 truncate" id="lbl-action-sos">🚨 SOS Fast</div>
+                            <div class="text-[10px] text-slate-500">1-Tap Distress</div>
+                        </div>
+                    </button>
+
+                    <!-- 🎙 SPEAK EMERGENCY -->
+                    <button type="button" onclick="openVoiceModal()" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-blue-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                        <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <i data-lucide="mic" class="w-6 h-6"></i>
+                        </div>
+                        <div class="min-w-0 w-full">
+                            <div class="font-extrabold text-xs text-slate-900 truncate" id="lbl-voice-sos">🎙 Speak</div>
+                            <div class="text-[10px] text-slate-500 truncate">Tamil / En / Hindi</div>
+                        </div>
+                    </button>
+
+                    <!-- ⌨ TYPE EMERGENCY -->
+                    <button type="button" onclick="openTypeEmergencyModal()" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-indigo-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                        <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            <i data-lucide="keyboard" class="w-6 h-6"></i>
+                        </div>
+                        <div class="min-w-0 w-full">
+                            <div class="font-extrabold text-xs text-slate-900 truncate" id="lbl-type-sos">⌨ Type</div>
+                            <div class="text-[10px] text-slate-500 truncate">Quick Text Form</div>
+                        </div>
+                    </button>
+
+                    <!-- 📍 SHARE LOCATION -->
+                    <button type="button" onclick="openLocationModal()" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-emerald-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i>
+                        </div>
+                        <div class="min-w-0 w-full">
+                            <div class="font-extrabold text-xs text-slate-900 truncate" id="lbl-share-loc">📍 Location</div>
+                            <div class="text-[10px] text-slate-500 truncate" id="citizen-loc-preview">GPS / Landmark</div>
+                        </div>
+                    </button>
                 </div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-0.5">
-                    <span class="text-[10px] text-slate-500 font-medium">RECEIVING HOSPITAL</span>
-                    <div class="font-bold text-slate-900 text-xs truncate" id="citizen-hosp-desc">
-                        <span>🏥</span> <span>Rajiv Gandhi Govt General Hospital (Chennai GH)</span>
+
+                <!-- 3. Emergency Category Tiles (Section 16) -->
+                <div class="space-y-2.5">
+                    <h2 class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center justify-between" id="lbl-types-title">
+                        <span>Select Emergency Category</span>
+                        <span class="text-[10px] text-slate-400 font-normal hidden sm:inline">Tap category for targeted crew</span>
+                    </h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        <button type="button" onclick="selectCitizenCategory('catMedical')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
+                            <span class="text-2xl">❤️</span>
+                            <span class="text-xs font-bold text-slate-800" id="lbl-cat-medical">Medical Emergency</span>
+                        </button>
+                        <button type="button" onclick="selectCitizenCategory('catAccident')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
+                            <span class="text-2xl">🚗</span>
+                            <span class="text-xs font-bold text-slate-800" id="lbl-cat-accident">Road Accident</span>
+                        </button>
+                        <button type="button" onclick="selectCitizenCategory('catFire')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
+                            <span class="text-2xl">🔥</span>
+                            <span class="text-xs font-bold text-slate-800" id="lbl-cat-fire">Fire Emergency</span>
+                        </button>
+                        <button type="button" onclick="selectCitizenCategory('catFlood')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
+                            <span class="text-2xl">🌊</span>
+                            <span class="text-xs font-bold text-slate-800" id="lbl-cat-flood">Flood / Disaster</span>
+                        </button>
+                        <button type="button" onclick="selectCitizenCategory('catPolice')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
+                            <span class="text-2xl">👮</span>
+                            <span class="text-xs font-bold text-slate-800" id="lbl-cat-police">Police / Security</span>
+                        </button>
+                        <button type="button" onclick="selectCitizenCategory('catOther')" class="service-card p-3 sm:p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
+                            <span class="text-2xl">🆘</span>
+                            <span class="text-xs font-bold text-slate-800" id="lbl-cat-other">Other Urgent Help</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Emergency Safety Instructions (Section 35) -->
-            <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 space-y-1">
-                <div class="text-[10px] font-bold text-blue-900 uppercase flex items-center gap-1">
-                    <i data-lucide="info" class="w-3.5 h-3.5 text-blue-700"></i>
-                    <span>EMERGENCY FIRST-AID INSTRUCTIONS</span>
+            <!-- RIGHT COLUMN (Cols 8-12): Live Status, Tracking, First-Aid Guidelines & Hotline Card -->
+            <div class="lg:col-span-5 flex flex-col space-y-4 sm:space-y-5 min-w-0">
+                <!-- 4. Citizen Live Status & Tracking Card: MY EMERGENCY (Section 33 & 34) -->
+                <div class="service-card rounded-2xl p-4 sm:p-5 border-l-4 border-l-emerald-600 space-y-3.5 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-2.5 flex-wrap gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">MY EMERGENCY STATUS</span>
+                            <div class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse shrink-0"></span>
+                                <span id="citizen-status-title">Ambulance En Route (உதவி வழியில் உள்ளது)</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ESTIMATED ARRIVAL</span>
+                            <div class="text-base font-black text-emerald-700" id="citizen-eta-title">04 min 00 sec</div>
+                        </div>
+                    </div>
+
+                    <!-- Unit & Destination -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-0.5">
+                            <span class="text-[10px] text-slate-500 font-medium">ASSIGNED UNIT</span>
+                            <div class="font-bold text-slate-900 text-xs flex items-center gap-1.5" id="citizen-unit-desc">
+                                <span>🚑</span> <span class="truncate">TN-108-ALS-04 (Advanced Life Support)</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-0.5">
+                            <span class="text-[10px] text-slate-500 font-medium">RECEIVING HOSPITAL</span>
+                            <div class="font-bold text-slate-900 text-xs truncate" id="citizen-hosp-desc">
+                                <span>🏥</span> <span>Rajiv Gandhi Govt General Hospital (Chennai GH)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Safety Instructions (Section 35) -->
+                    <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 space-y-1">
+                        <div class="text-[10px] font-bold text-blue-900 uppercase flex items-center gap-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-700 shrink-0"></i>
+                            <span>EMERGENCY FIRST-AID INSTRUCTIONS</span>
+                        </div>
+                        <p class="text-xs text-blue-950 font-medium leading-relaxed" id="citizen-guidelines-text">
+                            • Move away from active smoke and flames if safe. Do not inhale chemical fumes.<br>
+                            • If a person is burned, cool with clean ambient water. Do not apply ice or grease.<br>
+                            • Keep phone line clear so emergency responders can call for exact gate directions.
+                        </p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-1 flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="setInterfaceMode('dispatcher')" class="px-4 py-2 rounded-xl bg-[#1e3a8a] text-white text-xs font-bold hover:bg-blue-900 shadow-sm flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                            <span>View Live Map & Route →</span>
+                        </button>
+                        <a href="tel:108" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                            <span>Call 108 Hotline</span>
+                        </a>
+                    </div>
                 </div>
-                <p class="text-xs text-blue-950 font-medium leading-relaxed" id="citizen-guidelines-text">
-                    • Move away from active smoke and flames if safe. Do not inhale chemical fumes.<br>
-                    • If a person is burned, cool with clean ambient water. Do not apply ice or grease.<br>
-                    • Keep phone line clear so emergency responders can call for exact gate directions.
-                </p>
+
+                <!-- 5. 24x7 Government Emergency Helplines & Offline Protocol -->
+                <div class="service-card rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-blue-700"></i>
+                            <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wide">
+                                24×7 EMERGENCY HELPLINES (TAMIL NADU)
+                            </h3>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">TOLL FREE</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <a href="tel:108" class="p-2.5 rounded-xl bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-300 transition-all flex items-center space-x-2.5">
+                            <span class="text-xl">🚑</span>
+                            <div>
+                                <div class="font-black text-slate-900">108</div>
+                                <div class="text-[10px] text-slate-500">Medical / Ambulance</div>
+                            </div>
+                        </a>
+                        <a href="tel:112" class="p-2.5 rounded-xl bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-300 transition-all flex items-center space-x-2.5">
+                            <span class="text-xl">🚨</span>
+                            <div>
+                                <div class="font-black text-slate-900">112</div>
+                                <div class="text-[10px] text-slate-500">National Unified</div>
+                            </div>
+                        </a>
+                        <a href="tel:101" class="p-2.5 rounded-xl bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 transition-all flex items-center space-x-2.5">
+                            <span class="text-xl">🚒</span>
+                            <div>
+                                <div class="font-black text-slate-900">101</div>
+                                <div class="text-[10px] text-slate-500">Fire &amp; Rescue</div>
+                            </div>
+                        </a>
+                        <a href="tel:100" class="p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all flex items-center space-x-2.5">
+                            <span class="text-xl">👮</span>
+                            <div>
+                                <div class="font-black text-slate-900">100</div>
+                                <div class="text-[10px] text-slate-500">Police Patrol</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Offline SMS Distress Broadcast Action -->
+                    <div class="pt-1">
+                        <button type="button" onclick="triggerSmsSos()" class="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs font-bold flex items-center justify-center space-x-2 transition-all">
+                            <i data-lucide="message-square" class="w-3.5 h-3.5 text-blue-700"></i>
+                            <span id="lbl-sms-sos">📶 OFFLINE SMS SOS BACKUP (NO INTERNET)</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Actions -->
-            <div class="pt-1 flex flex-wrap items-center gap-2">
-                <button onclick="setInterfaceMode('dispatcher')" class="px-4 py-2 rounded-xl bg-[#1e3a8a] text-white text-xs font-bold hover:bg-blue-900 shadow-sm flex items-center gap-1.5">
-                    <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                    <span>View Live Map & Route →</span>
-                </button>
-                <a href="tel:108" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5">
-                    <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
-                    <span>Call 108 Hotline</span>
-                </a>
-            </div>
         </div>
     </main>
 
@@ -571,12 +673,21 @@
     <!-- ZONE 2: Clean Map & Dynamic Route                       -->
     <!-- ZONE 3: Unit Match, Hospital Pre-alert, Vitals          -->
     <!-- ======================================================== -->
-    <main id="dispatcher-view-container" class="hidden flex-1 grid grid-cols-12 gap-3 p-3 overflow-y-auto lg:overflow-hidden">
+    <main id="dispatcher-view-container" class="hidden flex-1 grid grid-cols-12 gap-3 p-2.5 sm:p-4 overflow-y-auto min-h-0 w-full max-w-full">
+
+        <!-- Mobile Section Quick-Jump Navigation Bar (< lg) -->
+        <nav aria-label="Dispatcher Section Navigation" class="col-span-12 lg:hidden flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-1 text-xs shrink-0">
+            <a href="#disp-zone-1" class="px-3 py-1 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold shrink-0 transition-colors">📋 Intake &amp; Triage</a>
+            <a href="#disp-zone-2" class="px-3 py-1 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold shrink-0 transition-colors">🗺️ Live GIS Map</a>
+            <a href="#disp-fleet" class="px-3 py-1 rounded-full bg-red-100 hover:bg-red-200 text-red-900 font-bold shrink-0 transition-colors">🚑 Unit Match &amp; Dispatch</a>
+            <a href="#disp-zone-3" class="px-3 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold shrink-0 transition-colors">🏥 Hospital &amp; Vitals</a>
+            <a href="#disp-coord" class="px-3 py-1 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold shrink-0 transition-colors">🤝 Agencies &amp; Timeline</a>
+        </nav>
 
         <!-- ==================================================== -->
         <!-- ZONE 1: INCIDENTS & EXPLAINABLE AI (3 COLS)          -->
         <!-- ==================================================== -->
-        <section aria-label="Incident Information and AI Assessment" class="col-span-12 lg:col-span-4 xl:col-span-3 flex flex-col gap-3 overflow-y-auto pr-1">
+        <section id="disp-zone-1" aria-label="Incident Information and AI Assessment" class="col-span-12 lg:col-span-5 xl:col-span-3 flex flex-col gap-3 min-w-0">
 
             <!-- Incident Feed Selector (Section 47) -->
             <div class="service-card rounded-xl p-3 space-y-2">
@@ -706,14 +817,14 @@
                         <div class="text-[10px] font-bold text-slate-700 uppercase" id="lbl-why-title">WHY IS THIS MARKED CRITICAL?</div>
                         <ul class="text-slate-700 space-y-1 text-xs list-disc pl-4" id="ai-reasons-list">
                             <li>Acute respiratory distress gasping detected in caller acoustics.</li>
-                            <li>Fall trauma with chest compression risk in elderly patient.</li>
+                            <li>Trauma with chest compression risk in affected casualties.</li>
                             <li>Immediate oxygenation required within 10 minutes.</li>
                         </ul>
                     </div>
 
                     <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 space-y-0.5">
                         <div class="text-[10px] font-medium text-slate-500" id="lbl-condition-title">POSSIBLE CONDITION</div>
-                        <div class="text-blue-900 font-bold" id="val-possible-condition">Respiratory Failure / Acute Coronary Syndrome</div>
+                        <div class="text-blue-900 font-bold" id="val-possible-condition">Respiratory Failure / Toxic Fume Inhalation</div>
                     </div>
 
                     <div class="text-[10px] text-slate-500 italic" id="lbl-disclaimer">
@@ -726,10 +837,10 @@
         <!-- ==================================================== -->
         <!-- ZONE 2: LIVE GIS ROUTING MAP (6 COLS - LARGEST AREA)-->
         <!-- ==================================================== -->
-        <section aria-label="Interactive Emergency GIS Map" class="col-span-12 lg:col-span-8 xl:col-span-6 flex flex-col gap-3">
+        <section id="disp-zone-2" aria-label="Interactive Emergency GIS Map" class="col-span-12 lg:col-span-7 xl:col-span-6 flex flex-col gap-3 min-w-0">
 
             <!-- Interactive Map Container -->
-            <div class="service-card rounded-xl overflow-hidden flex flex-col flex-1 relative min-h-[420px]">
+            <div id="disp-map" class="service-card rounded-xl overflow-hidden flex flex-col flex-1 relative min-h-[360px] sm:min-h-[420px]">
                 
                 <!-- Map Top Action Bar (Clean HUD) -->
                 <div class="absolute top-3 left-3 right-3 z-[400] flex flex-wrap items-center justify-between gap-1.5 pointer-events-none">
@@ -752,14 +863,14 @@
 
                         <!-- Map Quick Action Buttons -->
                         <div class="bg-white/95 p-0.5 rounded-lg border border-slate-300 shadow-sm flex items-center space-x-0.5 text-xs">
-                            <button onclick="triggerDynamicReroute()" id="btn-trigger-reroute" title="Simulate Dynamic Rerouting & Blockage" class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold flex items-center gap-1">
+                            <button type="button" onclick="triggerDynamicReroute()" id="btn-trigger-reroute" title="Simulate Dynamic Rerouting & Blockage" class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold flex items-center gap-1">
                                 <i data-lucide="refresh-cw" class="w-3 h-3 text-amber-600"></i>
                                 <span class="hidden sm:inline">Reroute Demo</span>
                                 <span class="sm:hidden">Reroute</span>
                             </button>
-                            <button onclick="recenterMap('incident')" title="Center on Incident" class="px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">📍</button>
-                            <button onclick="recenterMap('ambulance')" title="Center on Ambulance" class="hidden sm:inline-block px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">🚑</button>
-                            <button onclick="recenterMap('hospital')" title="Center on Hospital" class="hidden sm:inline-block px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">🏥</button>
+                            <button type="button" onclick="recenterMap('incident')" title="Center on Incident" class="px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">📍</button>
+                            <button type="button" onclick="recenterMap('ambulance')" title="Center on Ambulance" class="hidden sm:inline-block px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">🚑</button>
+                            <button type="button" onclick="recenterMap('hospital')" title="Center on Hospital" class="hidden sm:inline-block px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">🏥</button>
                         </div>
                     </div>
                 </div>
@@ -773,20 +884,20 @@
                             <div id="reroute-alert-text" class="text-xs font-semibold text-slate-900">Main Port Road blocked by smoke. Rerouted via Western Express Access Road (Saved: 1m 40s).</div>
                         </div>
                     </div>
-                    <button onclick="dismissRerouteBanner()" class="px-2 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold">
+                    <button type="button" onclick="dismissRerouteBanner()" class="px-2 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold">
                         DISMISS
                     </button>
                 </div>
 
                 <!-- Leaflet Interactive Map -->
-                <div id="live-map" class="w-full h-full min-h-[380px]"></div>
+                <div id="live-map" class="w-full h-[320px] sm:h-[400px] lg:h-[450px] min-h-[300px]"></div>
 
                 <!-- Offline/Failure Fallback (Hidden by default, shown if tile network fails) -->
                 <div id="map-fallback-banner" class="hidden absolute inset-0 bg-slate-100/95 z-[500] flex flex-col items-center justify-center p-6 text-center space-y-3">
                     <i data-lucide="map-pin-off" class="w-12 h-12 text-slate-400"></i>
                     <h3 class="font-bold text-slate-800 text-sm">Map temporarily unavailable</h3>
                     <p class="text-xs text-slate-600 max-w-sm">Network map tiles are cached or limited. The emergency dispatch routing coordinates are locked and operational.</p>
-                    <button onclick="retryMapTiles()" class="px-4 py-2 rounded-lg bg-[#1e3a8a] text-white text-xs font-bold">
+                    <button type="button" onclick="retryMapTiles()" class="px-4 py-2 rounded-lg bg-[#1e3a8a] text-white text-xs font-bold">
                         Retry Map
                     </button>
                 </div>
@@ -822,7 +933,7 @@
             </div>
 
             <!-- Dynamic Fleet Assignment Card & Primary Dispatch Action -->
-            <div class="service-card rounded-xl p-3.5 space-y-3">
+            <div id="disp-fleet" class="service-card rounded-xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-2">
                     <div class="flex items-center space-x-2">
                         <i data-lucide="truck" class="w-4 h-4 text-blue-700"></i>
@@ -832,7 +943,7 @@
                 </div>
 
                 <div class="p-3 rounded-lg border border-red-200 bg-red-50/50 space-y-2">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
                         <div class="font-bold text-sm text-slate-900 flex items-center gap-2">
                             <span class="text-base">🚑</span>
                             <span id="best-unit-title">TN-108-ALS-04 (Anna Nagar Depot)</span>
@@ -861,13 +972,13 @@
                 </div>
 
                 <!-- Primary Dispatch Action Bar -->
-                <div class="flex items-center justify-between pt-1">
+                <div class="flex items-center justify-between pt-1 flex-wrap gap-2">
                     <div class="text-xs text-slate-500">
                         Incident ID: <span class="font-bold text-slate-800 font-mono" id="cad-ticket-id">SX-CAD-TN-2026-0948</span>
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <button id="btn-dispatch-action" onclick="executeDispatchAuthorization()" class="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold tracking-wide transition-all shadow-sm flex items-center space-x-2 cursor-pointer active:scale-95">
+                        <button type="button" id="btn-dispatch-action" onclick="executeDispatchAuthorization()" class="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold tracking-wide transition-all shadow-sm flex items-center space-x-2 cursor-pointer active:scale-95">
                             <i data-lucide="send" class="w-4 h-4"></i>
                             <span id="lbl-dispatch-btn">AUTHORIZE IMMEDIATE DISPATCH</span>
                         </button>
@@ -879,162 +990,173 @@
         <!-- ==================================================== -->
         <!-- ZONE 3: HOSPITAL, VITALS & COORDINATION (3 COLS)    -->
         <!-- ==================================================== -->
-        <section aria-label="Hospital Pre-Alert and Patient Vitals" class="col-span-12 xl:col-span-3 flex flex-col gap-3 overflow-y-auto pl-1">
+        <section id="disp-zone-3" aria-label="Hospital Pre-Alert and Patient Vitals" class="col-span-12 lg:col-span-12 xl:col-span-3 flex flex-col gap-3 min-w-0">
 
-            <!-- Destination Hospital & Pre-Alert -->
-            <div class="service-card rounded-xl p-3.5 space-y-2.5">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="building-2" class="w-4 h-4 text-emerald-700"></i>
-                        <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider" id="lbl-hosp-head">DESTINATION HOSPITAL</h2>
+            <!-- Responsive Sub-grid: 2 columns on tablet, 1 column on wide desktop & mobile -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-3">
+                
+                <!-- Group A: Hospital Pre-Alert & Patient Vitals -->
+                <div class="space-y-3">
+                    <!-- Destination Hospital & Pre-Alert -->
+                    <div id="disp-hosp" class="service-card rounded-xl p-3.5 space-y-2.5">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="building-2" class="w-4 h-4 text-emerald-700"></i>
+                                <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider" id="lbl-hosp-head">DESTINATION HOSPITAL</h2>
+                            </div>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800" id="badge-hosp-ack">PRE-ALERT READY</span>
+                        </div>
+
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                            <div class="font-bold text-xs text-slate-900 leading-snug" id="hosp-name">
+                                Rajiv Gandhi Government General Hospital (Chennai GH)
+                            </div>
+                            <div class="text-[11px] text-blue-800 font-medium" id="hosp-specialty">
+                                Level 1 Apex Government Trauma & Critical Care Center
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1.5 text-center pt-1 text-xs">
+                                <div class="bg-white p-1.5 rounded border border-slate-200">
+                                    <div class="text-[10px] text-slate-500 font-medium" id="lbl-er-beds">ER BEDS</div>
+                                    <div class="font-bold text-emerald-700" id="val-beds">4 AVAIL</div>
+                                </div>
+                                <div class="bg-white p-1.5 rounded border border-slate-200">
+                                    <div class="text-[10px] text-slate-500 font-medium" id="lbl-trauma-bay">TRAUMA BAY</div>
+                                    <div class="font-bold text-red-700" id="val-trauma-bay">READY</div>
+                                </div>
+                                <div class="bg-white p-1.5 rounded border border-slate-200">
+                                    <div class="text-[10px] text-slate-500 font-medium">ETA</div>
+                                    <div class="font-bold text-amber-700" id="val-hosp-eta">11 MIN</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Send Pre-Alert Action -->
+                        <button type="button" onclick="sendHospitalPreAlert()" id="btn-prealert" class="w-full py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-sm">
+                            <i data-lucide="radio-tower" class="w-3.5 h-3.5"></i>
+                            <span id="lbl-prealert-btn">SEND HOSPITAL PRE-ALERT</span>
+                        </button>
                     </div>
-                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800" id="badge-hosp-ack">PRE-ALERT READY</span>
+
+                    <!-- Patient Vitals (Realistic, Non-Futuristic) -->
+                    <div id="disp-vitals" class="service-card rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-red-600"></i>
+                                <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider" id="lbl-vitals-head">PATIENT VITALS</h2>
+                            </div>
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300" id="badge-demo-vitals">SIMULATED / DEMO DATA</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-medium" id="lbl-hr">Heart Rate</div>
+                                <div class="text-lg font-extrabold text-red-700 flex items-center justify-between">
+                                    <span id="vital-hr-val">122</span>
+                                    <span class="text-[10px] font-normal text-slate-500">BPM</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-medium" id="lbl-spo2">Oxygen (SpO₂)</div>
+                                <div class="text-lg font-extrabold text-blue-700 flex items-center justify-between">
+                                    <span id="vital-spo2-val">89%</span>
+                                    <span class="text-[10px] font-normal text-slate-500">O2</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-medium" id="lbl-bp">Blood Pressure</div>
+                                <div class="text-lg font-extrabold text-amber-700 flex items-center justify-between">
+                                    <span id="vital-bp-val">92/58</span>
+                                    <span class="text-[10px] font-normal text-slate-500">mmHg</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-medium" id="lbl-gcs">Consciousness</div>
+                                <div class="text-lg font-extrabold text-slate-800 flex items-center justify-between">
+                                    <span id="vital-gcs-val">E3V2M5</span>
+                                    <span class="text-[10px] font-normal text-slate-500">10/15</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5">
-                    <div class="font-bold text-xs text-slate-900 leading-snug" id="hosp-name">
-                        Rajiv Gandhi Government General Hospital (Chennai GH)
-                    </div>
-                    <div class="text-[11px] text-blue-800 font-medium" id="hosp-specialty">
-                        Level 1 Apex Government Trauma & Critical Care Center
+                <!-- Group B: Cross-Agency Coordination Portal & Timeline -->
+                <div class="space-y-3">
+                    <!-- Cross-Agency Coordination Portal -->
+                    <div id="disp-coord" class="service-card rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="share-2" class="w-4 h-4 text-blue-700"></i>
+                                <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider" id="lbl-coord-head">CROSS-AGENCY PORTAL</h2>
+                            </div>
+                            <span class="text-[10px] font-bold text-emerald-700">4 AGENCIES</span>
+                        </div>
+
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                <span class="text-slate-800 font-medium flex items-center gap-1.5">
+                                    <span>🚑</span> <span id="lbl-agency-med">108 Ambulance (ALS)</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-emerald-700" id="status-agency-med">EN ROUTE</span>
+                            </div>
+
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                <span class="text-slate-800 font-medium flex items-center gap-1.5">
+                                    <span>🚒</span> <span id="lbl-agency-fire">101 Fire &amp; HAZMAT</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-red-700" id="status-agency-fire">DISPATCHED (FT-02)</span>
+                            </div>
+
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                <span class="text-slate-800 font-medium flex items-center gap-1.5">
+                                    <span>👮</span> <span id="lbl-agency-pol">100 Police Traffic Patrol</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-blue-700" id="status-agency-pol">SIGNALS CLEARED</span>
+                            </div>
+
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                <span class="text-slate-800 font-medium flex items-center gap-1.5">
+                                    <span>🏥</span> <span id="lbl-agency-hosp">Govt General Hospital</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-emerald-700" id="status-agency-hosp">PRE-ALERT READY</span>
+                            </div>
+                        </div>
+
+                        <!-- Functional Agency Coordination Actions (Section 31) -->
+                        <div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                            <button type="button" onclick="requestAgency('fire')" class="py-1.5 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+                                <span>🚒 Request Fire</span>
+                            </button>
+                            <button type="button" onclick="requestAgency('police')" class="py-1.5 px-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+                                <span>👮 Clear Corridor</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-1.5 text-center pt-1 text-xs">
-                        <div class="bg-white p-1.5 rounded border border-slate-200">
-                            <div class="text-[10px] text-slate-500 font-medium" id="lbl-er-beds">ER BEDS</div>
-                            <div class="font-bold text-emerald-700" id="val-beds">4 AVAIL</div>
+                    <!-- Incident Timeline Card (Section 32) -->
+                    <div id="disp-timeline" class="service-card rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="clock" class="w-4 h-4 text-blue-700"></i>
+                                <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider">INCIDENT TIMELINE</h2>
+                            </div>
+                            <span class="text-[10px] font-semibold text-emerald-700 font-mono" id="timeline-count">LIVE LOG</span>
                         </div>
-                        <div class="bg-white p-1.5 rounded border border-slate-200">
-                            <div class="text-[10px] text-slate-500 font-medium" id="lbl-trauma-bay">TRAUMA BAY</div>
-                            <div class="font-bold text-red-700" id="val-trauma-bay">READY</div>
-                        </div>
-                        <div class="bg-white p-1.5 rounded border border-slate-200">
-                            <div class="text-[10px] text-slate-500 font-medium">ETA</div>
-                            <div class="font-bold text-amber-700" id="val-hosp-eta">11 MIN</div>
+                        <div id="incident-timeline-list" class="space-y-2 text-xs max-h-36 overflow-y-auto pr-1">
+                            <!-- Real chronologically updated events -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Send Pre-Alert Action -->
-                <button onclick="sendHospitalPreAlert()" id="btn-prealert" class="w-full py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-sm">
-                    <i data-lucide="radio-tower" class="w-3.5 h-3.5"></i>
-                    <span id="lbl-prealert-btn">SEND HOSPITAL PRE-ALERT</span>
-                </button>
             </div>
 
-            <!-- Patient Vitals (Realistic, Non-Futuristic) -->
-            <div class="service-card rounded-xl p-3.5 space-y-2">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="activity" class="w-4 h-4 text-red-600"></i>
-                        <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider" id="lbl-vitals-head">PATIENT VITALS</h2>
-                    </div>
-                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300" id="badge-demo-vitals">SIMULATED / DEMO DATA</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <div class="text-[10px] text-slate-500 font-medium" id="lbl-hr">Heart Rate</div>
-                        <div class="text-lg font-extrabold text-red-700 flex items-center justify-between">
-                            <span id="vital-hr-val">122</span>
-                            <span class="text-[10px] font-normal text-slate-500">BPM</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <div class="text-[10px] text-slate-500 font-medium" id="lbl-spo2">Oxygen (SpO₂)</div>
-                        <div class="text-lg font-extrabold text-blue-700 flex items-center justify-between">
-                            <span id="vital-spo2-val">89%</span>
-                            <span class="text-[10px] font-normal text-slate-500">O2</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <div class="text-[10px] text-slate-500 font-medium" id="lbl-bp">Blood Pressure</div>
-                        <div class="text-lg font-extrabold text-amber-700 flex items-center justify-between">
-                            <span id="vital-bp-val">92/58</span>
-                            <span class="text-[10px] font-normal text-slate-500">mmHg</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <div class="text-[10px] text-slate-500 font-medium" id="lbl-gcs">Consciousness</div>
-                        <div class="text-lg font-extrabold text-slate-800 flex items-center justify-between">
-                            <span id="vital-gcs-val">E3V2M5</span>
-                            <span class="text-[10px] font-normal text-slate-500">10/15</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cross-Agency Coordination Portal -->
-            <div class="service-card rounded-xl p-3.5 space-y-2">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="share-2" class="w-4 h-4 text-blue-700"></i>
-                        <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider" id="lbl-coord-head">CROSS-AGENCY PORTAL</h2>
-                    </div>
-                    <span class="text-[10px] font-bold text-emerald-700">4 AGENCIES</span>
-                </div>
-
-                <div class="space-y-1.5 text-xs">
-                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-800 font-medium flex items-center gap-1.5">
-                            <span>🚑</span> <span id="lbl-agency-med">108 Ambulance (ALS)</span>
-                        </span>
-                        <span class="text-[10px] font-bold text-emerald-700" id="status-agency-med">EN ROUTE</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-800 font-medium flex items-center gap-1.5">
-                            <span>🚒</span> <span id="lbl-agency-fire">101 Fire &amp; HAZMAT</span>
-                        </span>
-                        <span class="text-[10px] font-bold text-red-700" id="status-agency-fire">DISPATCHED (FT-02)</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-800 font-medium flex items-center gap-1.5">
-                            <span>👮</span> <span id="lbl-agency-pol">100 Police Traffic Patrol</span>
-                        </span>
-                        <span class="text-[10px] font-bold text-blue-700" id="status-agency-pol">SIGNALS CLEARED</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-800 font-medium flex items-center gap-1.5">
-                            <span>🏥</span> <span id="lbl-agency-hosp">Govt General Hospital</span>
-                        </span>
-                        <span class="text-[10px] font-bold text-emerald-700" id="status-agency-hosp">PRE-ALERT READY</span>
-                    </div>
-                </div>
-
-                <!-- Functional Agency Coordination Actions (Section 31) -->
-                <div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
-                    <button type="button" onclick="requestAgency('fire')" class="py-1.5 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
-                        <span>🚒 Request Fire</span>
-                    </button>
-                    <button type="button" onclick="requestAgency('police')" class="py-1.5 px-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
-                        <span>👮 Clear Corridor</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Incident Timeline Card (Section 32) -->
-            <div class="service-card rounded-xl p-3.5 space-y-2">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="clock" class="w-4 h-4 text-blue-700"></i>
-                        <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider">INCIDENT TIMELINE</h2>
-                    </div>
-                    <span class="text-[10px] font-semibold text-emerald-700 font-mono" id="timeline-count">LIVE LOG</span>
-                </div>
-                <div id="incident-timeline-list" class="space-y-2 text-xs max-h-36 overflow-y-auto pr-1">
-                    <!-- Real chronologically updated events -->
-                </div>
-            </div>
-
-            <!-- Final Handover Action -->
-            <div class="service-card rounded-xl p-3.5 space-y-2 flex-1 flex flex-col justify-end">
-                <button onclick="executeHospitalHandover()" id="btn-handover" class="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center space-x-2 cursor-pointer active:scale-95">
+            <!-- Final Handover Action (Full width across zone) -->
+            <div class="service-card rounded-xl p-3.5 space-y-2 flex-1 flex flex-col justify-end mt-1">
+                <button type="button" onclick="executeHospitalHandover()" id="btn-handover" class="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center space-x-2 cursor-pointer active:scale-95">
                     <i data-lucide="check-circle" class="w-4 h-4"></i>
                     <span id="lbl-handover-btn">COMPLETE HOSPITAL HANDOVER</span>
                 </button>
@@ -1048,7 +1170,7 @@
     <!-- Speech recognition with clear "YOU SAID" & "WE UNDERSTOOD"-->
     <!-- ======================================================== -->
     <div id="voice-sos-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-5 border border-slate-200 shadow-xl text-center">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-5 border border-slate-200 shadow-xl text-center max-h-[90vh] overflow-y-auto">
             
             <div class="flex justify-between items-center border-b border-slate-200 pb-3">
                 <div class="flex items-center space-x-2.5">
@@ -1106,7 +1228,7 @@
     <!-- Simple, fast, no long questionnaires                     -->
     <!-- ======================================================== -->
     <div id="type-sos-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-200 pb-3">
                 <div class="flex items-center space-x-2.5">
                     <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
@@ -1172,7 +1294,7 @@
     <!-- Real GPS Geolocation + Transparent Accuracy Report       -->
     <!-- ======================================================== -->
     <div id="location-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-200 pb-3">
                 <div class="flex items-center space-x-2.5">
                     <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
@@ -1225,10 +1347,79 @@
     </div>
 
     <!-- ======================================================== -->
+    <!-- CLARIFICATION MODAL (SECTION 36, 41)                      -->
+    <!-- CAD Triage Clarification & Casualty Verification          -->
+    <!-- ======================================================== -->
+    <div id="clarification-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-5 sm:p-6 space-y-4 border border-slate-200 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base text-slate-900" id="lbl-clarify-title">Clarify Emergency Details</h2>
+                        <p class="text-[11px] text-slate-500" id="lbl-clarify-sub">Step 3 of 10: CAD Clarification &amp; Hazard Verification</p>
+                    </div>
+                </div>
+                <button onclick="closeClarificationModal()" class="text-slate-400 hover:text-slate-700 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">PATIENT / CASUALTY CONDITION</label>
+                    <select id="clarify-patient-condition" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 bg-white">
+                        <option value="Unconscious / Unresponsive">Unconscious / Unresponsive (நினைவிழந்த நிலை)</option>
+                        <option value="Severe Bleeding / Trauma" selected>Severe Bleeding / Trauma (அதிக இரத்தப்போக்கு)</option>
+                        <option value="Severe Respiratory Distress">Severe Respiratory Distress (மூச்சுத்திணறல்)</option>
+                        <option value="Trapped / Crushed Under Debris">Trapped / Crushed Under Debris (சிக்கியுள்ளார்)</option>
+                        <option value="Conscious but in Severe Pain">Conscious but in Severe Pain (மயக்கமில்லை / கடுமையான வலி)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">IMMEDIATE HAZARDS</label>
+                        <select id="clarify-hazard" class="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white font-semibold text-red-700">
+                            <option value="Toxic Chemical Fumes">Toxic Chemical Fumes (நச்சு வாயு)</option>
+                            <option value="Active Fire Spreading" selected>Active Fire Spreading (தீ பரவல்)</option>
+                            <option value="Live High-Voltage Cable">Live High-Voltage Cable (மின்கம்பி)</option>
+                            <option value="Explosion Risk">Explosion Risk (வெடிப்பு அபாயம்)</option>
+                            <option value="None / Area Clear">None / Area Clear (ஆபத்து ஏதுமில்லை)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">ENTRY / ACCESS POINT</label>
+                        <input type="text" id="clarify-access-notes" class="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white" placeholder="e.g. Gate 2, Loading Bay 3, Ground Floor" value="Gate 2, North Warehouse Entrance">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">CALL-BACK PHONE NUMBER</label>
+                    <input type="tel" id="clarify-contact-phone" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 bg-white" placeholder="+91 98765 43210" value="+91 94440 12345">
+                    <p class="text-[10px] text-slate-500 mt-1">Dispatched responder crew will directly coordinate via this number.</p>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center space-x-2">
+                <button onclick="submitClarificationDetails()" class="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>UPDATE DISPATCHER CAD</span>
+                </button>
+                <button onclick="closeClarificationModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
     <!-- INCIDENT RESOLUTION MODAL                                -->
     <!-- ======================================================== -->
     <div id="handover-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
@@ -1279,7 +1470,7 @@
     <!-- SIH PROBLEM STATEMENT COMPLIANCE MODAL (FOR JURY/JUDGES) -->
     <!-- ======================================================== -->
     <div id="compliance-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-xl rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl">
+        <div class="bg-white w-full max-w-xl rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center space-x-2.5">
                     <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center">
@@ -2149,6 +2340,46 @@
         function detectCitizenLocation() {
             acquireRealGeolocation();
             confirmLocationShare();
+        }
+
+        // Clarification Modal Handlers (Step 3 / CAD clarification)
+        function openClarificationModal() {
+            document.getElementById('clarification-modal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeClarificationModal() {
+            document.getElementById('clarification-modal').classList.add('hidden');
+        }
+
+        function submitClarificationDetails() {
+            const condition = document.getElementById('clarify-patient-condition').value;
+            const hazard = document.getElementById('clarify-hazard').value;
+            const access = document.getElementById('clarify-access-notes').value.trim();
+            const phone = document.getElementById('clarify-contact-phone').value.trim();
+
+            const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
+            if (sc && sc.caller) {
+                if (access) sc.caller.landmark = access + ", " + sc.caller.locationName;
+                if (phone) sc.caller.phone = phone;
+                setElText('caller-address', sc.caller.landmark);
+                setElText('caller-phone', sc.caller.phone);
+            }
+
+            // Update triage notes in dispatcher console
+            const triageNotes = document.getElementById('triage-clinical-notes');
+            if (triageNotes) {
+                triageNotes.textContent = `Clarified: Condition: ${condition} | Hazard: ${hazard} | Access: ${access || 'Standard'}`;
+            }
+
+            closeClarificationModal();
+            updateStepPill(3); // Advance to Step 3: Assess & Prioritize
+            playSynthesizedTone('success');
+            showEmergencyToast("✓ Clarified Incident Details Transmitted to 108 CAD");
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            addTimelineEvent(timeStr, `CAD Clarification: Patient: ${condition} | Hazard: ${hazard} | Access: ${access || 'N/A'}`, 'info');
         }
 
         // Cross-Agency Coordination Handlers (Section 31)
