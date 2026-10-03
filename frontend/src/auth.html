@@ -106,7 +106,7 @@
                 <!-- Dynamic Role Selector -->
                 <div class="space-y-2">
                     <label id="role-selector-label" class="text-xs uppercase tracking-wider font-bold text-slate-300">Select Security Profile Role</label>
-                    <div class="grid grid-cols-2 gap-2.5" id="role-selector">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="role-selector">
                         <!-- Populated by JavaScript according to active mode -->
                     </div>
                 </div>
@@ -222,18 +222,21 @@
         let timerVal = 60;
         let countdownTimer;
 
+        // Enterprise Multi-Role Matrix (Sections 2 & 19)
         const INDUSTRIAL_ROLES = [
-            { role: 'Admin', email: 'admin@sentinel.x', otp: '094821', icon: 'user-cog', color: 'text-blue-400' },
-            { role: 'Supervisor', email: 'supervisor@sentinel.x', otp: '384912', icon: 'users', color: 'text-cyan-400' },
-            { role: 'Safety Officer', email: 'officer@sentinel.x', otp: '849127', icon: 'shield-check', color: 'text-emerald-400' },
-            { role: 'Worker', email: 'worker@sentinel.x', otp: '201948', icon: 'hard-hat', color: 'text-orange-400' }
+            { role: 'Worker', email: 'worker@sentinel.x', otp: '201948', icon: 'hard-hat', color: 'text-amber-400', desc: 'Personal Safety & SOS' },
+            { role: 'Supervisor', email: 'supervisor@sentinel.x', otp: '384912', icon: 'users', color: 'text-cyan-400', desc: 'Team & Area Control' },
+            { role: 'Admin', email: 'admin@sentinel.x', otp: '094821', icon: 'user-cog', color: 'text-blue-400', desc: 'Full System Control' },
+            { role: 'Owner', email: 'owner@sentinel.x', otp: '518492', icon: 'briefcase', color: 'text-purple-400', desc: 'Executive Facility View' },
+            { role: 'Coordinator', email: 'coordinator@sentinel.x', otp: '741928', icon: 'share-2', color: 'text-emerald-400', desc: 'Emergency Coordination' }
         ];
 
         const CIVILIAN_ROLES = [
-            { role: 'CAD Dispatcher', email: 'dispatcher@sentinel.x', otp: '719402', icon: 'headset', color: 'text-rose-400' },
-            { role: 'Incident Commander', email: 'commander@sentinel.x', otp: '948123', icon: 'shield-alert', color: 'text-amber-400' },
-            { role: 'Paramedic Lead', email: 'paramedic@sentinel.x', otp: '528194', icon: 'ambulance', color: 'text-emerald-400' },
-            { role: 'Trauma Physician', email: 'physician@sentinel.x', otp: '381947', icon: 'cross', color: 'text-cyan-400' }
+            { role: 'Citizen', email: 'citizen@sentinel.x', otp: '108001', icon: 'user', color: 'text-emerald-400', desc: '1-Tap Distress SOS' },
+            { role: 'CAD Dispatcher', email: 'dispatcher@sentinel.x', otp: '719402', icon: 'headset', color: 'text-rose-400', desc: 'Triage & Unit Dispatch' },
+            { role: 'Incident Commander', email: 'commander@sentinel.x', otp: '948123', icon: 'shield-alert', color: 'text-amber-400', desc: 'Multi-Agency Leader' },
+            { role: 'Paramedic Lead', email: 'paramedic@sentinel.x', otp: '528194', icon: 'ambulance', color: 'text-cyan-400', desc: 'ALS Vehicle Crew' },
+            { role: 'Trauma Physician', email: 'physician@sentinel.x', otp: '381947', icon: 'cross', color: 'text-blue-400', desc: 'Hospital Receiving Bay' }
         ];
 
         // Mode Switching
@@ -382,7 +385,11 @@
             sessionStorage.setItem("operationalMode", currentMode);
 
             if (currentMode === "civilian") {
-                window.location.href = "civilian/index.html";
+                if (currentRole === 'Citizen') {
+                    window.location.href = "civilian/index.html?view=citizen";
+                } else {
+                    window.location.href = "civilian/index.html?view=dispatcher";
+                }
             } else {
                 window.location.href = "app.html";
             }

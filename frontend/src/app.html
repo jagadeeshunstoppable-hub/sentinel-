@@ -49,6 +49,8 @@
     <script src="library-twin-engine.js"></script>
     <script src="satellite-textures-data.js"></script>
     <script src="satellite-globe-engine.js?v=6.0"></script>
+    <script src="rbac-engine.js"></script>
+    <script src="coordination-engine.js"></script>
 
     <style>
         :root {
@@ -396,6 +398,42 @@
 
         <!-- Right Operational Actions & Demo Controls -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <!-- Enterprise Role Badge & Quick Switcher (Sections 2 & 19) -->
+            <div class="relative inline-block text-left shrink-0" id="role-switcher-container">
+                <button onclick="toggleRoleDropdown()" id="btn-active-role-badge" class="px-2 sm:px-2.5 py-1 rounded bg-blue-950/80 hover:bg-blue-900 border border-blue-400/60 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer" title="Active Role Profile — Click to Switch Role">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" id="role-led-indicator"></span>
+                    <span class="text-slate-400 text-[10px]">ROLE:</span>
+                    <span id="topbar-role-label" class="text-white">ADMIN</span>
+                    <span class="text-[9px] text-slate-400">▾</span>
+                </button>
+                <div id="role-switcher-dropdown" class="hidden absolute right-0 mt-1 w-64 bg-[#0d1117] border border-white/15 rounded-xl shadow-2xl p-2 z-[9995] space-y-1 font-mono text-xs backdrop-blur-md">
+                    <div class="px-2 py-1 text-[9px] text-slate-400 font-bold border-b border-white/10 uppercase flex justify-between items-center">
+                        <span>SECURITY PROFILES (RBAC)</span>
+                        <span class="text-[8px] text-cyan-400">SECT 2</span>
+                    </div>
+                    <button onclick="selectUserRole('WORKER')" class="w-full text-left p-1.5 rounded hover:bg-amber-950/50 hover:text-amber-300 text-slate-300 flex items-center justify-between transition-colors">
+                        <span class="flex items-center gap-1.5 font-bold"><span class="text-amber-400">👷</span><span>WORKER</span></span>
+                        <span class="text-[9px] text-slate-400">My Safety &amp; SOS</span>
+                    </button>
+                    <button onclick="selectUserRole('SUPERVISOR')" class="w-full text-left p-1.5 rounded hover:bg-cyan-950/50 hover:text-cyan-300 text-slate-300 flex items-center justify-between transition-colors">
+                        <span class="flex items-center gap-1.5 font-bold"><span class="text-cyan-400">👥</span><span>SUPERVISOR</span></span>
+                        <span class="text-[9px] text-slate-400">Team &amp; Zones</span>
+                    </button>
+                    <button onclick="selectUserRole('ADMIN')" class="w-full text-left p-1.5 rounded hover:bg-blue-950/50 hover:text-blue-300 text-slate-300 flex items-center justify-between transition-colors">
+                        <span class="flex items-center gap-1.5 font-bold"><span class="text-blue-400">⚙️</span><span>ADMIN</span></span>
+                        <span class="text-[9px] text-slate-400">Full System</span>
+                    </button>
+                    <button onclick="selectUserRole('OWNER')" class="w-full text-left p-1.5 rounded hover:bg-purple-950/50 hover:text-purple-300 text-slate-300 flex items-center justify-between transition-colors">
+                        <span class="flex items-center gap-1.5 font-bold"><span class="text-purple-400">💼</span><span>OWNER</span></span>
+                        <span class="text-[9px] text-slate-400">Executive View</span>
+                    </button>
+                    <button onclick="selectUserRole('COORDINATOR')" class="w-full text-left p-1.5 rounded hover:bg-emerald-950/50 hover:text-emerald-300 text-slate-300 flex items-center justify-between transition-colors">
+                        <span class="flex items-center gap-1.5 font-bold"><span class="text-emerald-400">📡</span><span>COORDINATOR</span></span>
+                        <span class="text-[9px] text-slate-400">Depts &amp; Agencies</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Hardware / Simulation Mode Pill -->
             <button onclick="toggleDataProvenance()" id="btn-provenance-toggle" class="badge-sim cursor-pointer hover:bg-cyan-500/25 transition-all text-[10px] hidden sm:inline-flex shrink-0">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -529,7 +567,7 @@
 
         <!-- 3. LEFT PERSISTENT INDUSTRIAL NAVIGATION DRAWER (13 Workspaces - Section 7) -->
         <aside id="main-scada-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 lg:w-56 bg-[#090b10] border-r border-white/10 flex flex-col justify-between p-2 flex-shrink-0 z-50 lg:z-30 select-none overflow-y-auto transition-transform duration-200 -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none">
-            <div class="space-y-1">
+            <div id="scada-nav-list" class="space-y-1">
                 <div class="flex items-center justify-between px-3 py-1.5 text-[9px] font-mono text-slate-500 font-bold tracking-wider">
                     <span>OPERATIONAL WORKSPACES</span>
                     <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden text-slate-400 hover:text-white p-1 text-sm leading-none" aria-label="Close menu">✕</button>
@@ -597,6 +635,14 @@
                 <div onclick="switchWorkspace(15)" id="nav-15" class="nav-item">
                     <span class="font-mono text-cyan-400 text-[10px]">16</span>
                     <span class="flex items-center gap-1.5"><span>🦺</span><span>AI PPE DETECTION</span></span>
+                </div>
+                <div onclick="switchWorkspace(16)" id="nav-16" class="nav-item">
+                    <span class="font-mono text-cyan-400 text-[10px]">17</span>
+                    <span class="flex items-center gap-1.5"><span>📡</span><span>DEPT COORDINATION</span></span>
+                </div>
+                <div onclick="switchWorkspace(17)" id="nav-17" class="nav-item">
+                    <span class="font-mono text-cyan-400 text-[10px]">18</span>
+                    <span class="flex items-center gap-1.5"><span>💼</span><span>OWNER EXECUTIVE</span></span>
                 </div>
             </div>
 
@@ -707,17 +753,17 @@
                 </div>
 
                 <!-- Center Digital Twin + Right Safety State Grid -->
-                <div class="grid grid-cols-1 xl:grid-cols-12 gap-4" style="min-height: 520px;">
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 min-h-[380px] xl:min-h-[520px]">
                     <!-- Left/Center 8 Cols: Large Interactive 3D Digital Twin Viewport -->
                     <div class="xl:col-span-8 scada-panel p-3 flex flex-col relative overflow-hidden shadow-2xl">
                         <div class="flex flex-col gap-2 border-b border-white/10 pb-2 mb-2 z-20 bg-[#0d1117]/90 backdrop-blur-sm">
-                            <div class="flex items-center justify-between">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
                                 <div class="flex items-center gap-2">
                                     <span class="font-display font-bold text-xs text-white">OPERATIONAL DIGITAL TWIN</span>
                                     <span class="badge-live font-mono text-[9px]">● LIVE 60 FPS</span>
                                 </div>
                                 <!-- Camera Presets -->
-                                <div class="flex items-center gap-1 text-[10px] font-mono">
+                                <div class="flex flex-wrap items-center gap-1 text-[10px] font-mono">
                                     <button onclick="setCameraView('ISO')" data-cam="ISO" class="px-2 py-0.5 rounded bg-cyan-600/40 text-cyan-300 border border-cyan-400 font-bold">ISOMETRIC</button>
                                     <button onclick="setCameraView('TOP')" data-cam="TOP" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">TOP DOWN</button>
                                     <button onclick="setCameraView('SAFETY')" data-cam="SAFETY" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">SAFETY CORRIDOR</button>
@@ -727,8 +773,8 @@
                                 </div>
                             </div>
                             <!-- Scene Overlays Selector (Section 20) -->
-                            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-white/5">
-                                <div class="flex items-center gap-3">
+                            <div class="flex flex-wrap items-center justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-white/5 gap-2">
+                                <div class="flex flex-wrap items-center gap-3">
                                     <span class="text-slate-500 font-bold">OVERLAYS:</span>
                                     <label class="flex items-center gap-1 cursor-pointer hover:text-white select-none">
                                         <input type="checkbox" checked onchange="toggleTwinLayer('sensors', this.checked)" class="accent-cyan-500">
@@ -3452,6 +3498,346 @@
                 </div>
             </div>
 
+            <!-- ==================================================================== -->
+            <!-- WORKSPACE 17 (PANEL-16): MULTI-DEPARTMENT EMERGENCY COORDINATION    -->
+            <!-- ==================================================================== -->
+            <div id="panel-16" class="workspace-panel space-y-4">
+                <!-- Header Banner -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-lg bg-gradient-to-r from-red-950/70 via-slate-900 to-slate-900 border border-red-500/40 shadow-lg">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] font-mono font-bold tracking-wider animate-pulse">EMERGENCY COORDINATION EVENT LAYER</span>
+                            <span id="coord-active-badge" class="badge-live text-[9px]">● STANDBY READY</span>
+                        </div>
+                        <h1 class="font-display font-bold text-lg text-white mt-1">MULTI-DEPARTMENT EMERGENCY COORDINATION ENGINE</h1>
+                        <p class="text-xs font-mono text-slate-400">Deterministic Cross-Department Response Matrix &amp; External Public Safety Agency Dispatch Bridge</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="triggerCoordinationSimulation()" id="btn-coord-sim" class="px-3 py-1.5 rounded bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-mono font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-900/40 cursor-pointer transition-all active:scale-95">
+                            <span>🔥</span>
+                            <span>TRIGGER FACTORY FIRE SCENARIO</span>
+                        </button>
+                        <button onclick="broadcastDeptAlert()" class="px-3 py-1.5 rounded bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-500/40 font-mono font-bold text-xs flex items-center gap-1 cursor-pointer transition-all">
+                            <span>📢</span>
+                            <span>ALERT ALL DEPTS</span>
+                        </button>
+                        <button onclick="resetCoordinationState()" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10 font-mono text-xs cursor-pointer">
+                            <span>↺</span>
+                            <span>RESET</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Incident Synopsis & Triage Bar -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
+                    <div class="scada-panel p-3 border-l-4 border-l-red-500 bg-[#0d121c]">
+                        <div class="text-[9px] font-mono text-slate-400 uppercase">CLASSIFIED INCIDENT</div>
+                        <div class="text-white font-bold text-sm mt-0.5 flex items-center gap-1.5">
+                            <span id="coord-incident-type">FACTORY FIRE &amp; CHEMICAL RISK</span>
+                        </div>
+                        <div class="text-[10px] font-mono text-red-400 mt-1" id="coord-incident-source">SOURCE: INDUSTRIAL RISK ENGINE &amp; I2C SENSORS</div>
+                    </div>
+                    <div class="scada-panel p-3 border-l-4 border-l-amber-500 bg-[#0d121c]">
+                        <div class="text-[9px] font-mono text-slate-400 uppercase">SEVERITY CLASSIFICATION</div>
+                        <div class="text-amber-400 font-bold text-sm mt-0.5 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                            <span id="coord-incident-severity">CRITICAL (TIER-1 HAZARD)</span>
+                        </div>
+                        <div class="text-[10px] font-mono text-slate-400 mt-1" id="coord-incident-zone">LOCATION: ZONE B — ROTATING EQUIPMENT BAY</div>
+                    </div>
+                    <div class="scada-panel p-3 border-l-4 border-l-cyan-500 bg-[#0d121c]">
+                        <div class="text-[9px] font-mono text-slate-400 uppercase">AFFECTED PERSONNEL</div>
+                        <div class="text-cyan-300 font-bold text-sm mt-0.5" id="coord-workers-affected">4 WORKERS (W-017, W-024, W-031, W-042)</div>
+                        <div class="text-[10px] font-mono text-emerald-400 mt-1" id="coord-evac-status">EVACUATION CORRIDOR: NORTH GATE ACTIVE</div>
+                    </div>
+                    <div class="scada-panel p-3 border-l-4 border-l-purple-500 bg-[#0d121c]">
+                        <div class="text-[9px] font-mono text-slate-400 uppercase">CIVILIAN BRIDGE STATUS</div>
+                        <div class="text-purple-300 font-bold text-sm mt-0.5 flex items-center gap-1.5">
+                            <span class="led led-green"></span>
+                            <span>CAD 108/112 EVENT SYNCHRONIZED</span>
+                        </div>
+                        <div class="text-[10px] font-mono text-slate-400 mt-1">SHARED EVENT BUS: ACTIVE</div>
+                    </div>
+                </div>
+
+                <!-- Internal Departments Grid -->
+                <div class="scada-panel p-4 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-white/10 gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-cyan-400 font-bold text-sm font-mono">1. INTERNAL ORGANIZATIONAL DEPARTMENTS (11 UNITS)</span>
+                            <span class="badge-derived text-[9px]">CONFIGURABLE MATRIX</span>
+                        </div>
+                        <div class="text-[10px] font-mono text-slate-400">
+                            Protocol: ISO 22301 / Industrial Incident Command Standard
+                        </div>
+                    </div>
+                    <div id="dept-cards-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
+                        <!-- Injected via JavaScript from SentinelCoordination -->
+                    </div>
+                </div>
+
+                <!-- External Public Safety Agency Directory -->
+                <div class="scada-panel p-4 space-y-3 border-cyan-500/30">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-white/10 gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-red-400 font-bold text-sm font-mono">2. EXTERNAL EMERGENCY AGENCY DISPATCH DIRECTORY</span>
+                                <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-mono font-bold">HONEST ATTRIBUTION: SIMULATED / DEMO CAD GATEWAY</span>
+                            </div>
+                            <p class="text-[10px] font-mono text-slate-400 mt-0.5">Real-world dispatches require authorized telecom gateway / State 112 CAD API integration. Active simulation mode enabled.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="dispatchAllAgencies()" class="px-3 py-1 rounded bg-red-600/40 hover:bg-red-600/60 text-red-200 border border-red-500/50 font-mono text-xs font-bold">DISPATCH ALL UNITS</button>
+                        </div>
+                    </div>
+                    <div id="agency-cards-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-3">
+                        <!-- Injected via JavaScript from SentinelCoordination -->
+                    </div>
+                </div>
+
+                <!-- Hospital Pre-Alert & Coordination Panel -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                    <div class="scada-panel p-3.5 space-y-2 lg:col-span-2">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-1.5">
+                            <span class="font-mono text-xs font-bold text-white flex items-center gap-1.5">
+                                <span>🏥</span>
+                                <span>HOSPITAL TRAUMA COORDINATION &amp; PRE-ALERT HANDOVER</span>
+                            </span>
+                            <span class="badge-sim text-[9px]">SIMULATED HOSPITAL HIS/EMR INTEGRATION</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                            <div class="p-2.5 rounded bg-slate-900/90 border border-white/5 space-y-1">
+                                <div class="text-[9px] text-slate-400">DESIGNATED RECEIVING FACILITY</div>
+                                <div class="text-cyan-300 font-bold text-xs" id="coord-hosp-name">Govt General Hospital, Chennai</div>
+                                <div class="text-[9px] text-slate-500">Trauma Level 1 • 6.2 km (ETA 8m)</div>
+                            </div>
+                            <div class="p-2.5 rounded bg-slate-900/90 border border-white/5 space-y-1">
+                                <div class="text-[9px] text-slate-400">EMERGENCY BED CAPACITY</div>
+                                <div class="text-emerald-400 font-bold text-xs" id="coord-hosp-beds">5 ER BEDS • 2 TRAUMA BAYS</div>
+                                <div class="text-[9px] text-slate-500">Burn ICU Team: Pre-Notified</div>
+                            </div>
+                            <div class="p-2.5 rounded bg-slate-900/90 border border-white/5 space-y-1">
+                                <div class="text-[9px] text-slate-400">PATIENT VITALS TELEMETRY</div>
+                                <div class="text-amber-300 font-bold text-xs" id="coord-hosp-vitals">PRE-STREAMING ACTIVE</div>
+                                <div class="text-[9px] text-slate-500">Spo2 96% • HR 104 • Inhalation Minor</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between pt-1 text-[10px] font-mono text-slate-400 gap-2">
+                            <span>Pre-alert protocol: Telemetry handover sent to Emergency Department triage station.</span>
+                            <button onclick="confirmHospitalHandover()" class="px-3 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 font-bold">CONFIRM HANDOVER</button>
+                        </div>
+                    </div>
+
+                    <!-- Live Dispatch Audit Trail / Timeline -->
+                    <div class="scada-panel p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-1.5">
+                            <span class="font-mono text-xs font-bold text-white flex items-center gap-1">
+                                <span>📋</span>
+                                <span>COORDINATION EVENT LEDGER</span>
+                            </span>
+                            <span class="text-[9px] font-mono text-cyan-400">IMMUTABLE</span>
+                        </div>
+                        <div id="coord-timeline-feed" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 text-[10px] font-mono">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- WORKSPACE 18 (PANEL-17): OWNER / EXECUTIVE OPERATIONAL DASHBOARD    -->
+            <!-- ==================================================================== -->
+            <div id="panel-17" class="workspace-panel space-y-4">
+                <!-- Executive Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-lg bg-gradient-to-r from-blue-950/70 via-slate-900 to-slate-900 border border-blue-500/40 shadow-lg">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-mono font-bold tracking-wider">EXECUTIVE SAFETY INTELLIGENCE</span>
+                            <span class="badge-live text-[9px]">● C-SUITE OVERSIGHT</span>
+                        </div>
+                        <h1 class="font-display font-bold text-lg text-white mt-1">FACILITY-WIDE SAFETY &amp; OPERATIONAL CONTINUITY OVERVIEW</h1>
+                        <p class="text-xs font-mono text-slate-400">High-Level Executive Decision Support — Zero Telemetry Noise</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="text-right font-mono">
+                            <div class="text-[9px] text-slate-400">ORGANIZATION</div>
+                            <div class="text-white font-bold text-xs">SENTINEL-X INDUSTRIAL CORP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 Core Executive Questions Answer Cards (Prompt Section 2 & Owner View) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+                    <!-- Q1: Is my facility safe? -->
+                    <div class="scada-panel p-4 space-y-2 border-l-4 border-l-emerald-500 bg-[#0c121e]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">1. IS MY FACILITY SAFE?</span>
+                            <span id="exec-safety-badge" class="badge-live">NORMAL SAFE</span>
+                        </div>
+                        <div class="text-2xl font-bold font-mono text-emerald-400" id="exec-risk-gauge">LOW RISK (14.2 / 100)</div>
+                        <p class="text-xs font-mono text-slate-300" id="exec-safety-answer">
+                            All operational zones within regulatory safety parameters. Zero critical interlock trips in past 24 hours.
+                        </p>
+                        <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                            <span>ISO 45001 Compliance:</span>
+                            <strong class="text-cyan-300">98.4% CERTIFIED</strong>
+                        </div>
+                    </div>
+
+                    <!-- Q2: What is happening? -->
+                    <div class="scada-panel p-4 space-y-2 border-l-4 border-l-cyan-500 bg-[#0c121e]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">2. WHAT IS HAPPENING?</span>
+                            <span class="text-[9px] font-mono text-cyan-400">FACILITY STATUS</span>
+                        </div>
+                        <div class="text-lg font-bold text-white font-mono" id="exec-situation-title">SHIFT A OPERATIONS NOMINAL</div>
+                        <p class="text-xs font-mono text-slate-300" id="exec-situation-desc">
+                            42 active personnel on factory floor across 4 active zones. Edge sensor mesh polling normally at 500ms cycle.
+                        </p>
+                        <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                            <span>Active Alarms:</span>
+                            <strong class="text-emerald-400" id="exec-alarms-count">0 CRITICAL • 0 WARNING</strong>
+                        </div>
+                    </div>
+
+                    <!-- Q3: Who is affected? -->
+                    <div class="scada-panel p-4 space-y-2 border-l-4 border-l-purple-500 bg-[#0c121e]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">3. WHO IS AFFECTED?</span>
+                            <span class="text-[9px] font-mono text-purple-400">PERSONNEL ACCOUNTABILITY</span>
+                        </div>
+                        <div class="text-2xl font-bold font-mono text-white" id="exec-personnel-affected">0 WORKERS AT RISK</div>
+                        <p class="text-xs font-mono text-slate-300" id="exec-personnel-desc">
+                            All 42 workers accounted for at authorized work stations. Wearable telemetry indicates safe biological vitals.
+                        </p>
+                        <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                            <span>Muster Readiness:</span>
+                            <strong class="text-emerald-400">100% CLEAR PATH</strong>
+                        </div>
+                    </div>
+
+                    <!-- Q4: Which departments are responding? -->
+                    <div class="scada-panel p-4 space-y-2 border-l-4 border-l-amber-500 bg-[#0c121e]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">4. WHICH DEPTS ARE RESPONDING?</span>
+                            <span class="text-[9px] font-mono text-amber-400">INTERNAL READINESS</span>
+                        </div>
+                        <div class="text-lg font-bold font-mono text-white" id="exec-dept-response">ALL 11 DEPTS ON STANDBY</div>
+                        <p class="text-xs font-mono text-slate-300" id="exec-dept-desc">
+                            Internal Safety, Medical, and Security squads are pre-positioned and logged into the incident command matrix.
+                        </p>
+                        <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                            <span>Duty Officer Contact:</span>
+                            <strong class="text-cyan-300">DUTY COMMANDER (+91-44-2833-0101)</strong>
+                        </div>
+                    </div>
+
+                    <!-- Q5: Has outside support been alerted? -->
+                    <div class="scada-panel p-4 space-y-2 border-l-4 border-l-blue-500 bg-[#0c121e]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">5. OUTSIDE EMERGENCY SUPPORT?</span>
+                            <span class="text-[9px] font-mono text-blue-400">PUBLIC SAFETY</span>
+                        </div>
+                        <div class="text-lg font-bold font-mono text-white" id="exec-outside-support">EXTERNAL DISPATCH: NOT REQUIRED</div>
+                        <p class="text-xs font-mono text-slate-300" id="exec-outside-desc">
+                            Local Fire Station (4.8km), 108 Ambulance Unit (3.2km), and Police Precinct (2.1km) on live automated telemetry standby.
+                        </p>
+                        <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                            <span>Govt General Hospital:</span>
+                            <strong class="text-emerald-400">TRAUMA BAY CONFIRMED READY</strong>
+                        </div>
+                    </div>
+
+                    <!-- Q6: What action requires my attention? -->
+                    <div class="scada-panel p-4 space-y-2 border-l-4 border-l-rose-500 bg-[#0c121e]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">6. REQUIRED OWNER ACTIONS?</span>
+                            <span class="text-[9px] font-mono text-rose-400">DECISION GATEWAY</span>
+                        </div>
+                        <div class="text-lg font-bold font-mono text-emerald-400" id="exec-action-title">ZERO PENDING APPROVALS</div>
+                        <p class="text-xs font-mono text-slate-300" id="exec-action-desc">
+                            Facility automated safety loops operational. No emergency executive override or evacuation declaration currently required.
+                        </p>
+                        <div class="pt-2 border-t border-white/5 flex gap-2">
+                            <button onclick="switchWorkspace(16)" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold">VIEW COORDINATION</button>
+                            <button onclick="switchWorkspace(9)" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold">VIEW RECOVERY</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Continuity & Resilience Summary -->
+                <div class="scada-panel p-4 space-y-3">
+                    <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                        <span class="font-mono text-xs font-bold text-white uppercase">Operational Continuity &amp; Economic Exposure</span>
+                        <span class="text-[10px] font-mono text-slate-400">Real-Time Risk Calculation</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono text-center">
+                        <div class="p-3 rounded bg-slate-900/90 border border-white/5">
+                            <div class="text-[9px] text-slate-400">ACTIVE PRODUCTION LINES</div>
+                            <div class="text-emerald-400 font-bold text-lg mt-1" id="exec-prod-lines">3 / 3 RUNNING</div>
+                            <div class="text-[9px] text-slate-500">100% Operational Capacity</div>
+                        </div>
+                        <div class="p-3 rounded bg-slate-900/90 border border-white/5">
+                            <div class="text-[9px] text-slate-400">FACILITY RESILIENCE SCORE</div>
+                            <div class="text-cyan-400 font-bold text-lg mt-1">94.8 / 100</div>
+                            <div class="text-[9px] text-slate-500">High Redundancy Index</div>
+                        </div>
+                        <div class="p-3 rounded bg-slate-900/90 border border-white/5">
+                            <div class="text-[9px] text-slate-400">ESTIMATED ASSET EXPOSURE</div>
+                            <div class="text-white font-bold text-lg mt-1" id="exec-exposure-amt">₹0 (ZERO)</div>
+                            <div class="text-[9px] text-slate-500">Insured &amp; Interlocked</div>
+                        </div>
+                        <div class="p-3 rounded bg-slate-900/90 border border-white/5">
+                            <div class="text-[9px] text-slate-400">CRITICAL SAFETY AUDIT</div>
+                            <div class="text-emerald-400 font-bold text-lg mt-1">COMPLIANT</div>
+                            <div class="text-[9px] text-slate-500">PS-26223 Verified</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- ACCESS RESTRICTED SECURITY SHIELD (RBAC Route & Policy Enforcement)  -->
+            <!-- ==================================================================== -->
+            <div id="panel-restricted" class="workspace-panel">
+                <div class="min-h-[500px] flex items-center justify-center p-4">
+                    <div class="max-w-lg w-full p-6 rounded-xl bg-[#0e1420] border-2 border-amber-500/50 shadow-2xl text-center space-y-4">
+                        <div class="w-16 h-16 mx-auto rounded-full bg-amber-500/10 border-2 border-amber-500/50 flex items-center justify-center text-3xl">
+                            🛡️
+                        </div>
+                        <div>
+                            <div class="text-amber-400 font-mono text-xs font-bold tracking-widest uppercase">RBAC POLICY ENFORCEMENT</div>
+                            <h2 class="font-display font-bold text-xl text-white mt-1">ACCESS RESTRICTED</h2>
+                            <p class="text-xs font-mono text-slate-300 mt-2">
+                                Your current account role does not have authorization to view or configure this industrial workspace.
+                            </p>
+                        </div>
+                        <div class="p-3 rounded bg-black/60 border border-white/10 text-xs font-mono text-left space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">CURRENT ACTIVE ROLE:</span>
+                                <span class="text-amber-300 font-bold" id="restricted-role-badge">WORKER</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">REQUIRED PRIVILEGE:</span>
+                                <span class="text-cyan-300 font-bold" id="restricted-req-badge">ADMIN / SUPERVISOR</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">SECURITY AUDIT ID:</span>
+                                <span class="text-slate-500 font-mono">SEC-POL-45001-DENIED</span>
+                            </div>
+                        </div>
+                        <div class="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+                            <button onclick="returnToAuthorizedWorkspace()" class="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-mono text-xs font-bold shadow-lg shadow-cyan-900/40 cursor-pointer transition-all active:scale-95">
+                                RETURN TO AUTHORIZED WORKSPACE
+                            </button>
+                            <button onclick="toggleRoleDropdown()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs cursor-pointer">
+                                SWITCH ROLE (DEMO)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -4132,7 +4518,7 @@
         let prototypeTwinEngine = null;
         let activeTwinPreset = 'CONVEYOR';
 
-        // --- Section 30 Routing Paths (16 Workspaces - Section 7 & 31) ---
+        // --- Section 30 Routing Paths (18 Workspaces) ---
         const WORKSPACE_ROUTES = [
             '/console',
             '/console/digital-twin',
@@ -4149,7 +4535,9 @@
             '/console/system',
             '/console/prototype',
             '/console/satellite',
-            '/console/ppe'
+            '/console/ppe',
+            '/console/coordination',
+            '/console/executive'
         ];
 
         // --- Section 31 Session Protection ---
@@ -4194,8 +4582,27 @@
             }
         }
 
-        // --- 2. Workspace Navigation (16 Workspaces) ---
+        // --- 2. Workspace Navigation (18 Workspaces + RBAC Guard) ---
         function switchWorkspace(idx, skipHistory) {
+            // Check Role-Based Access Control Permission
+            if (window.SentinelRBAC && !window.SentinelRBAC.canAccessWorkspace(idx)) {
+                activeWorkspaceIdx = idx;
+                document.querySelectorAll('.workspace-panel').forEach(p => p.classList.remove('active'));
+                const restrictedPanel = document.getElementById('panel-restricted');
+                if (restrictedPanel) restrictedPanel.classList.add('active');
+                document.querySelectorAll('.nav-item').forEach((b, i) => b.classList.toggle('active', i === idx));
+
+                const curRole = window.SentinelRBAC.getCurrentRole();
+                const reqRole = window.SentinelRBAC.getRequiredRoleForWorkspace ? window.SentinelRBAC.getRequiredRoleForWorkspace(idx) : 'ADMIN / SUPERVISOR';
+                const roleBadge = document.getElementById('restricted-role-badge');
+                const reqBadge = document.getElementById('restricted-req-badge');
+                if (roleBadge) roleBadge.textContent = curRole.toUpperCase();
+                if (reqBadge) reqBadge.textContent = reqRole;
+
+                if (window.innerWidth < 1024) toggleMobileSidebar(false);
+                return;
+            }
+
             activeWorkspaceIdx = idx;
             document.querySelectorAll('.workspace-panel').forEach((p, i) => {
                 p.classList.toggle('active', i === idx);
@@ -4238,6 +4645,12 @@
             if (idx === 15) {
                 onPpeTabActivated();
             }
+            if (idx === 16) {
+                renderCoordinationWorkspace();
+            }
+            if (idx === 17) {
+                renderOwnerWorkspace();
+            }
         }
 
         // Initialize Workspace from current URL path (Section 30)
@@ -4260,7 +4673,289 @@
             else if (path.includes('/prototype') || hash.includes('prototype')) switchWorkspace(13, true);
             else if (path.includes('/satellite') || hash.includes('satellite')) switchWorkspace(14, true);
             else if (path.includes('/ppe') || hash.includes('ppe')) switchWorkspace(15, true);
-            else switchWorkspace(0, true);
+            else if (path.includes('/coordination') || hash.includes('coordination')) switchWorkspace(16, true);
+            else if (path.includes('/executive') || hash.includes('executive')) switchWorkspace(17, true);
+            else {
+                const defaultWs = window.SentinelRBAC ? window.SentinelRBAC.getDefaultWorkspace(window.SentinelRBAC.getCurrentRole()) : 0;
+                switchWorkspace(defaultWs, true);
+            }
+        }
+
+        // ====================================================================
+        // RBAC & MULTI-DEPARTMENT EMERGENCY COORDINATION CONTROLLERS
+        // ====================================================================
+        function renderRoleNavigation() {
+            const role = (window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : 'admin').toLowerCase();
+            const navItems = document.querySelectorAll('#scada-nav-list .nav-item');
+            navItems.forEach((item, idx) => {
+                const allowed = window.SentinelRBAC ? window.SentinelRBAC.canAccessWorkspace(idx, role) : true;
+                item.style.display = allowed ? 'flex' : 'none';
+            });
+            const roleBadge = document.getElementById('current-role-badge-text');
+            if (roleBadge) {
+                roleBadge.textContent = role.toUpperCase();
+            }
+        }
+
+        function toggleRoleDropdown() {
+            const menu = document.getElementById('role-selector-menu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        function selectUserRole(role) {
+            if (window.SentinelRBAC) {
+                window.SentinelRBAC.setCurrentRole(role);
+            } else {
+                sessionStorage.setItem('sentinel_role', role);
+                sessionStorage.setItem('userRole', role);
+            }
+            renderRoleNavigation();
+            const menu = document.getElementById('role-selector-menu');
+            if (menu) menu.classList.add('hidden');
+            
+            showToast(`Role switched to ${role.toUpperCase()} (RBAC policy updated)`, 'info');
+
+            // Navigate to authorized workspace for new role
+            const defaultWs = window.SentinelRBAC ? window.SentinelRBAC.getDefaultWorkspace(role) : 0;
+            switchWorkspace(defaultWs);
+        }
+
+        function returnToAuthorizedWorkspace() {
+            const role = window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : 'admin';
+            const defaultWs = window.SentinelRBAC ? window.SentinelRBAC.getDefaultWorkspace(role) : 0;
+            switchWorkspace(defaultWs);
+        }
+
+        function renderCoordinationWorkspace() {
+            if (!window.SentinelCoordination) return;
+
+            const depts = window.SentinelCoordination.getDepartments();
+            const agencies = window.SentinelCoordination.getAgencies();
+            const activeEvent = window.SentinelCoordination.getActiveEvent();
+            const timeline = window.SentinelCoordination.getTimeline();
+
+            // Update Active Event Badges
+            const activeBadge = document.getElementById('coord-active-badge');
+            if (activeBadge) {
+                if (activeEvent) {
+                    activeBadge.textContent = `● ACTIVE: ${activeEvent.status}`;
+                    activeBadge.className = 'px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] font-mono font-bold animate-pulse';
+                } else {
+                    activeBadge.textContent = '● STANDBY READY';
+                    activeBadge.className = 'badge-live text-[9px]';
+                }
+            }
+
+            const incidentType = document.getElementById('coord-incident-type');
+            const incidentSeverity = document.getElementById('coord-incident-severity');
+            const workersAffected = document.getElementById('coord-workers-affected');
+            const incidentZone = document.getElementById('coord-incident-zone');
+
+            if (activeEvent) {
+                if (incidentType) incidentType.textContent = activeEvent.incidentType;
+                if (incidentSeverity) incidentSeverity.textContent = `${activeEvent.severity} (${activeEvent.status})`;
+                if (workersAffected) workersAffected.textContent = `${activeEvent.peopleAffected} WORKERS (${activeEvent.affectedWorkers ? activeEvent.affectedWorkers.join(', ') : 'W-017, W-024, W-031, W-042'})`;
+                if (incidentZone) incidentZone.textContent = `LOCATION: ${activeEvent.location}`;
+            }
+
+            // Render Departments Grid
+            const deptContainer = document.getElementById('dept-cards-grid');
+            if (deptContainer) {
+                deptContainer.innerHTML = depts.map(d => {
+                    const statusClass = {
+                        'STANDBY': 'bg-slate-800 text-slate-400 border-white/10',
+                        'ALERTED': 'bg-amber-950 text-amber-300 border-amber-500/50 animate-pulse',
+                        'ACKNOWLEDGED': 'bg-cyan-950 text-cyan-300 border-cyan-500/50',
+                        'RESPONDING': 'bg-emerald-950 text-emerald-300 border-emerald-500/50',
+                        'ON_SCENE': 'bg-purple-950 text-purple-300 border-purple-500/50'
+                    }[d.operationalStatus] || 'bg-slate-800 text-slate-400 border-white/10';
+
+                    let actionBtn = '';
+                    if (d.operationalStatus === 'ALERTED') {
+                        actionBtn = `<button onclick="window.SentinelCoordination.acknowledgeDepartment('${d.id}'); renderCoordinationWorkspace();" class="px-2 py-1 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-[9px] font-bold">ACKNOWLEDGE</button>`;
+                    } else if (d.operationalStatus === 'ACKNOWLEDGED') {
+                        actionBtn = `<button onclick="window.SentinelCoordination.deployDepartment('${d.id}'); renderCoordinationWorkspace();" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-[9px] font-bold">DEPLOY SQUAD</button>`;
+                    } else if (d.operationalStatus === 'STANDBY') {
+                        actionBtn = `<button onclick="window.SentinelCoordination.alertDepartment('${d.id}'); renderCoordinationWorkspace();" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-[9px]">ALERT DEPT</button>`;
+                    } else {
+                        actionBtn = `<span class="text-emerald-400 text-[10px] font-bold">ACTIVE ON SCENE ✓</span>`;
+                    }
+
+                    return `
+                        <div class="p-3 rounded-lg bg-[#0e1420] border border-white/10 space-y-2 hover:border-cyan-500/40 transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                                    <span>${d.icon || '🏢'}</span>
+                                    <span>${d.name}</span>
+                                </span>
+                                <span class="px-1.5 py-0.5 rounded border text-[8px] font-mono font-bold ${statusClass}">
+                                    ${d.operationalStatus}
+                                </span>
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400 space-y-0.5">
+                                <div>LEAD: <strong class="text-slate-200">${d.lead}</strong> (${d.contact})</div>
+                                <div>PERSONNEL: <strong class="text-cyan-300">${d.availablePersonnel} ACTIVE</strong> • EQUIP: ${d.resources.slice(0, 2).join(', ')}</div>
+                            </div>
+                            <div class="pt-1.5 border-t border-white/5 flex items-center justify-between">
+                                <span class="text-[9px] font-mono text-slate-500">${d.id}</span>
+                                ${actionBtn}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Render External Agency Grid
+            const agencyContainer = document.getElementById('agency-cards-grid');
+            if (agencyContainer) {
+                agencyContainer.innerHTML = agencies.map(a => {
+                    const statusClass = {
+                        'STANDBY': 'bg-slate-800 text-slate-400 border-white/10',
+                        'ALERTED': 'bg-amber-950 text-amber-300 border-amber-500/50 animate-pulse',
+                        'DISPATCHED': 'bg-red-950 text-red-300 border-red-500/50 animate-pulse',
+                        'EN_ROUTE': 'bg-cyan-950 text-cyan-300 border-cyan-500/50',
+                        'ON_SCENE': 'bg-emerald-950 text-emerald-300 border-emerald-500/50',
+                        'PRE_ALERTED': 'bg-purple-950 text-purple-300 border-purple-500/50'
+                    }[a.status] || 'bg-slate-800 text-slate-400 border-white/10';
+
+                    return `
+                        <div class="p-3 rounded-lg bg-[#0e1420] border border-cyan-500/20 space-y-2 hover:border-cyan-400/50 transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                                    <span>${a.icon || '🚨'}</span>
+                                    <span>${a.name}</span>
+                                </span>
+                                <span class="px-1.5 py-0.5 rounded border text-[8px] font-mono font-bold ${statusClass}">
+                                    ${a.status}
+                                </span>
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400 space-y-0.5">
+                                <div>CAPABILITY: <strong class="text-slate-200">${a.capability}</strong></div>
+                                <div>DISTANCE: <strong class="text-amber-300">${a.distance}</strong> • ETA: <strong class="text-cyan-300">${a.eta}</strong></div>
+                            </div>
+                            <div class="pt-1.5 border-t border-white/5 flex items-center justify-between">
+                                <span class="text-[8px] font-mono text-amber-400/70">SIMULATED CAD</span>
+                                <button onclick="window.SentinelCoordination.dispatchAgency('${a.id}'); renderCoordinationWorkspace();" class="px-2 py-0.5 rounded bg-red-600/40 hover:bg-red-600/60 text-red-200 border border-red-500/40 font-mono text-[9px] font-bold">
+                                    ${a.status === 'STANDBY' ? 'DISPATCH' : 'CYCLE'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Render Timeline
+            const timelineContainer = document.getElementById('coord-timeline-feed');
+            if (timelineContainer) {
+                timelineContainer.innerHTML = timeline.slice().reverse().map(t => `
+                    <div class="p-1.5 rounded bg-black/50 border border-white/5 space-y-0.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-cyan-300 font-bold">${t.action}</span>
+                            <span class="text-slate-500">${t.timestamp}</span>
+                        </div>
+                        <div class="text-slate-300">${t.details}</div>
+                    </div>
+                `).join('') || '<div class="text-slate-500 p-2">Zero coordination events logged yet. Standby mode active.</div>';
+            }
+        }
+
+        function renderOwnerWorkspace() {
+            if (!window.SentinelCoordination) return;
+            const activeEvent = window.SentinelCoordination.getActiveEvent();
+
+            const safetyBadge = document.getElementById('exec-safety-badge');
+            const riskGauge = document.getElementById('exec-risk-gauge');
+            const safetyAnswer = document.getElementById('exec-safety-answer');
+            const sitTitle = document.getElementById('exec-situation-title');
+            const sitDesc = document.getElementById('exec-situation-desc');
+            const alarmsCount = document.getElementById('exec-alarms-count');
+            const persAffected = document.getElementById('exec-personnel-affected');
+            const persDesc = document.getElementById('exec-personnel-desc');
+            const deptResp = document.getElementById('exec-dept-response');
+            const deptDesc = document.getElementById('exec-dept-desc');
+            const outsideSupp = document.getElementById('exec-outside-support');
+            const outsideDesc = document.getElementById('exec-outside-desc');
+            const actionTitle = document.getElementById('exec-action-title');
+            const actionDesc = document.getElementById('exec-action-desc');
+            const prodLines = document.getElementById('exec-prod-lines');
+            const exposureAmt = document.getElementById('exec-exposure-amt');
+
+            if (activeEvent && activeEvent.status !== 'RESOLVED') {
+                if (safetyBadge) { safetyBadge.textContent = 'CRITICAL ALERT (TIER-1)'; safetyBadge.className = 'px-1.5 py-0.5 rounded bg-red-950 text-red-300 border border-red-500/50 font-bold text-[9px] animate-pulse'; }
+                if (riskGauge) { riskGauge.textContent = 'HIGH RISK (84.6 / 100)'; riskGauge.className = 'text-2xl font-bold font-mono text-red-400'; }
+                if (safetyAnswer) safetyAnswer.textContent = 'Critical thermal & toxic gas hazard active in Zone B. Automated safety interlocks engaged and emergency corridor lit.';
+                if (sitTitle) sitTitle.textContent = 'FACTORY FIRE & TOXIC GAS (ZONE B)';
+                if (sitDesc) sitDesc.textContent = 'High heat (78.4°C) + MQ-135 480ppm. Multi-department emergency response matrix actively responding.';
+                if (alarmsCount) { alarmsCount.textContent = '1 CRITICAL • 3 WARNINGS'; alarmsCount.className = 'text-red-400'; }
+                if (persAffected) { persAffected.textContent = '4 WORKERS IN EVACUATION'; persAffected.className = 'text-2xl font-bold font-mono text-amber-400'; }
+                if (persDesc) persDesc.textContent = 'Personnel W-017, W-024, W-031, W-042 confirmed in active muster transit towards North Gate.';
+                if (deptResp) deptResp.textContent = 'SAFETY, MEDICAL, FIRE, SECURITY';
+                if (deptDesc) deptDesc.textContent = 'Internal response units acknowledged within 18 seconds. Fire foam and first aid squads on scene.';
+                if (outsideSupp) outsideSupp.textContent = '108 AMBULANCE & 101 FIRE EN ROUTE';
+                if (outsideDesc) outsideDesc.textContent = 'TN-108 (ETA 4m), Fire Station 101 (ETA 6m), Police (ETA 5m). Hospital Trauma Bay 1 ready.';
+                if (actionTitle) { actionTitle.textContent = '1 ACTION RECOMMENDED'; actionTitle.className = 'text-lg font-bold font-mono text-amber-400'; }
+                if (actionDesc) actionDesc.textContent = 'Recommended C-Suite Action: Authorize auxiliary power cut to Sector 2 to isolate motor MTR-01.';
+                if (prodLines) { prodLines.textContent = '2 / 3 RUNNING (LINE 2 ISOLATED)'; prodLines.className = 'text-amber-400 font-bold text-lg mt-1'; }
+                if (exposureAmt) { exposureAmt.textContent = '₹18,500 (CONTAINED)'; exposureAmt.className = 'text-amber-300 font-bold text-lg mt-1'; }
+            } else {
+                if (safetyBadge) { safetyBadge.textContent = 'NORMAL SAFE'; safetyBadge.className = 'badge-live'; }
+                if (riskGauge) { riskGauge.textContent = 'LOW RISK (14.2 / 100)'; riskGauge.className = 'text-2xl font-bold font-mono text-emerald-400'; }
+                if (safetyAnswer) safetyAnswer.textContent = 'All operational zones within regulatory safety parameters. Zero critical interlock trips in past 24 hours.';
+                if (sitTitle) sitTitle.textContent = 'SHIFT A OPERATIONS NOMINAL';
+                if (sitDesc) sitDesc.textContent = '42 active personnel on factory floor across 4 active zones. Edge sensor mesh polling normally at 500ms cycle.';
+                if (alarmsCount) { alarmsCount.textContent = '0 CRITICAL • 0 WARNING'; alarmsCount.className = 'text-emerald-400'; }
+                if (persAffected) { persAffected.textContent = '0 WORKERS AT RISK'; persAffected.className = 'text-2xl font-bold font-mono text-white'; }
+                if (persDesc) persDesc.textContent = 'All 42 workers accounted for at authorized work stations. Wearable telemetry indicates safe biological vitals.';
+                if (deptResp) deptResp.textContent = 'ALL 11 DEPTS ON STANDBY';
+                if (deptDesc) deptDesc.textContent = 'Internal Safety, Medical, and Security squads are pre-positioned and logged into the incident command matrix.';
+                if (outsideSupp) outsideSupp.textContent = 'EXTERNAL DISPATCH: NOT REQUIRED';
+                if (outsideDesc) outsideDesc.textContent = 'Local Fire Station (4.8km), 108 Ambulance Unit (3.2km), and Police Precinct (2.1km) on live automated telemetry standby.';
+                if (actionTitle) { actionTitle.textContent = 'ZERO PENDING APPROVALS'; actionTitle.className = 'text-lg font-bold font-mono text-emerald-400'; }
+                if (actionDesc) actionDesc.textContent = 'Facility automated safety loops operational. No emergency executive override or evacuation declaration currently required.';
+                if (prodLines) { prodLines.textContent = '3 / 3 RUNNING'; prodLines.className = 'text-emerald-400 font-bold text-lg mt-1'; }
+                if (exposureAmt) { exposureAmt.textContent = '₹0 (ZERO)'; exposureAmt.className = 'text-white font-bold text-lg mt-1'; }
+            }
+        }
+
+        function triggerCoordinationSimulation() {
+            if (!window.SentinelCoordination) return;
+            const event = window.SentinelCoordination.triggerDeterministicFireDisaster();
+            showToast('🔥 FACTORY FIRE DETECTED: Multi-Department Coordination Dispatched!', 'error');
+            renderCoordinationWorkspace();
+            renderOwnerWorkspace();
+        }
+
+        function broadcastDeptAlert() {
+            if (!window.SentinelCoordination) return;
+            window.SentinelCoordination.broadcastAlert('ALL_DEPTS', 'General Facility Safety Alert: Evacuation protocols on standby.');
+            showToast('📢 Priority alert broadcast to all 11 internal departments.', 'warning');
+            renderCoordinationWorkspace();
+        }
+
+        function dispatchAllAgencies() {
+            if (!window.SentinelCoordination) return;
+            const agencies = window.SentinelCoordination.getAgencies();
+            agencies.forEach(a => window.SentinelCoordination.dispatchAgency(a.id));
+            showToast('🚨 Simulated Public Safety Dispatch broadcast to 108, Fire, Police, and SDRF.', 'info');
+            renderCoordinationWorkspace();
+        }
+
+        function confirmHospitalHandover() {
+            if (!window.SentinelCoordination) return;
+            window.SentinelCoordination.confirmHandover();
+            showToast('🏥 Hospital Handover confirmed. Casualty transfer logged to immutable ledger.', 'success');
+            renderCoordinationWorkspace();
+            renderOwnerWorkspace();
+        }
+
+        function resetCoordinationState() {
+            if (!window.SentinelCoordination) return;
+            window.SentinelCoordination.resetAll();
+            showToast('Coordination state reset to nominal standby.', 'info');
+            renderCoordinationWorkspace();
+            renderOwnerWorkspace();
         }
 
         // ====================================================================
@@ -7017,6 +7712,7 @@
         // --- 16. App Init ---
         function initApp() {
             if (!checkAuthSession()) return;
+            renderRoleNavigation();
             initWorkspaceFromRoute();
             window.addEventListener('popstate', () => {
                 initWorkspaceFromRoute();
