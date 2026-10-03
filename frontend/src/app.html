@@ -55,20 +55,54 @@
             --bg-panel: #0d1117;
             --bg-surface: #131822;
             --border-tech: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.15);
             --c-cyan: #06b6d4;
             --c-green: #10b981;
             --c-amber: #f59e0b;
             --c-red: #ef4444;
+
+            /* Responsive Spacing Tokens */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+
+            /* Z-Index Hierarchy */
+            --z-base: 1;
+            --z-sticky: 30;
+            --z-header: 40;
+            --z-drawer: 50;
+            --z-modal: 9000;
+            --z-toast: 9999;
         }
 
-        * { box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; background-color: var(--bg-base); }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            background-color: var(--bg-base);
+        }
 
         /* Custom Scrollbars */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.28); }
+
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
         /* SCADA Surfaces & Cards */
         .scada-panel {
@@ -296,34 +330,38 @@
     </style>
 </head>
 
-<body class="bg-[#090b10] text-slate-100 font-sans w-screen h-screen overflow-hidden flex flex-col">
+<body class="bg-[#090b10] text-slate-100 font-sans w-full max-w-full h-full overflow-hidden flex flex-col">
 
     <!-- ==================================================================== -->
     <!-- 1. PERSISTENT GLOBAL TOP SCADA BAR (PS-26223 HARDWARE OPERATING SYS) -->
     <!-- ==================================================================== -->
-    <header class="h-12 bg-[#090b10] border-b border-white/10 px-4 flex items-center justify-between flex-shrink-0 z-40">
+    <header class="min-h-12 bg-[#090b10] border-b border-white/10 px-2.5 sm:px-4 py-1.5 flex items-center justify-between flex-shrink-0 z-40 w-full max-w-full gap-2 select-none">
         <!-- Left Title & Facility Context -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <!-- Mobile Navigation Drawer Toggle (Tablets & Phones) -->
+            <button id="btn-sidebar-toggle" onclick="toggleMobileSidebar()" class="lg:hidden p-1.5 rounded bg-slate-800/90 text-cyan-400 hover:text-white border border-cyan-500/30 flex items-center justify-center cursor-pointer transition-all active:scale-95" title="Toggle Navigation Workspaces">
+                <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
             <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
+                <div class="w-6 h-6 rounded bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
                     <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor">
                         <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                     </svg>
                 </div>
                 <div>
                     <span class="font-display font-bold text-sm tracking-tight text-white">SENTINEL-X</span>
-                    <span class="text-[9px] font-mono text-cyan-400 ml-2 hidden sm:inline">EDGE DISASTER &amp; INDUSTRIAL SAFETY OPERATING SYSTEM</span>
+                    <span class="text-[9px] font-mono text-cyan-400 ml-1.5 hidden xl:inline">EDGE DISASTER &amp; INDUSTRIAL SAFETY</span>
                 </div>
             </div>
-            <span class="text-slate-700">|</span>
-            <div class="flex items-center gap-1.5 text-xs font-mono text-slate-300">
+            <span class="text-slate-700 hidden sm:inline">|</span>
+            <div class="hidden md:flex items-center gap-1.5 text-xs font-mono text-slate-300">
                 <span class="text-slate-500 text-[10px]">FACILITY:</span>
-                <span class="font-bold text-slate-200">INDUSTRIAL UNIT 01</span>
+                <span class="font-bold text-slate-200">UNIT 01</span>
             </div>
         </div>
 
         <!-- Center System & Protocol Indicators -->
-        <div class="hidden lg:flex items-center gap-3 xl:gap-4 text-xs font-mono">
+        <div class="hidden 2xl:flex items-center gap-3 text-xs font-mono">
             <div class="flex items-center gap-1.5">
                 <span class="text-slate-500 text-[10px]">SYSTEM:</span>
                 <span id="topbar-system-status" class="badge-live">● LIVE</span>
@@ -346,7 +384,7 @@
             </div>
             <!-- Section 23: Operation Mode Selector -->
             <div class="flex items-center gap-1 border-l border-white/10 pl-3">
-                <span class="text-slate-500 text-[9px] font-bold hidden xl:inline">OP MODE:</span>
+                <span class="text-slate-500 text-[9px] font-bold">OP MODE:</span>
                 <div class="flex items-center p-0.5 rounded bg-slate-900 border border-white/10 text-[10px]">
                     <button onclick="setOperationMode('NORMAL')" id="opmode-normal" class="px-2 py-0.5 rounded bg-emerald-600/40 text-emerald-300 font-bold border border-emerald-500/40 transition-all">NORMAL</button>
                     <button onclick="setOperationMode('RESPONSE')" id="opmode-response" class="px-2 py-0.5 rounded text-slate-400 hover:text-rose-300 transition-all">DISASTER RESPONSE</button>
@@ -356,43 +394,44 @@
         </div>
 
         <!-- Right Operational Actions & Demo Controls -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <!-- Hardware / Simulation Mode Pill -->
-            <button onclick="toggleDataProvenance()" id="btn-provenance-toggle" class="badge-sim cursor-pointer hover:bg-cyan-500/25 transition-all text-[10px]">
+            <button onclick="toggleDataProvenance()" id="btn-provenance-toggle" class="badge-sim cursor-pointer hover:bg-cyan-500/25 transition-all text-[10px] hidden sm:inline-flex shrink-0">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                 <span id="provenance-toggle-label">○ SIMULATED DEMO</span>
             </button>
 
-            <!-- Role Selection -->
-            <div class="hidden 2xl:flex items-center p-0.5 rounded bg-slate-900 border border-white/10 text-[10px] font-mono">
-                <button onclick="setRole('COMMANDER')" id="role-cmd" class="px-2 py-0.5 rounded bg-slate-700 text-white font-bold">CMD</button>
-                <button onclick="setRole('RESPONDER')" id="role-rsp" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">RSP</button>
-                <button onclick="setRole('OPERATOR')" id="role-ops" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">OPS</button>
-            </div>
-
             <!-- Real-Time Satellite Constellation Uplink Trigger -->
-            <button onclick="openSatelliteLinkModal()" id="btn-topbar-satellite" class="px-2.5 py-1 rounded bg-gradient-to-r from-sky-950 via-cyan-950 to-emerald-950 hover:from-sky-900 hover:to-emerald-900 text-cyan-300 border border-cyan-400/80 text-xs font-mono font-bold flex items-center gap-1.5 shadow-lg shadow-cyan-500/25 transition-all active:scale-95 cursor-pointer" title="Instant Real-Time Satellite Constellation Uplink &amp; 3D Earth Globe">
+            <button onclick="openSatelliteLinkModal()" id="btn-topbar-satellite" class="px-2 sm:px-2.5 py-1 rounded bg-gradient-to-r from-sky-950 via-cyan-950 to-emerald-950 hover:from-sky-900 hover:to-emerald-900 text-cyan-300 border border-cyan-400/80 text-xs font-mono font-bold flex items-center gap-1 shadow-lg shadow-cyan-500/25 transition-all active:scale-95 cursor-pointer shrink-0" title="Instant Real-Time Satellite Constellation Uplink &amp; 3D Earth Globe">
                 <span id="topbar-satellite-led" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span>🛰️ SATELLITE CONNECT</span>
-                <span id="topbar-satellite-status-pill" class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-200 border border-cyan-400/40">ONLINE</span>
+                <span>🛰️</span>
+                <span class="hidden md:inline">SATELLITE</span>
             </button>
 
             <!-- Instant Photo-to-Digital-Twin Trigger -->
-            <button onclick="openInstantTwinModal()" id="btn-topbar-photo-twin" class="px-2.5 py-1 rounded bg-cyan-950/90 hover:bg-cyan-900 text-cyan-300 border border-cyan-400 text-xs font-mono font-bold flex items-center gap-1.5 shadow-md shadow-cyan-500/20 transition-all active:scale-95" title="Convert Photographs into 3D Digital Twin">
+            <button onclick="openInstantTwinModal()" id="btn-topbar-photo-twin" class="px-2 sm:px-2.5 py-1 rounded bg-cyan-950/90 hover:bg-cyan-900 text-cyan-300 border border-cyan-400 text-xs font-mono font-bold flex items-center gap-1 shadow-md shadow-cyan-500/20 transition-all active:scale-95 shrink-0" title="Convert Photographs into 3D Digital Twin">
                 <span>📷</span>
-                <span class="hidden sm:inline">PHOTO TO TWIN</span>
+                <span class="hidden lg:inline">PHOTO TWIN</span>
             </button>
 
+            <!-- Global Platform Switcher: Direct Navigation to Civilian Platform -->
+            <a href="civilian/index.html" id="btn-topbar-civilian" class="px-2.5 sm:px-3 py-1 rounded bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white text-xs font-mono font-bold flex items-center gap-1 shadow-md shadow-red-900/30 transition-all active:scale-95 border border-red-400/50 shrink-0" title="Switch to Civilian Emergency Response (108 / 112)">
+                <span>🚨</span>
+                <span class="hidden sm:inline">CIVILIAN (108) →</span>
+                <span class="sm:hidden">108</span>
+            </a>
+
             <!-- SIH High-Stakes Judge Demo Trigger -->
-            <button onclick="toggleJudgeDemo()" id="btn-judge-demo-trigger" class="px-3 py-1 rounded bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-lg shadow-cyan-900/30 transition-all active:scale-95 border border-cyan-400/40">
-                <span class="w-2 h-2 rounded-full bg-cyan-300 animate-pulse"></span>
-                <span>⚡ JUDGE DEMO</span>
+            <button onclick="toggleJudgeDemo()" id="btn-judge-demo-trigger" class="px-2 sm:px-2.5 py-1 rounded bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white text-xs font-mono font-bold flex items-center gap-1 shadow-lg shadow-cyan-900/30 transition-all active:scale-95 border border-cyan-400/40 shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-300 animate-pulse"></span>
+                <span>⚡</span>
+                <span class="hidden sm:inline">DEMO</span>
             </button>
 
             <!-- Exit Console / Logout -->
-            <button onclick="logoutConsole()" class="px-2.5 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer" title="Exit Operational Control Room">
+            <button onclick="logoutConsole()" class="px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer shrink-0" title="Exit Operational Control Room">
                 <span>⏻</span>
-                <span class="hidden sm:inline">LOGOUT</span>
+                <span class="hidden md:inline">LOGOUT</span>
             </button>
         </div>
     </header>
@@ -400,12 +439,12 @@
     <!-- ==================================================================== -->
     <!-- PERSISTENT DISASTER MANAGEMENT LIFECYCLE STRIP (PS-26223 SECTION 9)   -->
     <!-- ==================================================================== -->
-    <div id="disaster-lifecycle-strip" class="bg-[#0b0f17] border-b border-white/10 px-4 py-1.5 flex flex-wrap items-center justify-between text-xs font-mono select-none z-30">
-        <div class="flex items-center gap-2">
+    <div id="disaster-lifecycle-strip" class="bg-[#0b0f17] border-b border-white/10 px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs font-mono select-none z-30 overflow-x-auto scrollbar-none gap-3 whitespace-nowrap">
+        <div class="flex items-center gap-2 shrink-0">
             <span class="text-[10px] text-slate-400 font-bold tracking-wider">DISASTER LIFECYCLE:</span>
             <span id="lifecycle-phase-tag" class="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/30 text-[9px] font-bold">BEFORE DISASTER (PREPARE)</span>
         </div>
-        <div class="flex items-center gap-1 sm:gap-2 text-[10px]">
+        <div class="flex items-center gap-1 sm:gap-2 text-[10px] shrink-0">
             <div id="life-step-1" class="lifecycle-step active flex items-center gap-1 px-2 py-0.5 rounded border border-cyan-400 bg-cyan-950/70 text-cyan-300 font-bold">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                 <span>1. PREPARE</span>
@@ -436,7 +475,7 @@
                 <span>6. LEARN</span>
             </div>
         </div>
-        <div class="hidden md:flex items-center gap-3 text-[10px] text-slate-400">
+        <div class="hidden xl:flex items-center gap-3 text-[10px] text-slate-400 shrink-0">
             <span>MAPPING: <strong class="text-cyan-400 font-mono">BEFORE • DURING • AFTER</strong></span>
         </div>
     </div>
@@ -488,9 +527,12 @@
     <div class="flex-1 flex overflow-hidden relative">
 
         <!-- 3. LEFT PERSISTENT INDUSTRIAL NAVIGATION DRAWER (13 Workspaces - Section 7) -->
-        <aside class="w-56 bg-[#090b10] border-r border-white/10 flex flex-col justify-between p-2 flex-shrink-0 z-30 select-none">
+        <aside id="main-scada-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 lg:w-56 bg-[#090b10] border-r border-white/10 flex flex-col justify-between p-2 flex-shrink-0 z-50 lg:z-30 select-none overflow-y-auto transition-transform duration-200 -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none">
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[9px] font-mono text-slate-500 font-bold tracking-wider">OPERATIONAL WORKSPACES</div>
+                <div class="flex items-center justify-between px-3 py-1.5 text-[9px] font-mono text-slate-500 font-bold tracking-wider">
+                    <span>OPERATIONAL WORKSPACES</span>
+                    <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden text-slate-400 hover:text-white p-1 text-sm leading-none" aria-label="Close menu">✕</button>
+                </div>
                 <div onclick="switchWorkspace(0)" id="nav-0" class="nav-item active">
                     <span class="font-mono text-cyan-400 text-[10px]">01</span>
                     <span>COMMAND CENTER</span>
@@ -600,6 +642,9 @@
                 <button onclick="logoutConsole()" class="text-rose-400 hover:text-rose-300 font-bold transition-colors">LOGOUT →</button>
             </div>
         </aside>
+        
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="hidden fixed inset-0 bg-black/75 z-40 backdrop-blur-xs lg:hidden" aria-hidden="true"></div>
 
         <!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
         <main class="flex-1 bg-[#090b10] overflow-hidden relative">
@@ -1685,42 +1730,44 @@
                         </div>
 
                         <!-- Real-time metrics vs Baseline table -->
-                        <table class="w-full text-xs font-mono text-left">
-                            <thead>
-                                <tr class="text-slate-500 border-b border-white/5">
-                                    <th class="py-1">PARAMETER</th>
-                                    <th class="py-1">CURRENT</th>
-                                    <th class="py-1">BASELINE</th>
-                                    <th class="py-1">DEVIATION</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-slate-300 divide-y divide-white/5">
-                                <tr>
-                                    <td class="py-1.5">Motor Temperature</td>
-                                    <td class="font-bold text-white" id="m1-cur-temp">58.0 °C</td>
-                                    <td>43.0 °C</td>
-                                    <td class="text-amber-400 font-bold" id="m1-dev-temp">+34.8%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1.5">RMS Vibration</td>
-                                    <td class="font-bold text-white" id="m1-cur-vib">0.82 g</td>
-                                    <td>0.31 g</td>
-                                    <td class="text-amber-400 font-bold" id="m1-dev-vib">+164.5%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1.5">Motor Current</td>
-                                    <td class="font-bold text-white" id="m1-cur-current">7.4 A</td>
-                                    <td>6.8 A</td>
-                                    <td class="text-emerald-400" id="m1-dev-current">+8.8%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1.5">Runtime Hours</td>
-                                    <td class="font-bold text-white">1,842 h</td>
-                                    <td>2,000 h MTBF</td>
-                                    <td class="text-slate-400">92.1% Life</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs font-mono text-left">
+                                <thead>
+                                    <tr class="text-slate-500 border-b border-white/5">
+                                        <th class="py-1">PARAMETER</th>
+                                        <th class="py-1">CURRENT</th>
+                                        <th class="py-1">BASELINE</th>
+                                        <th class="py-1">DEVIATION</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-slate-300 divide-y divide-white/5">
+                                    <tr>
+                                        <td class="py-1.5">Motor Temperature</td>
+                                        <td class="font-bold text-white" id="m1-cur-temp">58.0 °C</td>
+                                        <td>43.0 °C</td>
+                                        <td class="text-amber-400 font-bold" id="m1-dev-temp">+34.8%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5">RMS Vibration</td>
+                                        <td class="font-bold text-white" id="m1-cur-vib">0.82 g</td>
+                                        <td>0.31 g</td>
+                                        <td class="text-amber-400 font-bold" id="m1-dev-vib">+164.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5">Motor Current</td>
+                                        <td class="font-bold text-white" id="m1-cur-current">7.4 A</td>
+                                        <td>6.8 A</td>
+                                        <td class="text-emerald-400" id="m1-dev-current">+8.8%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5">Runtime Hours</td>
+                                        <td class="font-bold text-white">1,842 h</td>
+                                        <td>2,000 h MTBF</td>
+                                        <td class="text-slate-400">92.1% Life</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
                         <div class="p-2.5 rounded bg-black/40 border border-white/5 flex items-center justify-between text-xs font-mono">
                             <div>
@@ -1742,42 +1789,44 @@
                         </div>
 
                         <!-- Real-time metrics vs Baseline table -->
-                        <table class="w-full text-xs font-mono text-left">
-                            <thead>
-                                <tr class="text-slate-500 border-b border-white/5">
-                                    <th class="py-1">PARAMETER</th>
-                                    <th class="py-1">CURRENT</th>
-                                    <th class="py-1">BASELINE</th>
-                                    <th class="py-1">DEVIATION</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-slate-300 divide-y divide-white/5">
-                                <tr>
-                                    <td class="py-1.5">Discharge Temp</td>
-                                    <td class="font-bold text-white">41.2 °C</td>
-                                    <td>40.0 °C</td>
-                                    <td class="text-emerald-400">+3.0%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1.5">Vibration Amplitude</td>
-                                    <td class="font-bold text-white">0.18 g</td>
-                                    <td>0.20 g</td>
-                                    <td class="text-emerald-400">-10.0%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1.5">Manifold Pressure</td>
-                                    <td class="font-bold text-white">38.4 Bar</td>
-                                    <td>40.0 Bar</td>
-                                    <td class="text-emerald-400">-4.0%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1.5">Runtime Hours</td>
-                                    <td class="font-bold text-white">924 h</td>
-                                    <td>5,000 h MTBF</td>
-                                    <td class="text-slate-400">18.4% Life</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs font-mono text-left">
+                                <thead>
+                                    <tr class="text-slate-500 border-b border-white/5">
+                                        <th class="py-1">PARAMETER</th>
+                                        <th class="py-1">CURRENT</th>
+                                        <th class="py-1">BASELINE</th>
+                                        <th class="py-1">DEVIATION</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-slate-300 divide-y divide-white/5">
+                                    <tr>
+                                        <td class="py-1.5">Discharge Temp</td>
+                                        <td class="font-bold text-white">41.2 °C</td>
+                                        <td>40.0 °C</td>
+                                        <td class="text-emerald-400">+3.0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5">Vibration Amplitude</td>
+                                        <td class="font-bold text-white">0.18 g</td>
+                                        <td>0.20 g</td>
+                                        <td class="text-emerald-400">-10.0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5">Manifold Pressure</td>
+                                        <td class="font-bold text-white">38.4 Bar</td>
+                                        <td>40.0 Bar</td>
+                                        <td class="text-emerald-400">-4.0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5">Runtime Hours</td>
+                                        <td class="font-bold text-white">924 h</td>
+                                        <td>5,000 h MTBF</td>
+                                        <td class="text-slate-400">18.4% Life</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
                         <div class="p-2.5 rounded bg-black/40 border border-white/5 flex items-center justify-between text-xs font-mono">
                             <div>
@@ -3900,6 +3949,22 @@
             }, 400);
         }
 
+        // --- Mobile SCADA Navigation Drawer Controller ---
+        function toggleMobileSidebar(force) {
+            const sidebar = document.getElementById('main-scada-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar) return;
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            const shouldOpen = (typeof force === 'boolean') ? force : isClosed;
+            if (shouldOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                if (backdrop) backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
+        }
+
         // --- 2. Workspace Navigation (16 Workspaces) ---
         function switchWorkspace(idx, skipHistory) {
             activeWorkspaceIdx = idx;
@@ -3909,6 +3974,11 @@
             document.querySelectorAll('.nav-item').forEach((b, i) => {
                 b.classList.toggle('active', i === idx);
             });
+
+            // Close mobile drawer on item selection if viewport is tablet/mobile
+            if (window.innerWidth < 1024) {
+                toggleMobileSidebar(false);
+            }
 
             // Update URL pathname or hash depending on hosting environment
             const isStaticHosting = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';

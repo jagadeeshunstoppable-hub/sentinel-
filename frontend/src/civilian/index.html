@@ -49,6 +49,26 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <style>
+        /* Design System Tokens */
+        :root {
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --z-base: 1;
+            --z-dropdown: 100;
+            --z-sticky: 200;
+            --z-overlay: 300;
+            --z-modal: 500;
+            --z-toast: 1000;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         /* Clean Public Service Aesthetics */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -59,12 +79,21 @@
             background: #ffffff;
             border: 1px solid #e2e8f0;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+            min-width: 0;
         }
 
         .service-card-elevated {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            min-width: 0;
+        }
+
+        .table-responsive {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Leaflet Clean Tile Treatment */
@@ -80,7 +109,7 @@
             100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
         .emergency-beacon {
-            animation: pulse-ring 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+            animation: pulse-ring 1.8s infinite cubic-bezier(0.66, 0, 1, 1);
         }
 
         /* Accessibility Overrides */
@@ -98,7 +127,7 @@
         }
     </style>
 </head>
-<body class="h-full bg-[#f8fafc] text-slate-800 font-sans flex flex-col overflow-hidden text-scale-md" id="app-body">
+<body class="h-full w-full max-w-full bg-[#f8fafc] text-slate-800 font-sans flex flex-col overflow-hidden text-scale-md" id="app-body">
 
     <!-- ======================================================== -->
     <!-- TOP PUBLIC SERVICE HEADER                                -->
@@ -141,14 +170,11 @@
             <span class="text-blue-300">→</span>
             <span id="st-9" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">9. Monitor</span>
             <span class="text-blue-300">→</span>
-            <span id="st-10" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">10. Complete</span>
-        </div>
-
-        <!-- Right: Language Switcher, Accessibility, Modes & Demo -->
+            <span id="st-10" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">10. Complete</sp        <!-- Right: Language Switcher, Accessibility, Modes & Demo -->
         <div class="flex items-center space-x-2">
 
-            <!-- Accessibility Controls: Text Scale & High Contrast -->
-            <div class="hidden md:flex items-center bg-blue-900/60 rounded-lg p-0.5 border border-blue-700 text-xs">
+            <!-- Accessibility Controls: Text Scale & High Contrast (Desktop) -->
+            <div class="hidden xl:flex items-center bg-blue-900/60 rounded-lg p-0.5 border border-blue-700 text-xs">
                 <button onclick="setTextScale('sm')" title="Standard Text" class="px-2 py-1 rounded text-blue-200 hover:text-white">A-</button>
                 <button onclick="setTextScale('md')" title="Medium Text" class="px-2 py-1 rounded text-blue-200 hover:text-white font-bold">A</button>
                 <button onclick="setTextScale('lg')" title="Large Text" class="px-2 py-1 rounded text-blue-200 hover:text-white font-bold text-sm">A+</button>
@@ -157,53 +183,109 @@
                 </button>
             </div>
 
-            <!-- Language Switcher -->
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="text-xs font-semibold bg-blue-900 border border-blue-700 text-white rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-amber-400 focus:outline-none cursor-pointer">
+            <!-- Language Switcher (Desktop / Laptop) -->
+            <select id="lang-selector" onchange="changeLanguage(this.value)" class="hidden lg:inline-block text-xs font-semibold bg-blue-900 border border-blue-700 text-white rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-amber-400 focus:outline-none cursor-pointer">
                 <option value="ta">தமிழ் (Tamil)</option>
                 <option value="en">English</option>
                 <option value="hi">हिन्दी (Hindi)</option>
                 <option value="te">తెలుగు (Telugu)</option>
-                <option value="ml">മലയാളം (Malayalam)</option>
+                <option value="ml">மலയാളம் (Malayalam)</option>
                 <option value="kn">ಕನ್ನಡ (Kannada)</option>
             </select>
 
-            <!-- Mode Selector: Citizen vs Dispatcher -->
+            <!-- Mode Selector: Citizen vs Dispatcher (Always Visible) -->
             <div class="flex items-center bg-blue-950 p-0.5 rounded-lg border border-blue-800 text-xs font-semibold">
-                <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2.5 py-1 rounded-md transition-all text-blue-200 hover:text-white">
+                <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2 py-1 rounded-md transition-all text-blue-200 hover:text-white">
                     <span id="lbl-citizen-mode">Citizen</span>
                 </button>
-                <button type="button" onclick="setInterfaceMode('dispatcher')" id="btn-view-dispatcher" class="px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm">
+                <button type="button" onclick="setInterfaceMode('dispatcher')" id="btn-view-dispatcher" class="px-2 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm">
                     <span id="lbl-dispatcher-mode">Dispatcher</span>
                 </button>
             </div>
 
-            <!-- Elderly / Easy Mode -->
-            <button onclick="toggleEasyMode()" id="btn-easy-mode" title="Elderly Easy Mode" class="px-2.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm">
+            <!-- Elderly / Easy Mode (Desktop / Tablet) -->
+            <button onclick="toggleEasyMode()" id="btn-easy-mode" title="Elderly Easy Mode" class="hidden lg:flex px-2.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold items-center gap-1.5 transition-all shadow-sm">
                 <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
-                <span class="hidden md:inline" id="lbl-easy-mode">Easy Mode</span>
+                <span id="lbl-easy-mode">Easy</span>
             </button>
 
-            <!-- Jury Demo Automation -->
-            <button id="btn-jury-demo" onclick="toggleJuryDemo()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm active:scale-95">
+            <!-- Jury Demo Automation (Desktop / Tablet) -->
+            <button id="btn-jury-demo" onclick="toggleJuryDemo()" class="hidden sm:flex px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold items-center space-x-1 shadow-sm active:scale-95">
                 <i data-lucide="play" class="w-3.5 h-3.5 fill-current" id="jury-icon"></i>
-                <span id="lbl-jury-demo">START DEMO</span>
+                <span id="lbl-jury-demo">DEMO</span>
             </button>
 
             <!-- Problem Statement Compliance Checklist Modal Trigger -->
-            <button onclick="openComplianceModal()" title="View SIH Problem Statement Compliance" class="p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
+            <button onclick="openComplianceModal()" title="View SIH Problem Statement Compliance" class="hidden xl:inline-flex p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
                 <i data-lucide="award" class="w-4 h-4"></i>
             </button>
 
             <!-- Global Platform Switcher: Direct Route to Industrial Safety & Digital Twin -->
-            <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm">
+            <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1 transition-all shadow-sm">
                 <i data-lucide="factory" class="w-3.5 h-3.5 text-amber-400"></i>
-                <span class="hidden sm:inline">🏭 Industrial Safety & SCADA →</span>
-                <span class="sm:hidden">🏭 Industrial</span>
+                <span class="hidden md:inline">🏭 Industrial SCADA →</span>
+                <span class="md:hidden">🏭 SCADA</span>
             </a>
 
+            <!-- Mobile Drawer Menu Toggle (Visible < lg) -->
+            <button type="button" onclick="toggleCivilianMobileMenu()" id="btn-civilian-mobile-menu" aria-label="Toggle Controls Menu" class="lg:hidden p-1.5 rounded-lg bg-blue-900 border border-blue-700 text-white hover:bg-blue-800 transition-colors flex items-center justify-center">
+                <i data-lucide="menu" class="w-4 h-4"></i>
+            </button>
+
             <!-- Gateway Exit -->
-            <a href="../auth.html" title="Return to Portal Gateway" class="p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
+            <a href="../auth.html" title="Return to Portal Gateway" class="hidden md:inline-flex p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Mobile Secondary Tools Drawer / Slide-Down Panel -->
+    <div id="civilian-mobile-drawer" class="hidden lg:hidden bg-blue-950 text-white border-b border-blue-800 px-4 py-3 space-y-3 z-30 shadow-xl transition-all">
+        <div class="flex items-center justify-between border-b border-blue-900 pb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-300">Quick Controls &amp; Settings</span>
+            <button type="button" onclick="toggleCivilianMobileMenu(false)" class="text-blue-300 hover:text-white p-1 text-sm font-bold">✕ Close</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>
+                <label class="block text-[10px] text-blue-300 mb-1">LANGUAGE</label>
+                <select id="lang-selector-mobile" onchange="changeLanguage(this.value);" class="w-full text-xs font-semibold bg-blue-900 border border-blue-700 text-white rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ta">தமிழ் (Tamil)</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी (Hindi)</option>
+                    <option value="te">తెలుగు (Telugu)</option>
+                    <option value="ml">മലയാളம் (Malayalam)</option>
+                    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] text-blue-300 mb-1">TEXT SIZE &amp; CONTRAST</label>
+                <div class="flex items-center bg-blue-900 rounded-lg p-0.5 border border-blue-700 justify-around">
+                    <button onclick="setTextScale('sm')" class="px-2 py-1 text-xs text-blue-200 hover:text-white">A-</button>
+                    <button onclick="setTextScale('md')" class="px-2 py-1 text-xs text-blue-200 hover:text-white font-bold">A</button>
+                    <button onclick="setTextScale('lg')" class="px-2 py-1 text-xs text-blue-200 hover:text-white font-bold">A+</button>
+                    <button onclick="toggleHighContrast()" class="px-2 py-1 text-xs text-blue-200 hover:text-white">🌓</button>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+            <button onclick="toggleEasyMode()" class="flex-1 py-2 px-3 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold flex items-center justify-center gap-1.5 shadow-sm">
+                <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
+                <span>Easy Mode</span>
+            </button>
+            <button onclick="toggleJuryDemo()" class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-1.5 shadow-sm">
+                <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                <span>Start Demo</span>
+            </button>
+            <button onclick="openComplianceModal()" class="py-2 px-3 rounded-lg bg-blue-900 border border-blue-700 text-blue-100 font-semibold flex items-center justify-center gap-1.5">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                <span>SIH Spec</span>
+            </button>
+            <a href="../auth.html" class="py-2 px-3 rounded-lg bg-rose-900/60 border border-rose-700 text-rose-200 font-semibold flex items-center justify-center gap-1.5">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                <span>Exit</span>
+            </a>
+        </div>
+    </div>-lucide="log-out" class="w-4 h-4"></i>
             </a>
         </div>
     </header>
@@ -475,33 +557,34 @@
             <div class="service-card rounded-xl overflow-hidden flex flex-col flex-1 relative min-h-[420px]">
                 
                 <!-- Map Top Action Bar (Clean HUD) -->
-                <div class="absolute top-3 left-3 right-3 z-[400] flex items-center justify-between pointer-events-none">
+                <div class="absolute top-3 left-3 right-3 z-[400] flex flex-wrap items-center justify-between gap-1.5 pointer-events-none">
                     
                     <!-- Left: GPS & Telematics Pill -->
-                    <div class="bg-white/95 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold flex items-center space-x-2 pointer-events-auto shadow-sm">
+                    <div class="bg-white/95 px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-semibold flex items-center space-x-1.5 pointer-events-auto shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                        <span class="text-emerald-700 font-bold" id="lbl-telematics-status">LIVE GPS</span>
+                        <span class="text-emerald-700 font-bold" id="lbl-telematics-status">GPS</span>
                         <span class="text-slate-300">|</span>
-                        <span class="text-slate-800 font-bold" id="map-unit-label">TN-108-ALS-04</span>
+                        <span class="text-slate-800 font-bold text-[11px] sm:text-xs" id="map-unit-label">TN-108-ALS-04</span>
                     </div>
 
                     <!-- Right: Green Corridor & Map Action Controls -->
-                    <div class="flex items-center space-x-2 pointer-events-auto">
-                        <div class="bg-white/95 px-2.5 py-1.5 rounded-lg border border-emerald-300 text-xs font-semibold flex items-center space-x-1.5 shadow-sm text-emerald-800">
+                    <div class="flex items-center space-x-1.5 pointer-events-auto">
+                        <div class="hidden sm:flex bg-white/95 px-2 py-1 rounded-lg border border-emerald-300 text-xs font-semibold items-center space-x-1 shadow-sm text-emerald-800">
                             <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-600"></i>
-                            <span id="lbl-green-corridor">GREEN CORRIDOR ACTIVE</span>
+                            <span id="lbl-green-corridor" class="hidden md:inline">GREEN CORRIDOR ACTIVE</span>
+                            <span class="md:hidden">CORRIDOR</span>
                         </div>
 
                         <!-- Map Quick Action Buttons -->
-                        <div class="bg-white/95 p-1 rounded-lg border border-slate-300 shadow-sm flex items-center space-x-1">
-                            <button onclick="triggerDynamicReroute()" id="btn-trigger-reroute" title="Simulate Dynamic Rerouting & Blockage" class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold flex items-center gap-1">
+                        <div class="bg-white/95 p-0.5 rounded-lg border border-slate-300 shadow-sm flex items-center space-x-0.5 text-xs">
+                            <button onclick="triggerDynamicReroute()" id="btn-trigger-reroute" title="Simulate Dynamic Rerouting & Blockage" class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold flex items-center gap-1">
                                 <i data-lucide="refresh-cw" class="w-3 h-3 text-amber-600"></i>
                                 <span class="hidden sm:inline">Reroute Demo</span>
                                 <span class="sm:hidden">Reroute</span>
                             </button>
-                            <button onclick="recenterMap('incident')" title="Center on Incident" class="px-2 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">Incident</button>
-                            <button onclick="recenterMap('ambulance')" title="Center on Ambulance" class="px-2 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">Ambulance</button>
-                            <button onclick="recenterMap('hospital')" title="Center on Hospital" class="px-2 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">Hospital</button>
+                            <button onclick="recenterMap('incident')" title="Center on Incident" class="px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">📍</button>
+                            <button onclick="recenterMap('ambulance')" title="Center on Ambulance" class="hidden sm:inline-block px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">🚑</button>
+                            <button onclick="recenterMap('hospital')" title="Center on Hospital" class="hidden sm:inline-block px-1.5 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">🏥</button>
                         </div>
                     </div>
                 </div>
@@ -960,6 +1043,20 @@
         let speechRecognition = null;
         let audioCtx = null;
 
+        // Mobile drawer controller
+        function toggleCivilianMobileMenu(force) {
+            const drawer = document.getElementById('civilian-mobile-drawer');
+            if (!drawer) return;
+            const isClosed = drawer.classList.contains('hidden');
+            const shouldOpen = (typeof force === 'boolean') ? force : isClosed;
+            if (shouldOpen) {
+                drawer.classList.remove('hidden');
+                if (window.lucide) lucide.createIcons();
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+
         // ========================================================
         // 1. LOCALIZATION ENGINE
         // ========================================================
@@ -972,6 +1069,8 @@
             const t = SENTINEL_LOCALES[langKey];
             const selector = document.getElementById('lang-selector');
             if (selector) selector.value = langKey;
+            const selectorMobile = document.getElementById('lang-selector-mobile');
+            if (selectorMobile) selectorMobile.value = langKey;
 
             // Global Text Updates
             setElText('app-tagline', t.tagline);
