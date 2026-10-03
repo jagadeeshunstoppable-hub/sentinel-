@@ -46,6 +46,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="state-engine.js"></script>
     <script src="twin-engine.js"></script>
+    <script src="library-twin-engine.js"></script>
     <script src="satellite-textures-data.js"></script>
     <script src="satellite-globe-engine.js?v=6.0"></script>
 
@@ -980,13 +981,25 @@
                 <div class="scada-panel p-4 flex flex-col h-full relative" style="min-height: 680px;">
                     <!-- Top Controls Bar -->
                     <div class="flex flex-col gap-2.5 border-b border-white/10 pb-3 mb-3 z-10 bg-[#0d1117]">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <span class="font-display font-bold text-sm text-white">THREE.JS OPERATIONAL DIGITAL TWIN</span>
-                                <span class="badge-live font-mono text-xs">● LIVE TELEMETRY</span>
-                                <span class="text-[10px] font-mono text-slate-400 hidden sm:inline">PBR 60 FPS WEBGL</span>
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <span class="font-display font-bold text-sm text-white">3D SPATIAL DIGITAL TWIN</span>
+                                
+                                <!-- Environment Registry Selector (Section 9 & 11) -->
+                                <div class="flex items-center gap-2 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-cyan-500/40 shadow-sm">
+                                    <span class="text-[9px] font-mono text-cyan-400 font-bold uppercase tracking-wider">TWIN ENVIRONMENT:</span>
+                                    <select id="twin-env-selector" onchange="switchTwinEnvironment(this.value)" class="text-xs font-mono font-bold bg-transparent text-white border-0 focus:outline-none cursor-pointer">
+                                        <option value="INDUSTRIAL" class="bg-slate-900 text-cyan-300" selected>🏭 Industrial Facility (Factory Twin)</option>
+                                        <option value="LIBRARY" class="bg-slate-900 text-amber-300">📚 Library / Learning Space (Photo-Based Twin)</option>
+                                    </select>
+                                </div>
+
+                                <span id="twin-env-status-badge" class="badge-live font-mono text-xs">● LIVE TELEMETRY</span>
+                                <span id="twin-env-tagline" class="text-[10px] font-mono text-slate-400 hidden sm:inline">PBR 60 FPS WEBGL</span>
                             </div>
-                            <div class="flex flex-wrap items-center gap-1.5 text-xs font-mono">
+
+                            <!-- Industrial Camera Toolbar (Visible when INDUSTRIAL is active) -->
+                            <div id="industrial-cam-toolbar" class="flex flex-wrap items-center gap-1.5 text-xs font-mono">
                                 <button onclick="setCameraView('PHYSICAL')" data-cam="PHYSICAL" class="px-2.5 py-1 rounded bg-cyan-600/40 text-cyan-300 border border-cyan-400 font-bold">PHYSICAL LAB</button>
                                 <button onclick="setCameraView('ISO')" data-cam="ISO" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">ISOMETRIC</button>
                                 <button onclick="setCameraView('TOP')" data-cam="TOP" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">TOP DOWN</button>
@@ -999,11 +1012,23 @@
                                     <span>PROTOTYPE LAB</span>
                                 </button>
                             </div>
+
+                            <!-- Library Camera & View Toolbar (Visible when LIBRARY is active) -->
+                            <div id="library-cam-toolbar" class="hidden flex flex-wrap items-center gap-1.5 text-xs font-mono">
+                                <button onclick="setLibraryView('OVERVIEW')" id="btn-lib-overview" class="px-2.5 py-1 rounded bg-amber-500/40 text-amber-300 border border-amber-400 font-bold">OVERVIEW</button>
+                                <button onclick="setLibraryView('RECEPTION')" id="btn-lib-reception" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">RECEPTION</button>
+                                <button onclick="setLibraryView('BOOKSHELVES')" id="btn-lib-bookshelves" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">BOOKSHELVES</button>
+                                <button onclick="setLibraryView('SEATING')" id="btn-lib-seating" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10">SEATING LOUNGE</button>
+                                <button onclick="openLibraryPhotoModal()" class="px-3 py-1 rounded bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-purple-200 border border-purple-400/60 font-bold flex items-center gap-1.5 shadow-md shadow-purple-950 transition-all hover:border-purple-300 ml-1">
+                                    <span>📷</span>
+                                    <span>4 PHOTO REFERENCES</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Scene Overlays Controls (Section 20) -->
-                        <div class="flex items-center justify-between text-xs font-mono text-slate-300 pt-1.5 border-t border-white/5">
-                            <div class="flex items-center gap-4">
+                        <!-- Industrial Scene Overlays Controls (Section 20) -->
+                        <div id="industrial-overlays-bar" class="flex items-center justify-between text-xs font-mono text-slate-300 pt-1.5 border-t border-white/5">
+                            <div class="flex flex-wrap items-center gap-4">
                                 <span class="text-slate-500 text-[10px] font-bold">SCENE OVERLAYS:</span>
                                 <label class="flex items-center gap-1.5 cursor-pointer hover:text-cyan-300 select-none">
                                     <input type="checkbox" checked onchange="toggleTwinLayer('sensors', this.checked)" class="accent-cyan-500">
@@ -1030,6 +1055,32 @@
                                 <span>FACILITY: </span><strong class="text-emerald-400">4 ZONES CONNECTED</strong>
                             </div>
                         </div>
+
+                        <!-- Library Scene Overlays Controls -->
+                        <div id="library-overlays-bar" class="hidden flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-300 pt-1.5 border-t border-white/5">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <span class="text-slate-500 text-[10px] font-bold">LIBRARY OVERLAYS:</span>
+                                <label class="flex items-center gap-1.5 cursor-pointer hover:text-purple-300 select-none">
+                                    <input type="checkbox" id="chk-lib-zones" onchange="toggleLibraryLayer('zones', this.checked)" class="accent-purple-500">
+                                    <span>[✓] ZONING</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer hover:text-purple-300 select-none">
+                                    <input type="checkbox" id="chk-lib-pois" checked onchange="toggleLibraryLayer('pois', this.checked)" class="accent-purple-500">
+                                    <span>[✓] POIs &amp; LABELS</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer hover:text-purple-300 select-none">
+                                    <input type="checkbox" id="chk-lib-routes" onchange="toggleLibraryLayer('safeRoute', this.checked)" class="accent-purple-500">
+                                    <span>[✓] EGRESS ROUTE</span>
+                                </label>
+                                <div class="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-purple-950/80 border border-purple-500/30 text-purple-300">
+                                    <span>● OCCUPANCY (DEMO):</span>
+                                    <span class="font-bold text-emerald-400">28 / 60 SEATS (46.7%)</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] font-mono text-amber-300/90">
+                                <span>✨ PHOTO-BASED 3D SPATIAL RECONSTRUCTION</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Reconstruction Sub-layer Toolbar (Visible after photo reconstruction) -->
@@ -1047,17 +1098,21 @@
                         </button>
                     </div>
 
-                    <!-- 3D Spatial Canvas -->
+                    <!-- 3D Spatial Canvas Viewport Container -->
                     <div class="flex-1 w-full rounded-lg relative overflow-hidden bg-black/60 min-h-[500px]" id="dedicated-twin-viewport">
+                        <!-- 1. Industrial Canvas Container -->
                         <div id="twin-spatial-viewport" class="w-full h-full"></div>
 
+                        <!-- 2. Library Canvas Container (Decoupled & Independent) -->
+                        <div id="library-spatial-viewport" class="w-full h-full hidden"></div>
+
                         <!-- Dynamic Object Inspector HUD -->
-                        <div class="absolute bottom-4 left-4 z-20 scada-surface p-3 max-w-sm space-y-2 text-xs font-mono border border-white/15">
+                        <div id="twin-inspect-hud" class="absolute bottom-4 left-4 z-20 scada-surface p-3 max-w-sm space-y-2 text-xs font-mono border border-white/15">
                             <div class="flex items-center justify-between border-b border-white/10 pb-1">
                                 <span class="font-bold text-white" id="twin-inspect-title">OBJECT: CONVEYOR MTR-01</span>
-                                <span class="badge-live text-[9px]">LIVE TELEMETRY</span>
+                                <span class="badge-live text-[9px]" id="twin-inspect-badge">LIVE TELEMETRY</span>
                             </div>
-                            <div class="space-y-1 text-[11px] text-slate-300">
+                            <div class="space-y-1 text-[11px] text-slate-300" id="twin-inspect-body">
                                 <div>Location: <span class="text-white font-bold" id="twin-inspect-loc">Zone B (Rotating Equipment Bay)</span></div>
                                 <div>Motor Temperature: <span class="text-emerald-400 font-bold" id="twin-inspect-temp">48.2 °C</span> (Baseline 43.0 °C)</div>
                                 <div>Vibration Amplitude: <span class="text-white font-bold" id="twin-inspect-vib">0.38 g</span> (Threshold 1.50 g)</div>
@@ -1066,8 +1121,8 @@
                             </div>
                         </div>
 
-                        <!-- 4 Semantic Facility Zones Focus (Conveyor, MCC, Compressor, Tank Farm) -->
-                        <div class="absolute top-4 right-4 z-20 flex flex-col gap-1.5 text-[10px] font-mono">
+                        <!-- Industrial 4 Semantic Facility Zones Focus (Conveyor, MCC, Compressor, Tank Farm) -->
+                        <div id="industrial-zones-pill" class="absolute top-4 right-4 z-20 flex flex-col gap-1.5 text-[10px] font-mono">
                             <button onclick="loadPresetTwinPhotos('CONVEYOR')" id="btn-twin-conveyor" class="px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 text-cyan-300 text-left">
                                 🏭 CONVEYOR BAY (MTR-01)
                             </button>
@@ -1079,6 +1134,30 @@
                             </button>
                             <button onclick="loadPresetTwinPhotos('TANKFARM')" id="btn-twin-tankfarm" class="px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-white/10 text-slate-300 text-left">
                                 ☣️ CHEMICAL TANK (TNK-01)
+                            </button>
+                        </div>
+
+                        <!-- Library 4 Photo Perspective Quick Switches (Floating overlay when Library is active) -->
+                        <div id="library-photos-pill" class="hidden absolute top-4 right-4 z-20 flex flex-col gap-1.5 text-[10px] font-mono">
+                            <div class="px-2.5 py-1 rounded bg-black/85 border border-purple-500/50 text-purple-300 font-bold text-[9px] uppercase tracking-wider flex items-center justify-between gap-2 shadow-md">
+                                <span>📷 PHOTO PERSPECTIVES:</span>
+                                <span class="text-[8px] px-1 py-0.2 rounded bg-purple-900 text-purple-200">REAL SITE</span>
+                            </div>
+                            <button onclick="setLibraryView('PHOTO_01')" id="btn-photo-view-1" class="px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-white/15 text-slate-300 text-left flex items-center justify-between gap-2 transition-all">
+                                <span>PHOTO 01 (RECEPTION → STACKS)</span>
+                                <span class="text-purple-400 font-bold">VIEW →</span>
+                            </button>
+                            <button onclick="setLibraryView('PHOTO_02')" id="btn-photo-view-2" class="px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-white/15 text-slate-300 text-left flex items-center justify-between gap-2 transition-all">
+                                <span>PHOTO 02 (WOOD &amp; YELLOW SOFA)</span>
+                                <span class="text-amber-400 font-bold">VIEW →</span>
+                            </button>
+                            <button onclick="setLibraryView('PHOTO_03')" id="btn-photo-view-3" class="px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-white/15 text-slate-300 text-left flex items-center justify-between gap-2 transition-all">
+                                <span>PHOTO 03 (WIDE PURPLE CARPET)</span>
+                                <span class="text-purple-400 font-bold">VIEW →</span>
+                            </button>
+                            <button onclick="setLibraryView('PHOTO_04')" id="btn-photo-view-4" class="px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-white/15 text-slate-300 text-left flex items-center justify-between gap-2 transition-all">
+                                <span>PHOTO 04 (ACROSS BOTH DESKS)</span>
+                                <span class="text-cyan-400 font-bold">VIEW →</span>
                             </button>
                         </div>
                     </div>
@@ -3797,6 +3876,156 @@
         </div>
     </div>
 
+    <!-- Photo-Based Library Digital Twin Ground-Truth Reference Modal (Section 22 & 23) -->
+    <div id="modal-library-photos" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-library-photos')">
+        <div class="modal-box p-5 space-y-4 max-w-5xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-purple-400 text-lg">📚</span>
+                    <div>
+                        <span class="font-display font-bold text-sm text-white">PHOTO-BASED DIGITAL TWIN: GROUND-TRUTH SITE PHOTOGRAPHS</span>
+                        <div class="text-[10px] font-mono text-purple-300">4 REAL-WORLD MULTI-VIEW PHOTOGRAPHS &rarr; 3D SPATIAL DIGITAL TWIN RECONSTRUCTION</div>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-library-photos')" class="text-slate-400 hover:text-white font-mono text-xs cursor-pointer">✕ CLOSE</button>
+            </div>
+
+            <!-- Modal Sub-header / System Provenance Info -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs font-mono">
+                <div class="scada-surface p-2.5">
+                    <div class="text-[9px] text-slate-400 uppercase">ENVIRONMENT</div>
+                    <div class="text-white font-bold text-xs mt-0.5">Library / Learning Space</div>
+                    <div class="text-[9px] text-purple-400">Campus Interior Floor</div>
+                </div>
+                <div class="scada-surface p-2.5">
+                    <div class="text-[9px] text-slate-400 uppercase">SOURCE DATA</div>
+                    <div class="text-amber-300 font-bold text-xs mt-0.5">4 Physical Photographs</div>
+                    <div class="text-[9px] text-slate-400">Multi-Angle Site Survey</div>
+                </div>
+                <div class="scada-surface p-2.5">
+                    <div class="text-[9px] text-slate-400 uppercase">REPRESENTATION</div>
+                    <div class="text-cyan-400 font-bold text-xs mt-0.5">3D Spatial Three.js Twin</div>
+                    <div class="text-[9px] text-slate-400">Architectural Reconstruction</div>
+                </div>
+                <div class="scada-surface p-2.5">
+                    <div class="text-[9px] text-slate-400 uppercase">SYSTEM STATUS</div>
+                    <div class="text-emerald-400 font-bold text-xs mt-0.5 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> READY / LIVE</div>
+                    <div class="text-[9px] text-slate-400">Deterministic Navigation</div>
+                </div>
+            </div>
+
+            <!-- 4 Photographic Ground-Truth Comparison Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs font-mono">
+                <!-- Photo Card 01 -->
+                <div class="scada-surface p-3 space-y-2 border border-purple-500/20 hover:border-purple-400/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+                            <span class="font-bold text-purple-300 flex items-center gap-1.5">
+                                <span>📷</span>
+                                <span>PHOTO 01: GREEN RECEPTION &amp; BOOKSHELVES</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-950 border border-purple-500/40 text-purple-200">REAL SITE PHOTO</span>
+                        </div>
+                        <div class="relative rounded overflow-hidden mt-1.5 border border-white/10 bg-black/80 aspect-video">
+                            <img src="assets/library/library_ref_01.jpg" alt="Library Photo 01 - Reception and Bookshelves" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-[10px] text-slate-300 leading-snug mt-1.5">
+                            <strong class="text-white">Spatial Features:</strong> Foreground deep-green fluted circular counter, halo ring light fixture, expansive purple carpet, and 5-bay birch bookshelf wall.
+                        </div>
+                    </div>
+                    <button onclick="alignTwinToPhoto('PHOTO_01')" class="w-full py-1.5 mt-2 rounded bg-purple-900/60 hover:bg-purple-800/80 border border-purple-400/60 text-purple-200 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all">
+                        <span>🎯</span>
+                        <span>ALIGN 3D TWIN CAMERA TO PHOTO 01</span>
+                    </button>
+                </div>
+
+                <!-- Photo Card 02 -->
+                <div class="scada-surface p-3 space-y-2 border border-purple-500/20 hover:border-purple-400/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+                            <span class="font-bold text-amber-300 flex items-center gap-1.5">
+                                <span>📷</span>
+                                <span>PHOTO 02: OAK FLOOR &amp; YELLOW SERPENTINE SOFA</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-200">REAL SITE PHOTO</span>
+                        </div>
+                        <div class="relative rounded overflow-hidden mt-1.5 border border-white/10 bg-black/80 aspect-video">
+                            <img src="assets/library/library_ref_02.jpg" alt="Library Photo 02 - Wood Floor and Yellow Sofa" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-[10px] text-slate-300 leading-snug mt-1.5">
+                            <strong class="text-white">Spatial Features:</strong> Natural wood flooring transition, secondary yellow service counter, curved modular yellow serpentine sofa, glass partitions, and discussion rooms.
+                        </div>
+                    </div>
+                    <button onclick="alignTwinToPhoto('PHOTO_02')" class="w-full py-1.5 mt-2 rounded bg-amber-950/70 hover:bg-amber-900/80 border border-amber-400/60 text-amber-200 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all">
+                        <span>🎯</span>
+                        <span>ALIGN 3D TWIN CAMERA TO PHOTO 02</span>
+                    </button>
+                </div>
+
+                <!-- Photo Card 03 -->
+                <div class="scada-surface p-3 space-y-2 border border-purple-500/20 hover:border-purple-400/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+                            <span class="font-bold text-purple-300 flex items-center gap-1.5">
+                                <span>📷</span>
+                                <span>PHOTO 03: WIDE PURPLE CARPET &amp; BEANBAGS</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-950 border border-purple-500/40 text-purple-200">REAL SITE PHOTO</span>
+                        </div>
+                        <div class="relative rounded overflow-hidden mt-1.5 border border-white/10 bg-black/80 aspect-video">
+                            <img src="assets/library/library_ref_03.jpg" alt="Library Photo 03 - Wide Purple Carpet" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-[10px] text-slate-300 leading-snug mt-1.5">
+                            <strong class="text-white">Spatial Features:</strong> Open central circulation axis, casual orange and indigo beanbags, green low poufs, and exposed ceiling plenum with black ducts &amp; sprinkler lines.
+                        </div>
+                    </div>
+                    <button onclick="alignTwinToPhoto('PHOTO_03')" class="w-full py-1.5 mt-2 rounded bg-purple-900/60 hover:bg-purple-800/80 border border-purple-400/60 text-purple-200 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all">
+                        <span>🎯</span>
+                        <span>ALIGN 3D TWIN CAMERA TO PHOTO 03</span>
+                    </button>
+                </div>
+
+                <!-- Photo Card 04 -->
+                <div class="scada-surface p-3 space-y-2 border border-purple-500/20 hover:border-purple-400/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+                            <span class="font-bold text-cyan-300 flex items-center gap-1.5">
+                                <span>📷</span>
+                                <span>PHOTO 04: FULL ROOM PANORAMA ACROSS DESKS</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-200">REAL SITE PHOTO</span>
+                        </div>
+                        <div class="relative rounded overflow-hidden mt-1.5 border border-white/10 bg-black/80 aspect-video">
+                            <img src="assets/library/library_ref_04.jpg" alt="Library Photo 04 - Across Both Desks" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-[10px] text-slate-300 leading-snug mt-1.5">
+                            <strong class="text-white">Spatial Features:</strong> Panoramic line of sight simultaneously linking the yellow counter, serpentine lounge, central beanbags, and green reception desk.
+                        </div>
+                    </div>
+                    <button onclick="alignTwinToPhoto('PHOTO_04')" class="w-full py-1.5 mt-2 rounded bg-cyan-950/70 hover:bg-cyan-900/80 border border-cyan-400/60 text-cyan-200 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all">
+                        <span>🎯</span>
+                        <span>ALIGN 3D TWIN CAMERA TO PHOTO 04</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer Notes & Switch Twin Action -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-xs font-mono">
+                <div class="text-[10px] text-slate-400">
+                    <span class="text-emerald-400 font-bold">✓ 100% INDEPENDENT DIGITAL TWIN:</span>
+                    <span>Industrial Digital Twin &amp; telemetry pipelines remain completely intact.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeModal('modal-library-photos')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer">CLOSE</button>
+                    <button onclick="closeModal('modal-library-photos'); switchTwinEnvironment('LIBRARY');" class="px-4 py-1.5 rounded bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold flex items-center gap-1.5 shadow-md shadow-purple-950 cursor-pointer">
+                        <span>📚</span>
+                        <span>EXPLORE 3D LIBRARY DIGITAL TWIN</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Judge Physical Alignment Presentation Modal -->
     <div id="modal-judge-alignment" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-judge-alignment')">
         <div class="modal-box p-5 space-y-4 max-w-5xl">
@@ -5417,7 +5646,276 @@
             }
         };
 
+        // --- 11a. TWIN ENVIRONMENT SELECTOR & LIBRARY PHOTO-TWIN CONTROLLER (Sections 8, 9, 13, 14, 21, 26) ---
+        let currentTwinEnvironment = 'INDUSTRIAL'; // 'INDUSTRIAL' or 'LIBRARY'
+        let libraryTwinEngine = null;
+        let activeLibraryPreset = 'OVERVIEW';
+
+        function switchTwinEnvironment(envKey) {
+            currentTwinEnvironment = envKey;
+            const sel = document.getElementById('twin-env-selector');
+            if (sel && sel.value !== envKey) sel.value = envKey;
+
+            const indToolbar = document.getElementById('industrial-cam-toolbar');
+            const libToolbar = document.getElementById('library-cam-toolbar');
+            const indOverlays = document.getElementById('industrial-overlays-bar');
+            const libOverlays = document.getElementById('library-overlays-bar');
+            const indPill = document.getElementById('industrial-zones-pill');
+            const libPill = document.getElementById('library-photos-pill');
+            const indViewport = document.getElementById('twin-spatial-viewport');
+            const libViewport = document.getElementById('library-spatial-viewport');
+            const statusBadge = document.getElementById('twin-env-status-badge');
+            const tagline = document.getElementById('twin-env-tagline');
+
+            if (envKey === 'LIBRARY') {
+                // Hide Industrial toolbars and overlays
+                if (indToolbar) indToolbar.classList.add('hidden');
+                if (indOverlays) indOverlays.classList.add('hidden');
+                if (indPill) indPill.classList.add('hidden');
+                if (indViewport) indViewport.classList.add('hidden');
+
+                // Show Library toolbars and overlays
+                if (libToolbar) libToolbar.classList.remove('hidden');
+                if (libOverlays) libOverlays.classList.remove('hidden');
+                if (libPill) libPill.classList.remove('hidden');
+                if (libViewport) libViewport.classList.remove('hidden');
+
+                // Update Header Badges
+                if (statusBadge) {
+                    statusBadge.className = 'badge-live font-mono text-xs bg-purple-500/20 text-purple-300 border-purple-500/40';
+                    statusBadge.textContent = '● PHOTO-BASED DIGITAL TWIN';
+                }
+                if (tagline) {
+                    tagline.textContent = '4-VIEW RECONSTRUCTED LEARNING SPACE';
+                }
+
+                // Update HUD Inspector
+                updateLibraryInspector(activeLibraryPreset);
+
+                // Initialize or Resume Library Twin
+                initLibraryTwin();
+
+                showToast('Switched to: Library / Learning Space Photo-Based Digital Twin', 'info');
+            } else {
+                // Show Industrial toolbars and overlays
+                if (libToolbar) libToolbar.classList.add('hidden');
+                if (libOverlays) libOverlays.classList.add('hidden');
+                if (libPill) libPill.classList.add('hidden');
+                if (libViewport) libViewport.classList.add('hidden');
+
+                if (indToolbar) indToolbar.classList.remove('hidden');
+                if (indOverlays) indOverlays.classList.remove('hidden');
+                if (indPill) indPill.classList.remove('hidden');
+                if (indViewport) indViewport.classList.remove('hidden');
+
+                // Restore Industrial Status Badge
+                if (statusBadge) {
+                    statusBadge.className = 'badge-live font-mono text-xs';
+                    statusBadge.textContent = '● LIVE TELEMETRY';
+                }
+                if (tagline) {
+                    tagline.textContent = 'PBR 60 FPS WEBGL';
+                }
+
+                // Pause library twin animation loop to save GPU
+                if (libraryTwinEngine && libraryTwinEngine.pause) {
+                    libraryTwinEngine.pause();
+                }
+
+                // Resume Industrial Twin
+                if (fullscreenTwinEngine && fullscreenTwinEngine.onWindowResize) {
+                    fullscreenTwinEngine.onWindowResize();
+                }
+
+                showToast('Switched to: Industrial Facility (Factory Digital Twin)', 'info');
+            }
+        }
+
+        function initLibraryTwin() {
+            const container = document.getElementById('library-spatial-viewport');
+            if (!container) return;
+
+            if (!libraryTwinEngine) {
+                if (!window.LibraryTwinEngine) {
+                    console.warn('LibraryTwinEngine script not yet ready');
+                    return;
+                }
+                try {
+                    libraryTwinEngine = new window.LibraryTwinEngine('library-spatial-viewport', {
+                        onSelectObject: (objName, objData) => {
+                            handleLibraryObjectSelect(objName, objData);
+                        },
+                        onViewChanged: (presetKey, presetData) => {
+                            updateLibraryPresetButtons(presetKey);
+                            updateLibraryInspector(presetKey);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Failed to initialize LibraryTwinEngine:', e);
+                    showToast('Library Digital Twin fallback mode active', 'warning');
+                    return;
+                }
+            } else {
+                libraryTwinEngine.start();
+                setTimeout(() => {
+                    if (libraryTwinEngine.onWindowResize) libraryTwinEngine.onWindowResize();
+                }, 100);
+            }
+        }
+
+        function setLibraryView(presetKey) {
+            activeLibraryPreset = presetKey;
+            if (libraryTwinEngine && libraryTwinEngine.setPreset) {
+                libraryTwinEngine.setPreset(presetKey);
+            }
+            updateLibraryPresetButtons(presetKey);
+            updateLibraryInspector(presetKey);
+        }
+
+        function updateLibraryPresetButtons(presetKey) {
+            // Update top library toolbar buttons
+            ['OVERVIEW', 'RECEPTION', 'BOOKSHELVES', 'SEATING'].forEach(k => {
+                const b = document.getElementById(`btn-lib-${k.toLowerCase()}`);
+                if (b) {
+                    if (k === presetKey) {
+                        b.className = 'px-2.5 py-1 rounded bg-amber-500/40 text-amber-300 border border-amber-400 font-bold';
+                    } else {
+                        b.className = 'px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10';
+                    }
+                }
+            });
+
+            // Update floating photo perspective pill buttons
+            [1, 2, 3, 4].forEach(num => {
+                const b = document.getElementById(`btn-photo-view-${num}`);
+                if (b) {
+                    const active = presetKey === `PHOTO_0${num}`;
+                    if (active) {
+                        b.className = 'px-3 py-1.5 rounded bg-purple-900/90 border border-purple-400 text-purple-200 text-left flex items-center justify-between gap-2 font-bold shadow-md shadow-purple-950';
+                    } else {
+                        b.className = 'px-3 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-white/15 text-slate-300 text-left flex items-center justify-between gap-2 transition-all';
+                    }
+                }
+            });
+        }
+
+        function updateLibraryInspector(presetKey) {
+            const title = document.getElementById('twin-inspect-title');
+            const loc = document.getElementById('twin-inspect-loc');
+            const temp = document.getElementById('twin-inspect-temp');
+            const vib = document.getElementById('twin-inspect-vib');
+            const safety = document.getElementById('twin-inspect-safety');
+            const badge = document.getElementById('twin-inspect-badge');
+
+            if (badge) {
+                badge.className = 'badge-live text-[9px] bg-purple-500/20 text-purple-300 border-purple-500/40';
+                badge.textContent = 'PHOTO-BASED 3D';
+            }
+
+            const infoMap = {
+                OVERVIEW: {
+                    t: 'CAMPUS LEARNING COMMONS (DIGITAL TWIN)',
+                    l: 'Zone L-01: Central Open Atrium & Bookshelves',
+                    temp: '23.4 °C (HVAC Setpoint)',
+                    vib: '0.02 g (Structure Stable)',
+                    s: 'OCCUPANCY NOMINAL (28/60 SEATS)'
+                },
+                RECEPTION: {
+                    t: 'CIRCULATION & INFO DESK',
+                    l: 'Zone L-02: Circular Fluted Green Desk & Halo Ring',
+                    temp: '23.6 °C (Ambient)',
+                    vib: '0.01 g (Static)',
+                    s: 'STAFFED / OPERATIONAL'
+                },
+                BOOKSHELVES: {
+                    t: 'BOOKSHELF STACKS WALL (5 BAYS)',
+                    l: 'Zone L-03: Perimeter Birch Shelving System',
+                    temp: '22.8 °C (Archival Ambient)',
+                    vib: '0.01 g (Micro-Acoustic)',
+                    s: 'CATALOG CLEAR / LIGHTS ACTIVE'
+                },
+                SEATING: {
+                    t: 'COLLABORATIVE BEANBAG & OAK LOUNGE',
+                    l: 'Zone L-04: Purple Carpet & Wood Floor Transition',
+                    temp: '23.8 °C (Occupied Area)',
+                    vib: '0.03 g (Foot Traffic)',
+                    s: 'INFORMAL STUDY ACTIVE'
+                },
+                PHOTO_01: {
+                    t: 'CAMERA VIEW 01: GREEN DESK & SHELVES',
+                    l: 'Ground-Truth Perspective: Site Photo 01',
+                    temp: '23.4 °C',
+                    vib: '0.02 g',
+                    s: 'FOV 54° CALIBRATED TO REAL PHOTO'
+                },
+                PHOTO_02: {
+                    t: 'CAMERA VIEW 02: OAK PARQUET & YELLOW SOFA',
+                    l: 'Ground-Truth Perspective: Site Photo 02',
+                    temp: '23.5 °C',
+                    vib: '0.02 g',
+                    s: 'FOV 54° CALIBRATED TO REAL PHOTO'
+                },
+                PHOTO_03: {
+                    t: 'CAMERA VIEW 03: WIDE PURPLE CARPET',
+                    l: 'Ground-Truth Perspective: Site Photo 03',
+                    temp: '23.3 °C',
+                    vib: '0.01 g',
+                    s: 'FOV 54° CALIBRATED TO REAL PHOTO'
+                },
+                PHOTO_04: {
+                    t: 'CAMERA VIEW 04: FULL ROOM PANORAMA',
+                    l: 'Ground-Truth Perspective: Site Photo 04',
+                    temp: '23.6 °C',
+                    vib: '0.02 g',
+                    s: 'FOV 54° CALIBRATED TO REAL PHOTO'
+                }
+            };
+
+            const data = infoMap[presetKey] || infoMap.OVERVIEW;
+            if (title) title.textContent = `OBJECT: ${data.t}`;
+            if (loc) loc.textContent = data.l;
+            if (temp) temp.textContent = data.temp;
+            if (vib) vib.textContent = data.vib;
+            if (safety) safety.textContent = data.s;
+        }
+
+        function handleLibraryObjectSelect(objName, objData) {
+            const title = document.getElementById('twin-inspect-title');
+            const loc = document.getElementById('twin-inspect-loc');
+            const safety = document.getElementById('twin-inspect-safety');
+            if (title) title.textContent = `SELECTED: ${objData?.label || objName}`;
+            if (loc) loc.textContent = objData?.category ? `Classification: ${objData.category}` : 'Campus Learning Space 3D Component';
+            if (safety) safety.textContent = '3D SPATIAL ASSET VERIFIED';
+            showToast(`Inspecting 3D Object: ${objData?.label || objName}`, 'info');
+        }
+
+        function toggleLibraryLayer(layerKey, isChecked) {
+            if (libraryTwinEngine && libraryTwinEngine.toggleLayer) {
+                libraryTwinEngine.toggleLayer(layerKey, isChecked);
+            }
+            showToast(`Library Overlay Layer [${layerKey.toUpperCase()}]: ${isChecked ? 'ON' : 'OFF'}`, 'info');
+        }
+
+        function openLibraryPhotoModal() {
+            const m = document.getElementById('modal-library-photos');
+            if (m) m.classList.add('open');
+        }
+
+        function alignTwinToPhoto(photoPresetKey) {
+            closeModal('modal-library-photos');
+            if (currentTwinEnvironment !== 'LIBRARY') {
+                switchTwinEnvironment('LIBRARY');
+            }
+            setLibraryView(photoPresetKey);
+            showToast(`Digital Twin camera aligned to physical ${photoPresetKey}`, 'success');
+        }
+
         function onTwinTabActivated() {
+            if (currentTwinEnvironment === 'LIBRARY') {
+                initLibraryTwin();
+                return;
+            }
+
             const container = document.getElementById('twin-spatial-viewport');
             if (!container || !window.SentinelSpatialEngine) return;
             if (!fullscreenTwinEngine) {
@@ -6431,6 +6929,9 @@
             if (e.key === 'Escape') {
                 closePalette();
                 closeModal('modal-instant-twin');
+                closeModal('modal-library-photos');
+                closeModal('modal-judge-alignment');
+                closeModal('modal-sat-link');
                 closeModal('modal-worker');
                 closeModal('modal-machine');
                 closeModal('modal-zone');
@@ -6438,6 +6939,18 @@
                 closeModal('modal-node');
                 closeModal('modal-arch');
                 closeModal('modal-confirm');
+            }
+        });
+
+        // Global resize listener for all 3D viewports
+        window.addEventListener('resize', () => {
+            if (currentTwinEnvironment === 'LIBRARY' && libraryTwinEngine && libraryTwinEngine.onWindowResize) {
+                libraryTwinEngine.onWindowResize();
+            } else if (fullscreenTwinEngine && fullscreenTwinEngine.onWindowResize) {
+                fullscreenTwinEngine.onWindowResize();
+            }
+            if (cmdTwinEngine && cmdTwinEngine.onWindowResize) {
+                cmdTwinEngine.onWindowResize();
             }
         });
 
