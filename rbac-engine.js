@@ -232,8 +232,13 @@
             return this.currentRole;
         }
 
+        getCurrentRole() {
+            return this.currentRole;
+        }
+
         getRoleMetadata(role = this.currentRole) {
-            return ROLE_METADATA[role] || ROLE_METADATA[ROLES.ADMIN];
+            const normalized = typeof role === 'string' ? (ROLES[role.toUpperCase()] || role) : role;
+            return ROLE_METADATA[normalized] || ROLE_METADATA[ROLES.ADMIN];
         }
 
         setActiveRole(roleName) {
@@ -241,6 +246,7 @@
             if (ROLES[upper]) {
                 this.currentRole = ROLES[upper];
                 sessionStorage.setItem('userRole', this.currentRole);
+                sessionStorage.setItem('sentinel_role', this.currentRole);
                 sessionStorage.setItem('authenticated', 'true');
                 
                 // Dispatch event so UI components can re-render reactively
@@ -253,16 +259,30 @@
             return false;
         }
 
+        setCurrentRole(roleName) {
+            return this.setActiveRole(roleName);
+        }
+
         hasPermission(permission) {
             const allowed = ROLE_PERMISSIONS[this.currentRole] || [];
             return allowed.includes(permission);
         }
 
-        canAccessWorkspace(workspaceIndex) {
+        getRequiredRoleForWorkspace(workspaceIndex) {
             const idx = parseInt(workspaceIndex, 10);
-            if (this.currentRole === ROLES.ADMIN) return true;
+            if (idx === 17) return 'OWNER / EXECUTIVE';
+            if (idx === 16) return 'COORDINATOR / ADMIN';
+            if ([12, 13, 14, 15].includes(idx)) return 'ADMIN / SYSTEMS ENGINEER';
+            if ([0, 1, 2, 3, 4, 5, 6].includes(idx)) return 'SUPERVISOR / ADMIN';
+            return 'AUTHORIZATION REQUIRED';
+        }
 
-            const allowedWorkspaces = ROLE_WORKSPACES[this.currentRole] || [];
+        canAccessWorkspace(workspaceIndex, roleOverride) {
+            const idx = parseInt(workspaceIndex, 10);
+            const targetRole = roleOverride ? (ROLES[String(roleOverride).toUpperCase()] || this.currentRole) : this.currentRole;
+            if (targetRole === ROLES.ADMIN) return true;
+
+            const allowedWorkspaces = ROLE_WORKSPACES[targetRole] || [];
             return allowedWorkspaces.some(w => w.idx === idx);
         }
 
@@ -270,8 +290,9 @@
             return ROLE_WORKSPACES[this.currentRole] || ROLE_WORKSPACES[ROLES.ADMIN];
         }
 
-        getDefaultWorkspace() {
-            const meta = this.getRoleMetadata(this.currentRole);
+        getDefaultWorkspace(roleOverride) {
+            const targetRole = roleOverride ? (ROLES[String(roleOverride).toUpperCase()] || this.currentRole) : this.currentRole;
+            const meta = this.getRoleMetadata(targetRole);
             return meta ? meta.defaultWorkspace : 0;
         }
     }
