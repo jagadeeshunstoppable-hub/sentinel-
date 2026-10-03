@@ -11,6 +11,9 @@ Write-Output "Building SENTINEL-X Android APK with Gradle..."
 Set-Location $androidRoot
 
 cmd.exe /c "gradlew.bat assembleDebug"
+if ($LASTEXITCODE -ne 0) {
+    throw "Gradle build failed with exit code $LASTEXITCODE"
+}
 
 $apkPath = "$androidRoot\app\build\outputs\apk\debug\app-debug.apk"
 if (Test-Path $apkPath) {

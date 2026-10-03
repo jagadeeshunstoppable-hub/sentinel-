@@ -210,8 +210,8 @@
                     </select>
                 </div>
 
-                <!-- Mode Selector: Citizen vs Dispatcher vs Easy (Always visible & Never Clipped) -->
-                <div class="flex items-center bg-blue-950 p-0.5 rounded-lg border border-blue-800 text-xs font-semibold shadow-inner shrink-0">
+                <!-- Mode Selector: Citizen vs Dispatcher vs Easy (Visible md+) -->
+                <div class="hidden md:flex items-center bg-blue-950 p-0.5 rounded-lg border border-blue-800 text-xs font-semibold shadow-inner shrink-0">
                     <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2 sm:px-2.5 py-1 rounded-md transition-all text-blue-200 hover:text-white whitespace-nowrap">
                         <span id="lbl-citizen-mode">🚨 Citizen</span>
                     </button>
@@ -235,15 +235,15 @@
                 </button>
 
                 <!-- Global Platform Switcher: Direct Route to Industrial Safety & Digital Twin -->
-                <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm shrink-0">
+                <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="hidden sm:flex px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold items-center space-x-1.5 transition-all shadow-sm shrink-0">
                     <i data-lucide="factory" class="w-3.5 h-3.5 text-amber-400"></i>
                     <span class="hidden lg:inline">🏭 Industrial Safety →</span>
                     <span class="lg:hidden">🏭 SCADA</span>
                 </a>
 
-                <!-- Mobile Drawer Menu Toggle (Visible < lg) -->
-                <button type="button" onclick="toggleCivilianMobileMenu()" id="btn-civilian-mobile-menu" aria-label="Toggle Controls Menu" class="lg:hidden p-1.5 rounded-lg bg-blue-900 border border-blue-700 text-white hover:bg-blue-800 transition-colors flex items-center justify-center shrink-0">
-                    <i data-lucide="menu" class="w-4 h-4"></i>
+                <!-- Mobile Drawer Menu Toggle (Always visible on mobile & tablet) -->
+                <button type="button" onclick="toggleCivilianMobileMenu()" id="btn-civilian-mobile-menu" aria-label="Toggle Emergency Controls Menu" class="md:hidden p-2 rounded-lg bg-blue-900 border border-blue-700 text-white hover:bg-blue-800 transition-colors flex items-center justify-center shrink-0 min-w-[44px] min-h-[44px]">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
 
                 <!-- Gateway Exit -->
@@ -255,8 +255,31 @@
 
         <!-- ROW 2: Dedicated Responsive Workflow Progress Strip -->
         <div class="bg-[#172554] border-t border-blue-900/80 px-3 sm:px-5 lg:px-6 py-1.5 flex items-center justify-between gap-3 text-xs w-full overflow-hidden">
-            <!-- Horizontally scrollable workflow steps on mobile/tablet, full grid/flex on desktop -->
-            <div class="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1" id="master-stepper" aria-label="Emergency Response Workflow Stages">
+            
+            <!-- MOBILE WORKFLOW VIEW (< md): Compact Progress Bar + Tap to View 10 Steps -->
+            <div class="md:hidden flex items-center justify-between gap-3 w-full py-0.5 cursor-pointer select-none" onclick="openWorkflowDrawer()" title="Tap to inspect emergency response workflow stages">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between text-[11px] font-extrabold text-white mb-1">
+                        <span class="flex items-center gap-1.5 text-amber-300 truncate">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
+                            <span id="mob-workflow-step-num">STEP 1 OF 10</span>
+                            <span class="text-blue-300 font-bold">•</span>
+                            <span id="mob-workflow-step-name" class="uppercase tracking-wide text-white">DISTRESS</span>
+                        </span>
+                        <span class="text-[10px] text-blue-200 bg-blue-900/90 border border-blue-700/80 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ml-2">
+                            <span>Steps (10)</span>
+                            <span class="text-xs">▾</span>
+                        </span>
+                    </div>
+                    <!-- Compact Progress Track -->
+                    <div class="w-full bg-blue-950/80 rounded-full h-1.5 overflow-hidden border border-blue-800/80">
+                        <div id="mob-workflow-progress-bar" class="bg-gradient-to-r from-red-500 via-amber-400 to-emerald-400 h-full transition-all duration-300 rounded-full" style="width: 10%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESKTOP / TABLET WORKFLOW VIEW (md+): Complete 10-step Horizontal Sequence -->
+            <div class="hidden md:flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1" id="master-stepper" aria-label="Emergency Response Workflow Stages">
                 <span id="st-1" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-extrabold shadow-sm whitespace-nowrap">1. Distress</span>
                 <span class="text-blue-400/70 shrink-0 select-none">→</span>
                 <span id="st-2" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">2. Understand</span>
@@ -278,8 +301,8 @@
                 <span id="st-10" class="step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap">10. Complete</span>
             </div>
 
-            <!-- Compact Active Step Indicator with Pulsing Beacon -->
-            <div class="shrink-0 flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-blue-900/90 border border-blue-700/80 text-[11px] font-bold text-amber-300 shadow-sm">
+            <!-- Compact Active Step Indicator with Pulsing Beacon (Desktop) -->
+            <div class="hidden md:flex shrink-0 items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-blue-900/90 border border-blue-700/80 text-[11px] font-bold text-amber-300 shadow-sm">
                 <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                 <span id="compact-step-label">Step 1: Distress</span>
             </div>
@@ -1416,6 +1439,46 @@
     </div>
 
     <!-- ======================================================== -->
+    <!-- EMERGENCY WORKFLOW MODAL / BOTTOM SHEET (SECTIONS 3, 4, 34) -->
+    <!-- Shows all 10 stages stacked vertically with icons, checks -->
+    <!-- ======================================================== -->
+    <div id="workflow-drawer-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="if(event.target === this) closeWorkflowDrawer()">
+        <div class="bg-slate-900 text-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 space-y-4 border border-blue-800 shadow-2xl max-h-[85vh] overflow-y-auto animate-in fade-in slide-in-from-bottom duration-200">
+            <!-- Mobile Grab Handle -->
+            <div class="w-12 h-1 bg-slate-700 rounded-full mx-auto sm:hidden mb-1"></div>
+            
+            <div class="flex items-center justify-between border-b border-blue-900/80 pb-3">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-blue-800/80 text-amber-300 flex items-center justify-center shrink-0 border border-blue-700">
+                        <i data-lucide="git-commit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-extrabold text-sm sm:text-base text-white">Emergency Response Workflow</h2>
+                        <p class="text-[11px] text-blue-200" id="workflow-drawer-current-sub">10-Stage CAD Dispatch &amp; Clinical Lifecycle</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeWorkflowDrawer()" aria-label="Close Workflow Modal" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- List of 10 Steps Container -->
+            <div id="workflow-drawer-steps-list" class="space-y-2 text-xs">
+                <!-- Dynamically rendered or updated by renderWorkflowDrawerSteps() -->
+            </div>
+
+            <div class="pt-2 border-t border-blue-900/80 flex items-center justify-between gap-3 text-xs">
+                <span class="text-[11px] text-blue-300">
+                    Active Step: <strong class="text-amber-300 font-bold" id="workflow-drawer-step-badge">1. DISTRESS</strong>
+                </span>
+                <button type="button" onclick="closeWorkflowDrawer()" class="px-4 py-2 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-bold text-xs transition-colors">
+                    Close Sheet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
     <!-- INCIDENT RESOLUTION MODAL                                -->
     <!-- ======================================================== -->
     <div id="handover-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -1842,19 +1905,123 @@
         // ========================================================
         // 4. CONSISTENT STATE MACHINE & DISPATCH WORKFLOW
         // ========================================================
+        const STEP_METADATA = [
+            { num: 1, name: "Distress", desc: "Citizen Distress Signal Ingested & Multi-Channel Alert" },
+            { num: 2, name: "Understand", desc: "AI Speech-to-Text & Tamil/English NLU Entity Extraction" },
+            { num: 3, name: "Assess", desc: "CAD Triage Clarification & Casualty Verification" },
+            { num: 4, name: "Prioritize", desc: "Urgency Scoring & Spatial Incident Clustering" },
+            { num: 5, name: "Find Help", desc: "Proximity Matching: ALS/BLS, Fire, Police, NDRF" },
+            { num: 6, name: "Dispatch", desc: "Dispatcher Confirmation & Turnout Order" },
+            { num: 7, name: "Guide", desc: "Live Turn-by-Turn GPS Navigation & Dynamic Rerouting" },
+            { num: 8, name: "Hospital", desc: "Trauma Center Pre-Alert & Capacity Reservation" },
+            { num: 9, name: "Monitor", desc: "En-Route Vitals & Multi-Agency Coordination" },
+            { num: 10, name: "Complete", desc: "Clinical Handover, Verified Closure & Resolution" }
+        ];
+
+        function renderWorkflowDrawerSteps(activeStep) {
+            const list = document.getElementById('workflow-drawer-steps-list');
+            if (!list) return;
+            const stepVal = activeStep || currentStepNum || 1;
+            const meta = STEP_METADATA[stepVal - 1] || STEP_METADATA[0];
+
+            const sub = document.getElementById('workflow-drawer-current-sub');
+            if (sub) sub.textContent = `Stage ${stepVal} of 10: ${meta.name.toUpperCase()} • ${meta.desc}`;
+
+            const badge = document.getElementById('workflow-drawer-step-badge');
+            if (badge) badge.textContent = `${stepVal}. ${meta.name.toUpperCase()}`;
+
+            list.innerHTML = STEP_METADATA.map((s) => {
+                const isCompleted = s.num < stepVal;
+                const isActive = s.num === stepVal;
+                
+                let statusBadge = '';
+                let borderClass = 'border-slate-800 bg-slate-900/60 text-slate-400';
+                let numBg = 'bg-slate-800 text-slate-400';
+                
+                if (isActive) {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-red-600/30 text-red-300 border border-red-500/50 text-[10px] font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> IN PROGRESS</span>`;
+                    borderClass = 'border-red-500/80 bg-red-950/30 text-white shadow-lg shadow-red-950/40';
+                    numBg = 'bg-red-600 text-white font-extrabold shadow-sm';
+                } else if (isCompleted) {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">✓ COMPLETED</span>`;
+                    borderClass = 'border-emerald-500/40 bg-emerald-950/20 text-slate-200';
+                    numBg = 'bg-emerald-600 text-white font-bold shadow-sm';
+                } else {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 text-[10px]">○ PENDING</span>`;
+                }
+
+                return `
+                    <div class="p-2.5 sm:p-3 rounded-xl border ${borderClass} flex items-start justify-between gap-3 transition-all">
+                        <div class="flex items-start gap-3 min-w-0">
+                            <div class="w-7 h-7 rounded-lg ${numBg} flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                                ${isCompleted ? '✓' : s.num}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-white flex items-center gap-2">
+                                    <span>${s.num}. ${s.name}</span>
+                                </div>
+                                <div class="text-[11px] text-slate-400 mt-0.5 leading-snug break-words">
+                                    ${s.desc}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shrink-0">
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openWorkflowDrawer() {
+            renderWorkflowDrawerSteps(currentStepNum);
+            const modal = document.getElementById('workflow-drawer-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeWorkflowDrawer() {
+            const modal = document.getElementById('workflow-drawer-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
         function updateStepPill(step) {
             currentStepNum = step;
+            
+            // 1. Update Desktop Horizontal Stepper (st-1 to st-10)
             for (let i = 1; i <= 10; i++) {
                 const el = document.getElementById(`st-${i}`);
                 if (!el) continue;
                 if (i === step) {
-                    el.className = "step-pill px-2.5 py-0.5 rounded-full bg-red-600 text-white font-extrabold shadow-sm";
+                    el.className = "step-pill shrink-0 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-extrabold shadow-sm whitespace-nowrap";
                 } else if (i < step) {
-                    el.className = "step-pill px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 font-semibold";
+                    el.className = "step-pill shrink-0 px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 font-semibold whitespace-nowrap";
                 } else {
-                    el.className = "step-pill px-2.5 py-0.5 rounded-full text-blue-200";
+                    el.className = "step-pill shrink-0 px-2.5 py-0.5 rounded-full text-blue-200 hover:text-white whitespace-nowrap";
                 }
             }
+
+            const meta = STEP_METADATA[step - 1] || STEP_METADATA[0];
+
+            // 2. Update Desktop Compact Step Label
+            const compactEl = document.getElementById('compact-step-label');
+            if (compactEl) compactEl.textContent = `Step ${step}: ${meta.name}`;
+
+            // 3. Update Mobile Compact Progress Bar (Option A from User Requirement)
+            const mobStepNum = document.getElementById('mob-workflow-step-num');
+            const mobStepName = document.getElementById('mob-workflow-step-name');
+            const mobProgressBar = document.getElementById('mob-workflow-progress-bar');
+            if (mobStepNum) mobStepNum.textContent = `STEP ${step} OF 10`;
+            if (mobStepName) mobStepName.textContent = meta.name.toUpperCase();
+            if (mobProgressBar) mobProgressBar.style.width = `${Math.min(100, Math.max(10, step * 10))}%`;
+
+            // 4. Update Mobile Bottom Sheet / Drawer list items if open
+            renderWorkflowDrawerSteps(step);
         }
 
         function executeDispatchAuthorization() {
