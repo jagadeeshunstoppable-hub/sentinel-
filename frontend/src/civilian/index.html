@@ -2795,6 +2795,153 @@
             const savedMode = modeParam || localStorage.getItem('sentinel_civilian_mode') || 'citizen';
             setInterfaceMode(savedMode);
         });
+
+        // ========================================================
+        // 9. RESPONSIVE MOBILE DRAWER & WORKFLOW STEPPER MODAL
+        // ========================================================
+        function toggleCivilianMobileMenu() {
+            const drawer = document.getElementById('civilian-mobile-drawer');
+            if (drawer) {
+                drawer.classList.toggle('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function openWorkflowDrawer() {
+            const modal = document.getElementById('workflow-drawer-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeWorkflowDrawer() {
+            const modal = document.getElementById('workflow-drawer-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
     </script>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div id="civilian-mobile-drawer" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col justify-end md:hidden">
+        <div class="bg-[#0f172a] border-t border-blue-500/30 rounded-t-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span class="font-bold text-white text-sm">SENTINEL-X EMERGENCY HUB</span>
+                </div>
+                <button type="button" onclick="toggleCivilianMobileMenu()" class="p-1.5 rounded-lg bg-white/10 text-slate-300 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Operational Modes -->
+            <div class="space-y-2">
+                <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Civilian Operating Mode</div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="setInterfaceMode('citizen'); toggleCivilianMobileMenu();" class="p-3 rounded-xl bg-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg">
+                        <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+                        <span>CITIZEN SOS</span>
+                    </button>
+                    <button type="button" onclick="setInterfaceMode('dispatcher'); toggleCivilianMobileMenu();" class="p-3 rounded-xl bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg">
+                        <i data-lucide="radio" class="w-4 h-4"></i>
+                        <span>DISPATCHER CAD</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Global Platform Links -->
+            <div class="space-y-2 pt-2 border-t border-white/10">
+                <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Cross-Platform Navigation</div>
+                <div class="grid grid-cols-1 gap-2 text-xs">
+                    <a href="../app.html" class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i data-lucide="factory" class="w-4 h-4"></i> 🏭 Industrial Safety &amp; 3D Twin</span>
+                        <span>→</span>
+                    </a>
+                    <a href="../auth.html" class="p-3 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4"></i> 🔐 RBAC Security Gateway</span>
+                        <span>→</span>
+                    </a>
+                    <a href="../project-workflow.html" class="p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-300 font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i data-lucide="git-merge" class="w-4 h-4"></i> 📋 Operational Architecture</span>
+                        <span>→</span>
+                    </a>
+                    <a href="../stakeholders-impacts.html" class="p-3 rounded-xl bg-purple-950/60 border border-purple-500/40 text-purple-300 font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> 👥 Stakeholders &amp; Impacts</span>
+                        <span>→</span>
+                    </a>
+                    <a href="../index.html" class="p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i data-lucide="home" class="w-4 h-4"></i> 🏠 Main Portal Home</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10-STEP EMERGENCY WORKFLOW BOTTOM SHEET MODAL -->
+    <div id="workflow-drawer-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col justify-end md:hidden">
+        <div class="bg-[#0b1329] border-t border-cyan-500/40 rounded-t-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10 sticky top-0 bg-[#0b1329] z-10">
+                <div>
+                    <h3 class="font-extrabold text-white text-sm flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        <span>EMERGENCY RESPONSE LIFECYCLE</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-400">10 Deterministic Stages: Citizen Distress to Hospital Handover</p>
+                </div>
+                <button type="button" onclick="closeWorkflowDrawer()" class="p-1.5 rounded-lg bg-white/10 text-slate-300 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- List of 10 Steps -->
+            <div class="space-y-2 text-xs">
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">1</span>
+                    <div><strong class="text-blue-300">1. DISTRESS:</strong> 1-Tap SOS / Voice / Sensor Alert Received</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">2</span>
+                    <div><strong class="text-blue-300">2. UNDERSTAND:</strong> Multilingual Speech AI (Tamil/En/Hi)</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">3</span>
+                    <div><strong class="text-blue-300">3. ASSESS:</strong> Severity Extraction &amp; Hazard Raycasting</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">4</span>
+                    <div><strong class="text-blue-300">4. TRIAGE:</strong> Triage Level Assigned (P1 / P2 / P3)</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">5</span>
+                    <div><strong class="text-blue-300">5. MATCH:</strong> Multi-Department Capability Matching</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">6</span>
+                    <div><strong class="text-blue-300">6. DISPATCH:</strong> 108 EMS + 101 Fire + 100 Police Alerted</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">7</span>
+                    <div><strong class="text-blue-300">7. ACKNOWLEDGE:</strong> Responder Unit Accepts Mission</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">8</span>
+                    <div><strong class="text-blue-300">8. EN ROUTE:</strong> GPS Telemetry &amp; Traffic Green Corridor</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-900/40 border border-blue-500/40 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 font-bold flex items-center justify-center shrink-0">9</span>
+                    <div><strong class="text-blue-300">9. HOSPITAL:</strong> Trauma Bay Pre-Alert &amp; Bed Reservation</div>
+                </div>
+                <div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-white flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-600 font-bold flex items-center justify-center shrink-0">10</span>
+                    <div><strong class="text-emerald-400">10. RESOLVED:</strong> Incident Mitigated &amp; DGMS Logbook Sealed</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -683,10 +683,29 @@
                 </div>
             </div>
 
+            <!-- Cross-Platform Navigation Hub -->
+            <div class="p-2 rounded-lg bg-slate-900/90 border border-white/10 space-y-1 text-[10px] font-mono">
+                <div class="text-slate-400 font-bold px-1 uppercase text-[8px] tracking-wider">PLATFORM DIRECTORY</div>
+                <div class="grid grid-cols-2 gap-1 text-[9px]">
+                    <a href="index.html" class="p-1.5 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-200 flex items-center justify-center gap-1">
+                        <span>🏠</span><span>Portal</span>
+                    </a>
+                    <a href="civilian/index.html" class="p-1.5 rounded bg-rose-950/50 hover:bg-rose-900/50 text-rose-300 border border-rose-500/30 flex items-center justify-center gap-1 font-bold">
+                        <span>🚨</span><span>Civilian</span>
+                    </a>
+                    <a href="project-workflow.html" class="p-1.5 rounded bg-amber-950/50 hover:bg-amber-900/50 text-amber-300 border border-amber-500/30 flex items-center justify-center gap-1">
+                        <span>📋</span><span>Workflow</span>
+                    </a>
+                    <a href="stakeholders-impacts.html" class="p-1.5 rounded bg-purple-950/50 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 flex items-center justify-center gap-1">
+                        <span>👥</span><span>Impacts</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Session & Logout Link -->
             <div class="px-2 pt-1 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                <span class="text-slate-400">UNIT-01 CONSOLE</span>
-                <button onclick="logoutConsole()" class="text-rose-400 hover:text-rose-300 font-bold transition-colors">LOGOUT →</button>
+                <a href="auth.html" class="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">🔐 SWITCH ROLE</a>
+                <button onclick="logoutConsole()" class="text-rose-400 hover:text-rose-300 font-bold transition-colors">LOGOUT ⏻</button>
             </div>
         </aside>
         

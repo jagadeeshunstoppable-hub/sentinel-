@@ -320,6 +320,26 @@
 </head>
 <body data-theme="light">
 
+  <!-- Global Platform Navigation Hub -->
+  <div style="width:100%; max-width:1980px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding:10px 18px; background:var(--bg-card); border-radius:12px; border:1px solid rgba(148,163,184,0.2); box-shadow:var(--card-shadow); font-size:13px;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <a href="index.html" style="text-decoration:none; color:var(--text-main); font-weight:800; display:flex; align-items:center; gap:6px;">
+        <span style="display:inline-block; width:10px; height:10px; border-radius:2px; background:#a855f7;"></span>
+        <span>SENTINEL-X</span>
+      </a>
+      <span style="color:var(--text-muted);">/</span>
+      <span style="color:var(--text-muted); font-size:12px; font-weight:600;">Stakeholders &amp; Impacts Analysis</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <a href="index.html" class="btn btn-secondary" style="text-decoration:none; padding:6px 12px; font-size:12px;">🏠 Home</a>
+      <a href="civilian/index.html" class="btn btn-secondary" style="text-decoration:none; padding:6px 12px; font-size:12px; color:#ef4444; border-color:rgba(239,68,68,0.3);">🚨 Civilian CAD</a>
+      <a href="app.html" class="btn btn-secondary" style="text-decoration:none; padding:6px 12px; font-size:12px; color:#10b981; border-color:rgba(16,185,129,0.3);">🏭 Industrial Twin</a>
+      <a href="auth.html" class="btn btn-secondary" style="text-decoration:none; padding:6px 12px; font-size:12px; color:#06b6d4; border-color:rgba(6,182,212,0.3);">🔐 RBAC Login</a>
+      <a href="project-workflow.html" class="btn btn-secondary" style="text-decoration:none; padding:6px 12px; font-size:12px; color:#38bdf8; border-color:rgba(56,189,248,0.3);">📋 Workflow</a>
+      <a href="test-suite.html" class="btn btn-secondary" style="text-decoration:none; padding:6px 12px; font-size:12px;">🧪 QA Suite</a>
+    </div>
+  </div>
+
   <!-- Top Action & Export Controls -->
   <div class="control-bar">
     <div class="brand-group">
@@ -342,7 +362,7 @@
       <button class="btn btn-primary" onclick="exportHighResPNG()">
         📸 Export High-Res PNG (For PPT)
       </button>
-      <a href="STAKEHOLDERS_AND_IMPACTS.svg" download="SENTINEL_X_STAKEHOLDERS_IMPACTS.svg" class="btn btn-accent" style="text-decoration:none;">
+      <a href="docs/STAKEHOLDERS_AND_IMPACTS.svg" download="SENTINEL_X_STAKEHOLDERS_IMPACTS.svg" class="btn btn-accent" style="text-decoration:none;">
         📥 Download Vector SVG
       </a>
     </div>
@@ -363,7 +383,6 @@
 
     <!-- The Complete Vector Flow Graphic -->
     <div class="diagram-container" id="diagramContainer">
-      <!-- Embedded SVG that dynamically changes with scenarios -->
       <svg id="mainSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 580" width="100%" height="100%" style="font-family:'Plus Jakarta Sans', 'Segoe UI', -apple-system, sans-serif;">
         <defs>
           <filter id="shadowBox" x="-5%" y="-5%" width="110%" height="110%">
@@ -373,8 +392,6 @@
             <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--curve-color, #1e293b)"/>
           </marker>
         </defs>
-
-        <!-- Dynamic Content injected via JS -->
         <g id="svgContent"></g>
       </svg>
     </div>
@@ -444,12 +461,9 @@
   </div>
 
   <div class="toast" id="toastMsg">✅ High-Res Image generated &amp; downloaded! Ready for your PPT.</div>
-
-  <!-- Hidden Canvas for High-Resolution 300DPI Rendering -->
   <canvas id="exportCanvas" style="display:none;"></canvas>
 
   <script>
-    // Scenarios Data
     const scenarios = [
       {
         id: 'mines',
@@ -583,19 +597,16 @@
       document.getElementById('scenarioHeaderLabel').innerText = data.headerLabel;
 
       const content = `
-        <!-- Main Connecting Flow Curves -->
         <path d="M 160 195 C 220 185, 260 215, 345 210 C 430 205, 470 185, 530 195" fill="none" stroke="var(--curve-color, #1e293b)" stroke-width="2.5" marker-end="url(#mArrow)"/>
         <path d="M 575 195 C 640 185, 695 215, 790 210 C 885 205, 940 185, 1000 195" fill="none" stroke="var(--curve-color, #1e293b)" stroke-width="2.5" marker-end="url(#mArrow)"/>
         <path d="M 1045 195 C 1110 185, 1160 215, 1250 210 C 1340 205, 1390 185, 1450 195" fill="none" stroke="var(--curve-color, #1e293b)" stroke-width="2.5" marker-end="url(#mArrow)"/>
 
-        <!-- Dashed connectors to impact boxes -->
         <path d="M 90 255 L 90 350" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.8" stroke-dasharray="5 5"/>
         <path d="M 500 255 L 500 350" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.8" stroke-dasharray="5 5"/>
         <path d="M 965 255 L 965 350" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.8" stroke-dasharray="5 5"/>
         <path d="M 1495 255 L 1495 350" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.8" stroke-dasharray="5 5"/>
 
-        <!-- ==================== NODE 1 ==================== -->
-        <!-- Top Callout -->
+        <!-- NODE 1 -->
         <g transform="translate(130, 70)">
           <rect x="0" y="0" width="260" height="62" rx="10" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="5 4" filter="url(#shadowBox)"/>
           <rect x="16" y="14" width="22" height="34" rx="4" fill="none" stroke="var(--text-main, #0f172a)" stroke-width="2"/>
@@ -607,18 +618,14 @@
         </g>
         <path d="M 260 132 L 260 152 L 130 152 L 130 175" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.5" stroke-dasharray="4 4"/>
 
-        <!-- Avatar & Label -->
         <circle cx="48" cy="180" r="14" fill="var(--bg-card, #ffffff)" stroke="var(--text-main, #0f172a)" stroke-width="2"/>
         <text x="48" y="186" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">1</text>
         
         <g transform="translate(60, 168)">
-          <!-- Helmet -->
           <path d="M 16 16 C 16 6, 40 6, 40 16 Z" fill="#eab308"/>
           <rect x="12" y="16" width="32" height="4" rx="2" fill="#ca8a04"/>
           <circle cx="28" cy="12" r="3.5" fill="#ffffff" stroke="#ca8a04" stroke-width="1.5"/>
-          <!-- Head -->
           <circle cx="28" cy="25" r="8" fill="#fed7aa"/>
-          <!-- Vest -->
           <path d="M 14 34 L 42 34 L 46 62 L 10 62 Z" fill="#f97316"/>
           <rect x="20" y="34" width="16" height="28" fill="#3b82f6"/>
           <line x1="13" y1="46" x2="43" y2="46" stroke="#facc15" stroke-width="3"/>
@@ -626,7 +633,6 @@
         <text x="90" y="254" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">${data.node1.role}</text>
         <text x="90" y="271" fill="var(--text-muted, #475569)" font-size="11.5" font-weight="600" text-anchor="middle">${data.node1.sub}</text>
 
-        <!-- Mid Action 1 -->
         <g transform="translate(230, 190)">
           <rect x="15" y="0" width="34" height="24" rx="5" fill="#fef2f2" stroke="#ef4444" stroke-width="1.8"/>
           <circle cx="26" cy="12" r="2.5" fill="#ef4444"/>
@@ -637,7 +643,6 @@
           <text x="42" y="67" fill="var(--text-muted, #475569)" font-size="11" font-weight="500" text-anchor="middle">${data.node1.actionDesc2}</text>
         </g>
 
-        <!-- Bottom Impact Box 1 -->
         <g transform="translate(30, 350)">
           <rect x="0" y="0" width="355" height="190" rx="12" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="6 5" filter="url(#shadowBox)"/>
           <g transform="translate(18, 24)">
@@ -658,8 +663,7 @@
           </g>
         </g>
 
-        <!-- ==================== NODE 2 ==================== -->
-        <!-- Top Callout -->
+        <!-- NODE 2 -->
         <g transform="translate(540, 70)">
           <rect x="0" y="0" width="280" height="62" rx="10" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="5 4" filter="url(#shadowBox)"/>
           <rect x="14" y="14" width="30" height="30" rx="5" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
@@ -675,7 +679,6 @@
         </g>
         <path d="M 680 132 L 680 152 L 535 152 L 535 175" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.5" stroke-dasharray="4 4"/>
 
-        <!-- Avatar & Label -->
         <circle cx="458" cy="180" r="14" fill="var(--bg-card, #ffffff)" stroke="var(--text-main, #0f172a)" stroke-width="2"/>
         <text x="458" y="186" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">2</text>
 
@@ -691,7 +694,6 @@
         <text x="500" y="254" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">${data.node2.role}</text>
         <text x="500" y="271" fill="var(--text-muted, #475569)" font-size="11.5" font-weight="600" text-anchor="middle">${data.node2.sub}</text>
 
-        <!-- Mid Action 2 -->
         <g transform="translate(685, 190)">
           <circle cx="42" cy="13" r="13" fill="var(--text-main, #0f172a)"/>
           <path d="M 35 13 L 40 18 L 49 9" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -700,7 +702,6 @@
           <text x="42" y="67" fill="var(--text-muted, #475569)" font-size="11" font-weight="500" text-anchor="middle">${data.node2.actionDesc2}</text>
         </g>
 
-        <!-- Bottom Impact Box 2 -->
         <g transform="translate(420, 350)">
           <rect x="0" y="0" width="355" height="190" rx="12" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="6 5" filter="url(#shadowBox)"/>
           <g transform="translate(18, 24)">
@@ -721,8 +722,7 @@
           </g>
         </g>
 
-        <!-- ==================== NODE 3 ==================== -->
-        <!-- Top Callout -->
+        <!-- NODE 3 -->
         <g transform="translate(980, 70)">
           <rect x="0" y="0" width="290" height="62" rx="10" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="5 4" filter="url(#shadowBox)"/>
           <rect x="14" y="14" width="20" height="28" rx="3" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
@@ -733,7 +733,6 @@
         </g>
         <path d="M 1125 132 L 1125 152 L 1000 152 L 1000 175" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.5" stroke-dasharray="4 4"/>
 
-        <!-- Avatar & Label -->
         <circle cx="925" cy="180" r="14" fill="var(--bg-card, #ffffff)" stroke="var(--text-main, #0f172a)" stroke-width="2"/>
         <text x="925" y="186" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">3</text>
 
@@ -749,7 +748,6 @@
         <text x="965" y="254" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">${data.node3.role}</text>
         <text x="965" y="271" fill="var(--text-muted, #475569)" font-size="11.5" font-weight="600" text-anchor="middle">${data.node3.sub}</text>
 
-        <!-- Mid Action 3 -->
         <g transform="translate(1140, 190)">
           <circle cx="42" cy="13" r="13" fill="#10b981"/>
           <path d="M 35 13 L 39 17 L 49 8" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -758,7 +756,6 @@
           <text x="42" y="67" fill="var(--text-muted, #475569)" font-size="11" font-weight="500" text-anchor="middle">${data.node3.actionDesc2}</text>
         </g>
 
-        <!-- Bottom Impact Box 3 -->
         <g transform="translate(810, 350)">
           <rect x="0" y="0" width="355" height="190" rx="12" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="6 5" filter="url(#shadowBox)"/>
           <g transform="translate(18, 24)">
@@ -778,8 +775,7 @@
           </g>
         </g>
 
-        <!-- ==================== NODE 4 ==================== -->
-        <!-- Top Callout -->
+        <!-- NODE 4 -->
         <g transform="translate(1420, 70)">
           <rect x="0" y="0" width="290" height="62" rx="10" fill="var(--bg-card, #ffffff)" stroke="var(--box-dash, #64748b)" stroke-width="1.5" stroke-dasharray="5 4" filter="url(#shadowBox)"/>
           <rect x="14" y="14" width="30" height="20" rx="3" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
@@ -791,12 +787,10 @@
         </g>
         <path d="M 1565 132 L 1565 152 L 1495 152 L 1495 175" fill="none" stroke="var(--box-dash, #94a3b8)" stroke-width="1.5" stroke-dasharray="4 4"/>
 
-        <!-- Avatar & Label -->
         <circle cx="1435" cy="180" r="14" fill="var(--bg-card, #ffffff)" stroke="var(--text-main, #0f172a)" stroke-width="2"/>
         <text x="1435" y="186" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">4</text>
 
         <g transform="translate(1455, 160)">
-          <!-- Building -->
           <rect x="0" y="8" width="24" height="48" fill="#1e293b" rx="2"/>
           <rect x="4" y="14" width="4" height="4" fill="#38bdf8"/>
           <rect x="14" y="14" width="4" height="4" fill="#38bdf8"/>
@@ -804,7 +798,6 @@
           <rect x="14" y="24" width="4" height="4" fill="#38bdf8"/>
           <rect x="4" y="34" width="4" height="4" fill="#38bdf8"/>
           <rect x="14" y="34" width="4" height="4" fill="#38bdf8"/>
-          <!-- Monitor -->
           <rect x="28" y="22" width="30" height="22" rx="2" fill="#0f172a"/>
           <polyline points="32,38 38,30 44,34 52,26" fill="none" stroke="#22c55e" stroke-width="2"/>
           <line x1="43" y1="44" x2="43" y2="50" stroke="#0f172a" stroke-width="2"/>
@@ -813,7 +806,6 @@
         <text x="1495" y="254" fill="var(--text-main, #0f172a)" font-size="14" font-weight="800" text-anchor="middle">${data.node4.role}</text>
         <text x="1495" y="271" fill="var(--text-muted, #475569)" font-size="11.5" font-weight="600" text-anchor="middle">${data.node4.sub}</text>
 
-        <!-- Mid Action 4 -->
         <g transform="translate(1640, 190)">
           <rect x="25" y="4" width="28" height="7" rx="2" fill="#475569"/>
           <rect x="25" y="13" width="28" height="7" rx="2" fill="#475569"/>
@@ -823,7 +815,7 @@
           <text x="39" y="80" fill="var(--text-muted, #475569)" font-size="11" font-weight="500" text-anchor="middle">${data.node4.actionDesc2}</text>
         </g>
 
-        <!-- ==================== REGULATORY BODIES ==================== -->
+        <!-- REGULATORY BODIES -->
         <g transform="translate(1200, 350)">
           <rect x="0" y="0" width="570" height="190" rx="12" fill="var(--scenario-bg, #f8fafc)" stroke="var(--scenario-border, #cbd5e1)" stroke-width="1.8" filter="url(#shadowBox)"/>
           <g transform="translate(20, 18)">
@@ -847,14 +839,12 @@
       document.getElementById('svgContent').innerHTML = content;
     }
 
-    // Toggle Scenario Function
     function toggleScenario() {
       currentScenarioIndex = (currentScenarioIndex + 1) % scenarios.length;
       renderSvg();
       showToast(`Switched scenario to: ${scenarios[currentScenarioIndex].title}`);
     }
 
-    // Toggle Theme
     function toggleTheme() {
       const body = document.body;
       const currentTheme = body.getAttribute('data-theme');
@@ -864,7 +854,6 @@
       renderSvg();
     }
 
-    // Toggle Copy Drawer
     function toggleCopyDrawer() {
       const drawer = document.getElementById('copyDrawer');
       drawer.classList.toggle('active');
@@ -873,7 +862,6 @@
       }
     }
 
-    // Toast notification
     function showToast(msg) {
       const toast = document.getElementById('toastMsg');
       toast.innerText = msg;
@@ -883,7 +871,6 @@
       }, 3500);
     }
 
-    // Copy all slide text
     function copyAllText() {
       const text = `
 SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
@@ -918,27 +905,23 @@ SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
       });
     }
 
-    // Export High-Res 300 DPI PNG
     function exportHighResPNG() {
       showToast("⏳ Rendering High-Resolution 4K PNG for PowerPoint...");
-      const slide = document.getElementById('slideArea');
       const svgElement = document.getElementById('mainSvg');
       const serializer = new XMLSerializer();
       const svgString = serializer.serializeToString(svgElement);
 
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
-      const width = 3840; // 4K resolution
+      const width = 3840;
       const height = 1450;
       canvas.width = width;
       canvas.height = height;
 
-      // Draw background
       const isDark = document.body.getAttribute('data-theme') === 'dark';
       ctx.fillStyle = isDark ? '#111827' : '#ffffff';
       ctx.fillRect(0, 0, width, height);
 
-      // Draw Title Pill
       ctx.fillStyle = isDark ? '#1e293b' : '#0f172a';
       roundRect(ctx, 80, 50, 680, 80, 40, true, false);
       ctx.fillStyle = '#ffffff';
@@ -946,7 +929,6 @@ SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
       ctx.textAlign = 'center';
       ctx.fillText('STAKEHOLDERS & IMPACTS', 420, 104);
 
-      // Scenario Pill
       ctx.fillStyle = isDark ? '#172554' : '#eff6ff';
       roundRect(ctx, width - 820, 50, 740, 80, 40, true, false);
       ctx.fillStyle = '#2563eb';
@@ -958,7 +940,6 @@ SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
       ctx.textAlign = 'left';
       ctx.fillText(scenarios[currentScenarioIndex].headerLabel, width - 740, 100);
 
-      // Convert SVG to Image and draw to canvas
       const img = new Image();
       const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
       const URL = window.URL || window.webkitURL || window;
@@ -968,7 +949,6 @@ SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
         ctx.drawImage(img, 80, 180, width - 160, height - 220);
         URL.revokeObjectURL(blobURL);
 
-        // Download PNG
         const pngURL = canvas.toDataURL('image/png');
         const dlLink = document.createElement('a');
         dlLink.download = `SENTINEL_X_STAKEHOLDERS_IMPACTS_${scenarios[currentScenarioIndex].id.toUpperCase()}.png`;
@@ -982,7 +962,6 @@ SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
       img.src = blobURL;
     }
 
-    // Helper for rounded rectangles on Canvas
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
       if (typeof stroke === 'undefined') stroke = true;
       if (typeof radius === 'undefined') radius = 5;
@@ -1001,7 +980,6 @@ SENTINEL-X: STAKEHOLDERS & OPERATIONAL IMPACTS (SIH 2026 / PS 26223)
       if (stroke) ctx.stroke();
     }
 
-    // Initial render
     window.addEventListener('DOMContentLoaded', () => {
       renderSvg();
     });

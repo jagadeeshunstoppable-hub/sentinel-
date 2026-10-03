@@ -122,22 +122,21 @@
         </div>
 
         <!-- Navigation Links -->
-        <nav class="hidden lg:flex items-center space-x-7 text-xs font-medium text-slate-300">
-            <a href="#core-features" class="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">Core Features</a>
-            <a href="#architecture" class="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">Hardware Architecture</a>
-            <a href="#how-it-thinks" class="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">Disaster Readiness</a>
-            <a href="#comms-failover" class="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">Edge Resilience</a>
-            <a href="#sync-section" class="hover:text-emerald-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">Digital Twin</a>
-            <a href="#replay-section" class="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">Recovery Timeline</a>
+        <nav class="hidden xl:flex items-center space-x-5 text-xs font-medium text-slate-300">
+            <a href="civilian/index.html" class="hover:text-rose-400 transition-colors focus-visible:ring-2 focus-visible:ring-rose-500 rounded px-1 py-0.5 font-semibold text-rose-300">🚨 Civilian CAD</a>
+            <a href="app.html" class="hover:text-emerald-400 transition-colors focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5 font-semibold text-emerald-300">🏭 Industrial Twin</a>
+            <a href="auth.html" class="hover:text-cyan-400 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 rounded px-1 py-0.5">🔐 RBAC Portal</a>
+            <a href="project-workflow.html" class="hover:text-amber-400 transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 rounded px-1 py-0.5">📋 Architecture</a>
+            <a href="stakeholders-impacts.html" class="hover:text-purple-400 transition-colors focus-visible:ring-2 focus-visible:ring-purple-500 rounded px-1 py-0.5">👥 Impacts</a>
+            <a href="test-suite.html" class="hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-emerald-500 rounded px-1 py-0.5">🧪 QA Suite</a>
         </nav>
 
         <!-- Right System Status Badge & Enter Platform -->
-        <!-- Right System Status Badge & Enter Platform -->
         <div class="flex items-center space-x-2 sm:space-x-3">
-            <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs font-sans text-slate-300">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="font-mono text-[11px] text-emerald-400">HARDWARE READY</span>
-            </div>
+            <a href="auth.html" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700/90 border border-cyan-500/40 text-cyan-300 font-sans text-xs font-semibold tracking-wide transition-all shadow-sm">
+                <span>🔐</span>
+                <span>RBAC LOGIN</span>
+            </a>
 
             <a href="civilian/index.html" class="px-3 py-2 rounded-lg bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-sans text-xs font-bold tracking-wide transition-all active:scale-95 shadow-md flex items-center space-x-1.5 cursor-pointer">
                 <span>🚨 CIVILIAN (108/112)</span>
@@ -148,8 +147,38 @@
                 <span>🏭 INDUSTRIAL TWIN</span>
                 <span>→</span>
             </a>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button onclick="document.getElementById('mobile-nav-drawer').classList.toggle('hidden')" class="xl:hidden p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
         </div>
     </header>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div id="mobile-nav-drawer" class="hidden xl:hidden fixed inset-x-0 top-[73px] z-50 bg-[#111315]/95 border-b border-white/10 backdrop-blur-xl p-5 shadow-2xl transition-all space-y-3">
+        <div class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2">Platform Navigation Hub</div>
+        <div class="grid grid-cols-2 gap-2 text-xs font-medium">
+            <a href="civilian/index.html" class="p-3 rounded-lg bg-rose-950/40 border border-rose-500/40 text-rose-300 font-bold flex items-center gap-2">
+                <span>🚨</span> Civilian Emergency
+            </a>
+            <a href="app.html" class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-2">
+                <span>🏭</span> Industrial 3D Twin
+            </a>
+            <a href="auth.html" class="p-3 rounded-lg bg-cyan-950/40 border border-cyan-500/40 text-cyan-300 font-bold flex items-center gap-2">
+                <span>🔐</span> RBAC Auth Portal
+            </a>
+            <a href="project-workflow.html" class="p-3 rounded-lg bg-amber-950/40 border border-amber-500/40 text-amber-300 font-bold flex items-center gap-2">
+                <span>📋</span> Operational Workflow
+            </a>
+            <a href="stakeholders-impacts.html" class="p-3 rounded-lg bg-purple-950/40 border border-purple-500/40 text-purple-300 font-bold flex items-center gap-2">
+                <span>👥</span> Stakeholders &amp; ROI
+            </a>
+            <a href="test-suite.html" class="p-3 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 font-bold flex items-center gap-2">
+                <span>🧪</span> System Test Suite
+            </a>
+        </div>
+    </div>
 
     <!-- ======================================================== -->
     <!-- SCREEN 1: THE PRODUCT HERO (Asymmetric 40/60 Composition)  -->
@@ -231,6 +260,26 @@
                                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                                 <span>Digital Twin Live (14ms)</span>
                             </div>
+                        </a>
+                    </div>
+
+                    <!-- INTEGRATED PLATFORM QUICK-LINKS -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-sans">
+                        <a href="auth.html" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-cyan-500/30 text-cyan-300 flex items-center justify-center gap-1.5 transition-all">
+                            <span>🔐</span>
+                            <span class="font-semibold">RBAC Login</span>
+                        </a>
+                        <a href="project-workflow.html" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-amber-500/30 text-amber-300 flex items-center justify-center gap-1.5 transition-all">
+                            <span>📋</span>
+                            <span class="font-semibold">Workflow</span>
+                        </a>
+                        <a href="stakeholders-impacts.html" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-purple-500/30 text-purple-300 flex items-center justify-center gap-1.5 transition-all">
+                            <span>👥</span>
+                            <span class="font-semibold">Impacts</span>
+                        </a>
+                        <a href="test-suite.html" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-emerald-500/30 text-emerald-300 flex items-center justify-center gap-1.5 transition-all">
+                            <span>🧪</span>
+                            <span class="font-semibold">QA Suite</span>
                         </a>
                     </div>
 
