@@ -1,0 +1,23 @@
+========================================================================
+SENTINEL-X ANDROID APPLICATION — CHANGELOG
+========================================================================
+
+Version 1.0.0 (October 2026)
+------------------------------------------------------------------------
+* Initial Production Android Release of SENTINEL-X.
+* DUAL OPERATIONAL ARCHITECTURE:
+  - Civilian Emergency Response & CAD Dispatch Platform (108 / 112 TN).
+  - Industrial Safety & 3D Spatial Digital Twin Platform (SCADA/IoT).
+* MOBILE NATIVE CAPABILITIES:
+  - 1-Tap SOS Emergency Beacon with instant auditory and visual feedback.
+  - Multilingual Speech-to-Text Voice Intake (Tamil, English, Hindi).
+  - Real-time GPS Geolocation integration with landmark verification fallback.
+  - Interactive Leaflet GIS mapping with live vehicle tracking and rerouting.
+  - Three.js WebGL 3D Spatial Facility Twin with full touch orbit/pan/zoom.
+  - Android Hardware Back Button bridge preventing accidental emergency session drops.
+  - High-Contrast Elderly/Easy Mode with large touch targets (>48px).
+  - Official Adaptive Launcher Icon & Splash Screen branding.
+* ZERO REGRESSION:
+  - Web application and industrial backend logic strictly preserved.
+  - Responsive reflow verified across phone, tablet, and desktop viewports.
+========================================================================

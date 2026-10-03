@@ -12,10 +12,15 @@ scratch/
 .agents/
 sentinel-x-frontend/
 *.zip
+*.apk
 *.tar.gz
 *.7z
 *.bak
 *.tmp
+.gradle/
+android/app/build/
+android/.gradle/
+www/
 
 # ------------------------------------------------------------
 # Large Binary / Media Files (tracked via Git LFS or excluded)

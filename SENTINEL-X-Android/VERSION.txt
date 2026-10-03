@@ -1,0 +1,10 @@
+SENTINEL-X Android Application
+Version: 1.0.0
+Build: Release Debug APK
+Target SDK: 34 (Android 14)
+Minimum SDK: 22 (Android 5.1+)
+Package ID: com.sentinelx.emergency
+Build Date: October 2026
+Architecture: Universal (ARM64, ARMv7, x86_64)
+Built with: Capacitor 6.2 + Android SDK 34 + OpenJDK 17
+Official Branding: Multi-sector Intelligence & Integrated Rescue

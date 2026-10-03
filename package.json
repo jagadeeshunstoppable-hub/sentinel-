@@ -1,0 +1,22 @@
+{
+  "name": "sentinel-x-android",
+  "version": "1.0.0",
+  "description": "SENTINEL-X Android Application — Dual Operational Disaster Intelligence Platform",
+  "main": "index.html",
+  "scripts": {
+    "prepare:www": "powershell -ExecutionPolicy Bypass -File ./scripts/prepare_www.ps1",
+    "cap:sync": "npx cap sync android",
+    "build:apk": "powershell -ExecutionPolicy Bypass -File ./scripts/build_apk.ps1"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/geolocation": "^6.0.1",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
