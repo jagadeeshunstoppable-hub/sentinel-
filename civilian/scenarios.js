@@ -199,9 +199,9 @@ const CIVILIAN_SCENARIOS = {
     key: "chemical_fire",
     category: "catFire",
     title: {
-      en: "Ennore Industrial Estate Toxic Vapor Fire",
-      ta: "எண்ணூர் தொழில்துறை ரசாயன தீ மற்றும் நச்சுப் புகை",
-      hi: "एन्नोर औद्योगिक क्षेत्र में जहरीली गैस व आग"
+      en: "Factory Fire + Injured Person (Industrial Chemical Estate, Ennore)",
+      ta: "தொழிற்சாலை தீ விபத்து மற்றும் காயம் (எண்ணூர் தொழில்துறை)",
+      hi: "कारखाने में आग और घायल व्यक्ति (एन्नोर औद्योगिक क्षेत्र)"
     },
     language: "ta",
     caller: {
@@ -215,6 +215,11 @@ const CIVILIAN_SCENARIOS = {
       pin: "600057",
       coords: [13.2120, 80.3150]
     },
+    missingInfoCheck: {
+      en: "Chemical class identified: Hydrocarbon Solvent. Casualties: 4 trapped. Wind direction: West-Southwest. Evacuation radius: 500m.",
+      ta: "வேதியியல் வகை கண்டறியப்பட்டது: ஹைட்ரோகார்பன் கரைப்பான். காயமடைந்தோர்: 4 நபர்கள். காற்றின் திசை: தென்மேற்கு. வெளியேற்ற ஆரம்: 500 மீ.",
+      hi: "रासायनिक वर्ग पहचाना गया: हाइड्रोकार्बन सॉल्वेंट। हताहत: 4 व्यक्ति। हवा की दिशा: दक्षिण-पश्चिम।"
+    },
     voiceTranscript: [
       { speaker: "101/108", text: "தீயணைப்பு மற்றும் அவசர கட்டுப்பாட்டு அறை, சொல்லுங்கள்.", lang: "ta" },
       { speaker: "Caller", text: "ஐயா! ரசாயன குடோனில் தீப்பிடித்து வெடித்துவிட்டது! மஞ்சள் நிற நச்சுப் புகை கிளம்புகிறது!", lang: "ta" },
@@ -223,9 +228,9 @@ const CIVILIAN_SCENARIOS = {
     ],
     youSaidText: "ரசாயன குடோனில் தீப்பிடித்து நச்சுப்புகை கிளம்புகிறது. தொழிலாளர்கள் மயங்கி விழுந்துவிட்டனர்.",
     weUnderstoodSummary: {
-      en: "Industrial chemical flash fire with toxic hydrocarbon gas cloud and secondary vapor hazard.",
-      ta: "தொழில்துறை ரசாயன தீ விபத்து, நச்சு வாயு கசிவு மற்றும் தொழிலாளர்கள் மயக்கமடைந்த நிலை.",
-      hi: "रासायनिक गोदाम में आग, जहरीली गैस का रिसाव और बेहोश कर्मचारी।"
+      en: "Factory chemical flash fire with toxic vapor cloud, 4 casualties, and immediate Burn ICU + HAZMAT squad requirement.",
+      ta: "தொழிற்சாலை தீ விபத்து, நச்சு வாயு கசிவு, 4 தொழிலாளர்கள் காயம். உடனடி தீயணைப்பு + தீவிர சிகிச்சை ஆம்புலன்ஸ் தேவை.",
+      hi: "कारखाने में रासायनिक आग, जहरीली गैस का रिसाव, 4 घायल। तत्काल फायर और एम्बुलेंस की आवश्यकता।"
     },
     triage: {
       urgency: "CRITICAL",
@@ -242,7 +247,8 @@ const CIVILIAN_SCENARIOS = {
       ],
       aiReasoning: [
         { en: "HAZMAT containment + Burn ICU pre-alert triggered immediately", ta: "நச்சு வாயு தடுப்பு படை மற்றும் தீக்காய சிகிச்சை பிரிவு தயார் செய்யப்பட்டது" },
-        { en: "Downwind evacuation perimeter calculated via meteorological wind feed", ta: "காற்றடிக்கும் திசையை கணித்து பொதுமக்கள் பாதுகாப்பு எச்சரிக்கை அனுப்பப்பட்டது" }
+        { en: "Downwind evacuation perimeter calculated via meteorological wind feed", ta: "காற்றடிக்கும் திசையை கணித்து பொதுமக்கள் பாதுகாப்பு எச்சரிக்கை அனுப்பப்பட்டது" },
+        { en: "Dual dispatch: Specialized HAZMAT Fire Tender + Advanced Life Support Burns Ambulance", ta: "தீயணைப்பு மற்றும் தீவிர தீக்காய சிகிச்சை ஆம்புலன்ஸ் இரண்டும் ஒரே நேரத்தில் ஒதுக்கீடு" }
       ]
     },
     fleet: {
@@ -262,8 +268,20 @@ const CIVILIAN_SCENARIOS = {
       polyline: [
         [13.2000, 80.3000],
         [13.2050, 80.3080],
+        [13.2090, 80.3110],
         [13.2120, 80.3150]
       ],
+      reroutedPolyline: [
+        [13.2000, 80.3000],
+        [13.2030, 80.3030],
+        [13.2080, 80.3120],
+        [13.2120, 80.3150]
+      ],
+      blockageNote: {
+        en: "Main Port Road blocked by chemical smoke plume. Rerouted via Western Express Access Road (ETA saved: 1m 40s).",
+        ta: "துறைமுக சாலையில் புகை மூட்டம் காரணமாக மேற்கு புறவழிப்பாதையில் வண்டி திருப்பி விடப்பட்டுள்ளது (1 நிமிடம் 40 விநாடி மிச்சம்).",
+        hi: "मुख्य सड़क पर धुएं के कारण पश्चिमी बाईपास से नया रूट तैयार किया गया।"
+      },
       signalsPreempted: 2,
       greenCorridorRoad: "Ennore Port Access Highway"
     },

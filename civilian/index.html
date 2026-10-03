@@ -194,6 +194,13 @@
                 <i data-lucide="award" class="w-4 h-4"></i>
             </button>
 
+            <!-- Global Platform Switcher: Direct Route to Industrial Safety & Digital Twin -->
+            <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm">
+                <i data-lucide="factory" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span class="hidden sm:inline">🏭 Industrial Safety & SCADA →</span>
+                <span class="sm:hidden">🏭 Industrial</span>
+            </a>
+
             <!-- Gateway Exit -->
             <a href="../auth.html" title="Return to Portal Gateway" class="p-1.5 rounded-lg bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-700">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
@@ -312,7 +319,7 @@
     <!-- ZONE 2: Clean Map & Dynamic Route                       -->
     <!-- ZONE 3: Unit Match, Hospital Pre-alert, Vitals          -->
     <!-- ======================================================== -->
-    <main id="dispatcher-view-container" class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
+    <main id="dispatcher-view-container" class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-y-auto lg:overflow-hidden">
 
         <!-- ==================================================== -->
         <!-- ZONE 1: INCIDENTS & EXPLAINABLE AI (3 COLS)          -->
@@ -330,9 +337,9 @@
                 </div>
 
                 <select id="scenario-selector" onchange="switchScenario(this.value)" class="w-full text-xs font-medium bg-slate-50 border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    <option value="chemical_fire" selected>🚨 [PRIMARY DEMO] Factory Fire + Injured Person (Industrial Chemical Estate, Ennore)</option>
                     <option value="tamil_medical">Tamil Voice: Elderly Fall & Breathing Distress (Anna Nagar, Chennai)</option>
                     <option value="highway_accident">GST Road NH-48 Multi-Vehicle Collision (Sriperumbudur)</option>
-                    <option value="chemical_fire">Ennore Industrial Toxic Vapor Fire (Manali / Tiruvallur)</option>
                     <option value="kavaraipettai_flood">Kavaraipettai Railway Subway Flash Flood Submersion</option>
                     <option value="hindi_worker_cardiac">Hindi Voice: OMR IT Corridor Acute Cardiac Event</option>
                 </select>
@@ -353,7 +360,7 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <div class="text-[10px] text-slate-500 font-medium" id="lbl-caller-id">CALLER / INFORMANT</div>
-                            <div class="font-bold text-slate-800 text-xs" id="caller-name">Senthil Kumar (செந்தில்)</div>
+                            <div class="font-bold text-slate-800 text-xs" id="caller-name">முருகேசன் (Plant Safety Supervisor)</div>
                         </div>
                         <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">± 4.8m GPS</span>
                     </div>
@@ -361,7 +368,7 @@
                     <div class="border-t border-slate-200 pt-1.5">
                         <div class="text-[10px] text-slate-500 font-medium" id="lbl-landmark-title">LANDMARK & ADDRESS</div>
                         <div class="text-blue-900 font-semibold text-xs leading-snug" id="caller-address">
-                            Near Roundtana, 4th Avenue, Anna Nagar West, Chennai (600040)
+                            Near Ennore Creek Bridge, Manali Industrial Park, Chennai
                         </div>
                     </div>
                 </div>
@@ -374,6 +381,44 @@
                     </div>
                     <div id="transcript-box" class="h-24 overflow-y-auto bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs text-slate-700 leading-relaxed space-y-1">
                         <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Structured Incident Extraction & Missing Information Check -->
+            <div class="service-card rounded-xl p-3.5 space-y-2">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-700"></i>
+                        <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider">2. EXTRACTION & CLARIFICATION</h2>
+                    </div>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300" id="badge-info-status">VERIFIED</span>
+                </div>
+
+                <div class="space-y-1.5 text-xs">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                            <span class="text-[10px] text-slate-500 font-medium block">GPS / LOCATION:</span>
+                            <span class="font-bold text-emerald-700 flex items-center gap-1">
+                                <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Confirmed (±4.8m)
+                            </span>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                            <span class="text-[10px] text-slate-500 font-medium block">CALLER VERIFICATION:</span>
+                            <span class="font-bold text-emerald-700 flex items-center gap-1">
+                                <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Safety Supervisor
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50/70 p-2.5 rounded-lg border border-blue-200 space-y-1">
+                        <div class="text-[10px] font-bold text-blue-900 uppercase flex items-center gap-1">
+                            <i data-lucide="search" class="w-3 h-3 text-blue-600"></i>
+                            <span>CRITICAL INCIDENT CLARIFICATIONS</span>
+                        </div>
+                        <div class="text-xs text-blue-950 font-medium leading-relaxed" id="val-missing-info-detail">
+                            Chemical class identified: Hydrocarbon Solvent. Casualties: 4 trapped. Wind direction: West-Southwest. Evacuation radius: 500m.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -449,11 +494,30 @@
 
                         <!-- Map Quick Action Buttons -->
                         <div class="bg-white/95 p-1 rounded-lg border border-slate-300 shadow-sm flex items-center space-x-1">
+                            <button onclick="triggerDynamicReroute()" id="btn-trigger-reroute" title="Simulate Dynamic Rerouting & Blockage" class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold flex items-center gap-1">
+                                <i data-lucide="refresh-cw" class="w-3 h-3 text-amber-600"></i>
+                                <span class="hidden sm:inline">Reroute Demo</span>
+                                <span class="sm:hidden">Reroute</span>
+                            </button>
                             <button onclick="recenterMap('incident')" title="Center on Incident" class="px-2 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">Incident</button>
                             <button onclick="recenterMap('ambulance')" title="Center on Ambulance" class="px-2 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">Ambulance</button>
                             <button onclick="recenterMap('hospital')" title="Center on Hospital" class="px-2 py-1 rounded text-xs text-slate-700 hover:bg-slate-100 font-medium">Hospital</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Dynamic Rerouting Alert Banner (Shown during blockage / reroute) -->
+                <div id="reroute-alert-banner" class="hidden absolute top-14 left-3 right-3 z-[400] bg-amber-500 text-slate-950 p-2.5 rounded-xl border border-amber-600 shadow-lg flex items-center justify-between text-xs font-bold transition-all">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-base">⚠</span>
+                        <div>
+                            <div class="uppercase tracking-wide font-extrabold text-[10px] text-amber-950">DYNAMIC REROUTE ADAPTATION (DEMO REROUTING)</div>
+                            <div id="reroute-alert-text" class="text-xs font-semibold text-slate-900">Main Port Road blocked by smoke. Rerouted via Western Express Access Road (Saved: 1m 40s).</div>
+                        </div>
+                    </div>
+                    <button onclick="dismissRerouteBanner()" class="px-2 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold">
+                        DISMISS
+                    </button>
                 </div>
 
                 <!-- Leaflet Interactive Map -->
@@ -877,13 +941,14 @@
 
         // System State
         let currentLang = localStorage.getItem('sentinel_lang') || 'ta';
-        let currentScenarioKey = 'tamil_medical';
+        let currentScenarioKey = 'chemical_fire';
         let currentUiMode = 'dispatcher'; // 'dispatcher' or 'citizen'
         let isEasyMode = false;
         let isHighContrast = false;
         let isJuryDemoActive = false;
         let juryDemoTimer = null;
         let currentStepNum = 1;
+        let hasRerouted = false;
 
         // Leaflet GIS Entities
         let map = null;
@@ -982,6 +1047,10 @@
             setElText('caller-address', sc.caller.landmark + ", " + sc.caller.locationName);
             setElText('citizen-loc-preview', sc.caller.locationName);
             setElText('badge-source', sc.caller.source);
+
+            // Render Missing Information Check / Incident Clarification
+            const missingInfo = sc.missingInfoCheck ? (sc.missingInfoCheck[currentLang] || sc.missingInfoCheck.en) : "All essential incident parameters verified via 108 CAD.";
+            setElText('val-missing-info-detail', missingInfo);
 
             const urgencyKey = sc.triage.urgency;
             setElText('badge-urgency-code', urgencyKey);
@@ -1181,6 +1250,12 @@
 
             ambulanceAnimationInterval = setInterval(() => {
                 progress += 0.04;
+
+                // Automatic dynamic reroute demonstration if scenario provides a bypass
+                if (sc.route.reroutedPolyline && progress >= 0.44 && !hasRerouted) {
+                    triggerDynamicReroute();
+                }
+
                 if (progress >= 1) {
                     clearInterval(ambulanceAnimationInterval);
                     ambulanceMarker.setLatLng(scene);
@@ -1203,6 +1278,42 @@
                 setElText('hud-eta-timer', `0${min}m ${s < 10 ? '0' : ''}${s}s`);
                 setElText('hud-dist-val', `${((1 - progress) * parseFloat(sc.fleet.distance)).toFixed(1)} km`);
             }, 300);
+        }
+
+        function triggerDynamicReroute() {
+            const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
+            if (!sc || !sc.route || !sc.route.reroutedPolyline) return;
+            hasRerouted = true;
+            playSynthesizedTone('alert');
+
+            // Replace active polyline with dynamic bypass route
+            if (map && routePolyline) {
+                map.removeLayer(routePolyline);
+                routePolyline = L.polyline(sc.route.reroutedPolyline, {
+                    color: '#d97706', // High-visibility Amber bypass
+                    weight: 6,
+                    opacity: 0.95,
+                    dashArray: '6, 6',
+                    lineJoin: 'round'
+                }).addTo(map);
+            }
+
+            // Display dynamic reroute alert banner
+            const banner = document.getElementById('reroute-alert-banner');
+            const alertText = document.getElementById('reroute-alert-text');
+            if (banner && alertText) {
+                const note = sc.route.blockageNote ? (sc.route.blockageNote[currentLang] || sc.route.blockageNote.en) : "Port Road blocked by hazardous plume. Rerouted via Western Express.";
+                alertText.textContent = note;
+                banner.classList.remove('hidden');
+            }
+
+            setElText('hud-status-text', 'REROUTED (மாற்று வழி)');
+            setElText('status-agency-med', 'REROUTED VIA BYPASS (SAVED 1m 40s)');
+        }
+
+        function dismissRerouteBanner() {
+            const banner = document.getElementById('reroute-alert-banner');
+            if (banner) banner.classList.add('hidden');
         }
 
         function sendHospitalPreAlert() {
@@ -1234,6 +1345,8 @@
 
         function resetIncidentState() {
             if (ambulanceAnimationInterval) clearInterval(ambulanceAnimationInterval);
+            hasRerouted = false;
+            dismissRerouteBanner();
             updateStepPill(1);
 
             const btn = document.getElementById('btn-dispatch-action');
@@ -1484,7 +1597,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             initMap();
             changeLanguage(currentLang);
-            switchScenario('tamil_medical');
+            switchScenario('chemical_fire');
         });
     </script>
 </body>
