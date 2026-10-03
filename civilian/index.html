@@ -1147,6 +1147,13 @@
                                 </span>
                                 <span class="text-[10px] font-bold text-emerald-700" id="status-agency-hosp">PRE-ALERT READY</span>
                             </div>
+
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                <span class="text-slate-800 font-medium flex items-center gap-1.5">
+                                    <span>🦺</span> <span id="lbl-agency-sdrf">State Disaster Response (SDRF)</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-amber-700" id="status-agency-sdrf">STANDBY (12 KM)</span>
+                            </div>
                         </div>
 
                         <!-- Functional Agency Coordination Actions (Section 31) -->
@@ -1600,6 +1607,7 @@
     <!-- EXTERNAL DATA SCRIPTS -->
     <script src="locales.js"></script>
     <script src="scenarios.js"></script>
+    <script src="../coordination-engine.js"></script>
 
     <!-- MASTER LOGIC -->
     <script>
@@ -2738,12 +2746,48 @@
             document.getElementById('compliance-modal').classList.add('hidden');
         }
 
+        // ========================================================
+        // 8. EMERGENCY COORDINATION CROSS-PLATFORM BRIDGE
+        // ========================================================
+        function syncIndustrialEmergencyEvent() {
+            if (!window.SentinelCoordination) return;
+            const activeEvent = window.SentinelCoordination.getActiveEvent();
+            if (!activeEvent || activeEvent.status === 'RESOLVED') return;
+
+            // Reflect in agencies status in #disp-coord
+            const medStatus = document.getElementById('status-agency-med');
+            const fireStatus = document.getElementById('status-agency-fire');
+            const polStatus = document.getElementById('status-agency-pol');
+            const hospStatus = document.getElementById('status-agency-hosp');
+            const sdrfStatus = document.getElementById('status-agency-sdrf');
+
+            const agencies = window.SentinelCoordination.getAgencies();
+            agencies.forEach(a => {
+                if (a.id === 'AGY-108' && medStatus) medStatus.textContent = a.status + ` (ETA ${a.eta})`;
+                if (a.id === 'AGY-101' && fireStatus) fireStatus.textContent = a.status + ` (ETA ${a.eta})`;
+                if (a.id === 'AGY-100' && polStatus) polStatus.textContent = a.status + ` (ETA ${a.eta})`;
+                if (a.id === 'AGY-HOSP' && hospStatus) hospStatus.textContent = a.status + ` (${a.capability})`;
+                if (a.id === 'AGY-SDRF' && sdrfStatus) sdrfStatus.textContent = a.status + ` (ETA ${a.eta})`;
+            });
+
+            showCivilianToast(`🚨 INDUSTRIAL DISASTER COORDINATION: ${activeEvent.incidentType} (${activeEvent.location}) - Public Safety CAD Active`);
+        }
+
         // Onload Initialization (Section 3)
         window.addEventListener('DOMContentLoaded', () => {
             initMap();
             changeLanguage(currentLang);
             switchScenario('chemical_fire');
             renderIncidentFeed();
+
+            // Check for cross-platform Industrial coordination event
+            syncIndustrialEmergencyEvent();
+            window.addEventListener('sentinel:coordination-updated', syncIndustrialEmergencyEvent);
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'sentinel_active_coordination_event') {
+                    syncIndustrialEmergencyEvent();
+                }
+            });
 
             // Default to Citizen mode unless URL explicitly requests dispatcher or easy mode
             const urlParams = new URLSearchParams(window.location.search);

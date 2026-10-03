@@ -24,7 +24,9 @@ $jsFiles = @(
     "satellite-globe-engine.js",
     "satellite-textures-data.js",
     "state-engine.js",
-    "fable-bridge.js"
+    "fable-bridge.js",
+    "rbac-engine.js",
+    "coordination-engine.js"
 )
 foreach ($f in $jsFiles) {
     if (Test-Path "$root\$f") {
@@ -97,4 +99,15 @@ foreach ($p in $pagesToPatch) {
     }
 }
 
-Write-Output "www staging directory assembled successfully!"
+# 5. Sync to Android Native assets/public directory
+$androidPublic = "$root\android\app\src\main\assets\public"
+if (Test-Path "$root\android") {
+    Write-Output "Syncing staging assets to Android Native container ($androidPublic)..."
+    if (Test-Path $androidPublic) {
+        Remove-Item -Path $androidPublic -Recurse -Force
+    }
+    Copy-Item -Path $www -Destination $androidPublic -Recurse -Force
+    Write-Output "Synced www to Android assets/public successfully!"
+}
+
+Write-Output "www staging directory and Android native assets assembled successfully!"
