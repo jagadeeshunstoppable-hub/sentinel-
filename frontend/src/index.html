@@ -132,14 +132,19 @@
         </nav>
 
         <!-- Right System Status Badge & Enter Platform -->
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3">
             <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs font-sans text-slate-300">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="font-mono text-[11px] text-emerald-400">HARDWARE READY</span>
             </div>
 
-            <button onclick="enterSentinelConsole()" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-sans text-xs font-bold tracking-wide transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 shadow-sm flex items-center space-x-1.5 cursor-pointer">
-                <span>ENTER SENTINEL-X CONSOLE</span>
+            <button onclick="enterSentinelConsole('civilian')" class="px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-sans text-xs font-bold tracking-wide transition-all active:scale-95 shadow-sm flex items-center space-x-1.5 cursor-pointer">
+                <span>CIVILIAN AI</span>
+                <span>→</span>
+            </button>
+
+            <button onclick="enterSentinelConsole('industrial')" class="px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-sans text-xs font-bold tracking-wide transition-all active:scale-95 shadow-sm flex items-center space-x-1.5 cursor-pointer">
+                <span>INDUSTRIAL SCADA</span>
                 <span>→</span>
             </button>
         </div>
@@ -180,13 +185,18 @@
                 </p>
 
                 <!-- Primary CTAs (Section 4 & 8) -->
-                <div class="flex flex-wrap items-center gap-4 pt-2">
-                    <button onclick="enterSentinelConsole()" class="px-6 py-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-sans text-xs font-bold tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/20 flex items-center space-x-2 active:scale-95 cursor-pointer">
-                        <span>ENTER SENTINEL-X CONSOLE</span>
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <button onclick="enterSentinelConsole('civilian')" class="px-5 py-3.5 rounded-lg bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-sans text-xs font-bold tracking-wider uppercase transition-all shadow-lg shadow-rose-600/30 flex items-center space-x-2 active:scale-95 cursor-pointer">
+                        <span>LAUNCH CIVILIAN (AI UC)</span>
                         <span>→</span>
                     </button>
 
-                    <a href="#core-features" class="px-5 py-3.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 font-sans text-xs font-semibold uppercase tracking-wider transition-all">
+                    <button onclick="enterSentinelConsole('industrial')" class="px-5 py-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-sans text-xs font-bold tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/20 flex items-center space-x-2 active:scale-95 cursor-pointer">
+                        <span>ENTER INDUSTRIAL SCADA</span>
+                        <span>→</span>
+                    </button>
+
+                    <a href="#core-features" class="px-4 py-3.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 font-sans text-xs font-semibold uppercase tracking-wider transition-all">
                         EXPLORE SYSTEM
                     </a>
                 </div>
@@ -1242,10 +1252,10 @@
         // ========================================================
         // 8. SECTION 8: ENTER SENTINEL-X CONSOLE TRANSITION
         // ========================================================
-        function enterSentinelConsole() {
+        function enterSentinelConsole(mode = 'industrial') {
             const modal = document.getElementById('console-transition-modal');
             if (!modal) {
-                window.location.href = 'auth.html';
+                window.location.href = `auth.html?mode=${mode}`;
                 return;
             }
 
@@ -1284,7 +1294,7 @@
             }, 900);
 
             setTimeout(() => {
-                window.location.href = 'auth.html';
+                window.location.href = `auth.html?mode=${mode}`;
             }, 1050);
         }
     </script>

@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#07090e] text-slate-100 antialiased selection:bg-rose-500 selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL-X | AI Civilian Emergency Response Platform</title>
+    <meta name="description" content="SENTINEL-X AI Emergency Response Platform — Autonomous CAD distress intake, clinical AI triage, unit selection, green corridor live routing, and hospital handover.">
+
+    <!-- Fonts: Inter, Sora & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Sora', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        civic: {
+                            950: '#07090e',
+                            900: '#0c0f17',
+                            850: '#111522',
+                            800: '#171c2d',
+                            700: '#232b42',
+                            600: '#343f5e'
+                        },
+                        alert: {
+                            red: '#f43f5e',
+                            orange: '#f97316',
+                            amber: '#f59e0b',
+                            green: '#10b981',
+                            cyan: '#06b6d4',
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Leaflet CSS & JS for Interactive Emergency GIS Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #07090e; }
+        ::-webkit-scrollbar-thumb { background: #232b42; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #343f5e; }
+
+        .glass-panel {
+            background: rgba(12, 15, 23, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .glass-panel-elevated {
+            background: rgba(17, 21, 34, 0.88);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .pulse-beacon {
+            box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
+            animation: pulse-ring 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.8); }
+            70% { transform: scale(1); box-shadow: 0 0 0 16px rgba(244, 63, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+        }
+
+        /* Leaflet Dark Filter */
+        .leaflet-container {
+            background: #090b10 !important;
+            font-family: inherit;
+        }
+        .dark-tile {
+            filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+        }
+
+        /* Radar scan effect */
+        @keyframes radar-sweep {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .radar-spinner {
+            animation: radar-sweep 4s linear infinite;
+        }
+    </style>
+</head>
+<body class="h-full bg-[#07090e] text-slate-100 font-sans flex flex-col overflow-hidden">
+
+    <!-- TOP GLOBAL APP BAR -->
+    <header class="h-14 border-b border-white/10 bg-[#0c0f17]/95 px-4 lg:px-6 flex items-center justify-between z-30 shrink-0">
+        <!-- Left: Brand & Mode Selector Indicator -->
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center shadow-lg shadow-rose-500/25">
+                    <i data-lucide="siren" class="w-4.5 h-4.5 text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-display font-extrabold text-sm tracking-tight text-white">SENTINEL-X</span>
+                        <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">CIVILIAN RESPONSE</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 hidden sm:block">AI AUTONOMOUS EMERGENCY DISPATCH & CLINICAL TRIAGE SYSTEM (UC)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Incident Phase Stepper Pill (Clickable) -->
+        <div class="hidden xl:flex items-center space-x-1 px-3 py-1 rounded-full bg-[#111522] border border-white/5 text-[11px] font-mono">
+            <div id="step-pill-1" class="phase-indicator px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">1. DISTRESS</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-2" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">2. INTAKE</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-3" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">3. AI TRIAGE</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-4" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">4. SEVERITY</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-5" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">5. UNIT SELECT</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-6" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">6. DISPATCH</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-7" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">7. ROUTING</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-8" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">8. HOSPITAL</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-9" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">9. MONITOR</div>
+            <span class="text-slate-600">→</span>
+            <div id="step-pill-10" class="phase-indicator px-2.5 py-0.5 rounded-full text-slate-400">10. RESOLUTION</div>
+        </div>
+
+        <!-- Right Action Controls -->
+        <div class="flex items-center space-x-2.5">
+            <!-- Demo Auto-Run Button -->
+            <button id="auto-demo-btn" onclick="toggleAutoDemo()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-mono text-xs font-bold transition-all shadow-md shadow-rose-600/30 flex items-center space-x-1.5 active:scale-95 cursor-pointer">
+                <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                <span id="demo-btn-label">SIMULATE AUTO DEMO</span>
+            </button>
+
+            <!-- Reset Scenario -->
+            <button onclick="resetCivilianState()" title="Reset Incident Cycle" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+
+            <!-- Mode Switcher Back to Industrial Safety Gateway -->
+            <a href="../auth.html" title="Switch to Industrial Platform or Gateway" class="px-2.5 py-1.5 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/30 text-xs font-mono font-medium flex items-center space-x-1.5 transition-all">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span class="hidden md:inline">PLATFORM SELECTOR</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN OPERATIONAL WORKSPACE (3-COLUMN LAYOUT) -->
+    <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
+
+        <!-- ========================================== -->
+        <!-- COLUMN 1: INTAKE, AUDIO & TRIAGE (3 Cols)   -->
+        <!-- ========================================== -->
+        <div class="col-span-12 lg:col-span-4 xl:col-span-3 flex flex-col gap-3 overflow-y-auto pr-1">
+
+            <!-- INCIDENT SCENARIO SELECTOR & PRESETS -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="radio" class="w-3.5 h-3.5 text-rose-400"></i>
+                        ACTIVE DISTRESS CHANNEL
+                    </span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold" id="channel-status">INCOMING CAD</span>
+                </div>
+
+                <select id="scenario-selector" onchange="loadScenario(this.value)" class="w-full text-xs font-medium bg-[#111522] border border-white/10 text-white rounded-lg px-2.5 py-2 focus:ring-1 focus:ring-rose-500 focus:outline-none">
+                    <option value="mva_trauma">Scenario A: Highway Multi-Vehicle Collision (Severe Entrapment)</option>
+                    <option value="cardiac_arrest">Scenario B: High-Rise Sudden Cardiac Arrest (BLS/ALS Priority)</option>
+                    <option value="chemical_fire">Scenario C: Warehouse Hazmat Flash Fire (Respiratory Distress)</option>
+                    <option value="flood_submersion">Scenario D: Urban Underpass Flash Flood Vehicle Submersion</option>
+                </select>
+            </div>
+
+            <!-- STEP 1 & 2: DISTRESS & INTAKE (Audio Waveform & Live Transcription) -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                        <h3 class="font-display font-bold text-xs text-white uppercase tracking-wider">1. DISTRESS & CALL INTAKE</h3>
+                    </div>
+                    <span class="text-[10px] font-mono text-emerald-400" id="call-duration">00:42 LIVE</span>
+                </div>
+
+                <!-- Geolocation & Caller Metadata -->
+                <div class="grid grid-cols-2 gap-2 text-[11px] font-mono bg-[#090c13] p-2.5 rounded-lg border border-white/5">
+                    <div>
+                        <div class="text-[9px] text-slate-500">CALLER ID</div>
+                        <div class="text-slate-200 font-semibold truncate" id="caller-name">Sarah M. (Cell)</div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-slate-500">TRIANGULATION</div>
+                        <div class="text-cyan-400 font-bold">± 4.2m GPS LOCK</div>
+                    </div>
+                    <div class="col-span-2">
+                        <div class="text-[9px] text-slate-500">SCENE ADDRESS</div>
+                        <div class="text-amber-300 truncate" id="caller-address">Industrial Outer Ring Road, KM 14.8</div>
+                    </div>
+                </div>
+
+                <!-- Audio Visualizer Canvas -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center text-[10px] font-mono text-slate-400">
+                        <span>EMERGENCY VOICE STREAM</span>
+                        <span class="text-rose-400 font-bold flex items-center gap-1">
+                            <i data-lucide="mic" class="w-3 h-3 text-rose-400"></i> 44.1 kHz CAD
+                        </span>
+                    </div>
+                    <div class="w-full h-12 bg-[#090c13] rounded-lg border border-white/5 overflow-hidden flex items-center justify-center relative">
+                        <canvas id="audio-waveform-canvas" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <!-- Real-time Speech-to-Text Transcription with Entity Highlights -->
+                <div class="space-y-1">
+                    <div class="text-[10px] font-mono text-slate-400 flex justify-between">
+                        <span>LIVE SPEECH-TO-TEXT AI EXTRACTION</span>
+                        <span class="text-cyan-400">NLP MODEL: SENTINEL-BIO-NER</span>
+                    </div>
+                    <div id="transcript-box" class="h-24 overflow-y-auto bg-[#090c13] p-2 rounded-lg border border-white/5 text-xs text-slate-300 font-mono leading-relaxed space-y-1">
+                        <!-- Streamed text dynamically filled -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3 & 4: AI TRIAGE & SEVERITY ASSESSMENT -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-3 flex-1">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="brain-circuit" class="w-4 h-4 text-purple-400"></i>
+                        <h3 class="font-display font-bold text-xs text-white uppercase tracking-wider">3. AI CLINICAL TRIAGE</h3>
+                    </div>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold">CONFIDENCE 98.4%</span>
+                </div>
+
+                <!-- Severity Score Box (ESI 1-5 + START Triage) -->
+                <div class="grid grid-cols-2 gap-2">
+                    <!-- ESI Rating -->
+                    <div class="bg-[#090c13] p-2.5 rounded-lg border border-white/5 space-y-1">
+                        <div class="text-[9px] font-mono text-slate-400 uppercase">EMERGENCY SEVERITY INDEX</div>
+                        <div class="flex items-center space-x-2">
+                            <span id="esi-badge" class="px-2 py-0.5 rounded text-xs font-mono font-extrabold bg-rose-600 text-white">ESI-1</span>
+                            <span id="esi-label" class="text-xs font-bold text-rose-400">RESUSCITATION</span>
+                        </div>
+                    </div>
+                    <!-- START Color Code -->
+                    <div class="bg-[#090c13] p-2.5 rounded-lg border border-white/5 space-y-1">
+                        <div class="text-[9px] font-mono text-slate-400 uppercase">START TRIAGE STATUS</div>
+                        <div class="flex items-center space-x-2">
+                            <span id="start-badge" class="w-3 h-3 rounded-full bg-rose-500 animate-ping"></span>
+                            <span id="start-label" class="text-xs font-bold text-rose-400">RED: IMMEDIATE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clinical Entity Extraction & Protocol -->
+                <div class="space-y-2 text-xs font-mono">
+                    <div class="bg-[#111522] p-2 rounded-lg border border-white/5 space-y-1">
+                        <div class="text-[9px] text-slate-400">DETECTED CLINICAL PRESENTATION</div>
+                        <div id="clinical-presentation" class="text-slate-200 font-sans text-xs">
+                            High-velocity rollover trauma, traumatic hypovolemic shock, bilateral chest compression, critical airway compromise.
+                        </div>
+                    </div>
+
+                    <div class="bg-[#111522] p-2 rounded-lg border border-white/5 space-y-1">
+                        <div class="text-[9px] text-slate-400">RECOMMENDED STANDARD PROTOCOL</div>
+                        <div id="protocol-sop" class="text-amber-400 font-bold">
+                            SOP-TRAUMA-04: Immediate Dual-Paramedic ALS + Heavy Hydraulic Rescue
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- COLUMN 2: TACTICAL MAP & LIVE ROUTING (6 Cols) -->
+        <!-- ========================================== -->
+        <div class="col-span-12 lg:col-span-8 xl:col-span-6 flex flex-col gap-3">
+
+            <!-- INTERACTIVE GIS EMERGENCY ROUTING MAP -->
+            <div class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1 relative min-h-[380px]">
+                
+                <!-- Map Top HUD Bar -->
+                <div class="absolute top-3 left-3 right-3 z-[400] flex items-center justify-between pointer-events-none">
+                    <!-- Left: GPS & Telemetry HUD -->
+                    <div class="bg-[#0c0f17]/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono flex items-center space-x-3 pointer-events-auto">
+                        <div class="flex items-center space-x-1.5 text-emerald-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="font-bold">CAD GIS ENGINE</span>
+                        </div>
+                        <span class="text-slate-600">|</span>
+                        <div class="text-slate-300">
+                            DESTINATION: <span id="map-target-name" class="text-white font-bold">METRO TRAUMA CENTER</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Green Corridor EVLS Signal Preemption Badge -->
+                    <div class="bg-[#0c0f17]/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-emerald-500/30 text-xs font-mono flex items-center space-x-2 pointer-events-auto">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400 animate-bounce"></i>
+                        <span class="text-emerald-400 font-bold">GREEN CORRIDOR ACTIVE</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">3 SIGNALS PREEMPTED</span>
+                    </div>
+                </div>
+
+                <!-- Leaflet Interactive Map Container -->
+                <div id="emergency-map" class="w-full h-full min-h-[360px]"></div>
+
+                <!-- Map Bottom HUD Bar (Route Telemetry & Progress) -->
+                <div class="bg-[#0c0f17]/95 border-t border-white/10 p-3 z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                    <div class="space-y-0.5">
+                        <div class="text-[9px] text-slate-500">DISPATCHED UNIT</div>
+                        <div class="text-rose-400 font-bold flex items-center gap-1.5">
+                            <i data-lucide="ambulance" class="w-3.5 h-3.5"></i>
+                            <span id="hud-unit-id">MEDIC-04 (ALS)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-0.5">
+                        <div class="text-[9px] text-slate-500">ESTIMATED ETA</div>
+                        <div class="text-emerald-400 font-extrabold text-sm" id="hud-eta">03 min 12 sec</div>
+                    </div>
+                    <div class="space-y-0.5">
+                        <div class="text-[9px] text-slate-500">DISTANCE REMAINING</div>
+                        <div class="text-slate-200 font-bold" id="hud-distance">1.8 km</div>
+                    </div>
+                    <div class="space-y-0.5">
+                        <div class="text-[9px] text-slate-500">CORRIDOR STATUS</div>
+                        <div class="text-cyan-400 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                            <span id="hud-traffic-status">LIGHTS OVERRIDDEN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5 & 6: EMERGENCY UNIT SELECTION & DISPATCH PANEL -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="truck" class="w-4 h-4 text-cyan-400"></i>
+                        <h3 class="font-display font-bold text-xs text-white uppercase tracking-wider">5. UNIT SELECTION & CAD DISPATCH</h3>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400">NEAREST FLEET OPTIMIZER</span>
+                </div>
+
+                <!-- Unit Fleet Matrix Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" id="unit-selection-container">
+                    <!-- Unit 1: Medic-04 (Selected) -->
+                    <div id="unit-card-1" class="p-2.5 rounded-lg border border-rose-500/50 bg-rose-950/20 space-y-1.5 cursor-pointer transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-white flex items-center gap-1">
+                                <i data-lucide="ambulance" class="w-3.5 h-3.5 text-rose-400"></i>
+                                MEDIC-04
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">PRIMARY ALS</span>
+                        </div>
+                        <div class="text-[11px] font-mono text-slate-300">Station 7 • 1.8 km • <span class="text-emerald-400 font-bold">ETA 3m 40s</span></div>
+                        <div class="text-[10px] text-slate-400">Lucas-3, Paramedic x2, IV Infusion</div>
+                    </div>
+
+                    <!-- Unit 2: Heavy Rescue-12 -->
+                    <div id="unit-card-2" class="p-2.5 rounded-lg border border-white/10 bg-[#090c13] space-y-1.5 cursor-pointer hover:border-amber-500/40 transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-white flex items-center gap-1">
+                                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i>
+                                RESCUE-12
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">EXTRICATION</span>
+                        </div>
+                        <div class="text-[11px] font-mono text-slate-300">Firehouse 12 • 2.6 km • <span class="text-amber-400 font-bold">ETA 5m 15s</span></div>
+                        <div class="text-[10px] text-slate-400">Jaws of Life, Hydraulic Cutters</div>
+                    </div>
+
+                    <!-- Unit 3: Air-Care 1 (Medevac) -->
+                    <div id="unit-card-3" class="p-2.5 rounded-lg border border-white/10 bg-[#090c13] space-y-1.5 cursor-pointer hover:border-cyan-500/40 transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-white flex items-center gap-1">
+                                <i data-lucide="plane" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                AIR-CARE 1
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold">MEDEVAC</span>
+                        </div>
+                        <div class="text-[11px] font-mono text-slate-300">Regional Helipad • 6.2 km • <span class="text-cyan-400 font-bold">ETA 7m 00s</span></div>
+                        <div class="text-[10px] text-slate-400">Critical Flight Surgeon on-board</div>
+                    </div>
+                </div>
+
+                <!-- Execution Dispatch Action Bar -->
+                <div class="flex items-center justify-between pt-1">
+                    <div class="text-xs font-mono text-slate-400">
+                        CAD DISPATCH CODE: <span class="text-rose-400 font-bold" id="cad-code">CODE-3 HIGH PRIORITY</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button id="dispatch-action-btn" onclick="executeDispatch()" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold tracking-wide transition-all shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 active:scale-95 cursor-pointer">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            <span id="dispatch-btn-text">AUTHORIZE CAD DISPATCH</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- COLUMN 3: HOSPITAL, VITALS & RESOLUTION (3 Cols) -->
+        <!-- ========================================== -->
+        <div class="col-span-12 xl:col-span-3 flex flex-col gap-3 overflow-y-auto pl-1">
+
+            <!-- STEP 8: HOSPITAL / DESTINATION PRE-ALERT -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="cross" class="w-4 h-4 text-emerald-400"></i>
+                        <h3 class="font-display font-bold text-xs text-white uppercase tracking-wider">8. HOSPITAL DESTINATION</h3>
+                    </div>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold" id="trauma-bay-status">BAY 1 RESERVED</span>
+                </div>
+
+                <!-- Hospital Target Card -->
+                <div class="bg-[#090c13] p-3 rounded-lg border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="font-bold text-xs text-white" id="hospital-name">METRO GENERAL TRAUMA CENTER</div>
+                        <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">LEVEL 1 TRAUMA</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1.5 text-center font-mono">
+                        <div class="bg-[#111522] p-1.5 rounded">
+                            <div class="text-[8px] text-slate-500">ER BEDS</div>
+                            <div class="text-xs font-bold text-emerald-400">4 AVAIL</div>
+                        </div>
+                        <div class="bg-[#111522] p-1.5 rounded">
+                            <div class="text-[8px] text-slate-500">TRAUMA BAY</div>
+                            <div class="text-xs font-bold text-rose-400">READY</div>
+                        </div>
+                        <div class="bg-[#111522] p-1.5 rounded">
+                            <div class="text-[8px] text-slate-500">CT SCANNER</div>
+                            <div class="text-xs font-bold text-cyan-400">STANDBY</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transmit Telemedicine Pre-alert -->
+                <button onclick="transmitPreAlert()" id="prealert-btn" class="w-full py-1.5 rounded bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all">
+                    <i data-lucide="radio-tower" class="w-3.5 h-3.5"></i>
+                    <span>TRANSMIT PRE-ARRIVAL FHIR PACKET</span>
+                </button>
+            </div>
+
+            <!-- STEP 9: CONTINUOUS EN-ROUTE MONITORING & VITALS -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="activity" class="w-4 h-4 text-rose-400"></i>
+                        <h3 class="font-display font-bold text-xs text-white uppercase tracking-wider">9. EN-ROUTE MONITORING</h3>
+                    </div>
+                    <span class="text-[10px] font-mono text-emerald-400 animate-pulse">● LIVE TELEMETRY</span>
+                </div>
+
+                <!-- Animated ECG Heart Rhythm Waveform -->
+                <div class="bg-[#090c13] p-2 rounded-lg border border-white/5 space-y-1">
+                    <div class="flex justify-between items-center text-[10px] font-mono text-slate-400">
+                        <span>LEAD II ECG TELEMETRY</span>
+                        <span class="text-emerald-400 font-bold" id="ecg-rhythm">SINUS TACHYCARDIA</span>
+                    </div>
+                    <div class="h-14 bg-[#05070a] rounded overflow-hidden relative">
+                        <canvas id="ecg-canvas" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <!-- Patient Vitals Matrix -->
+                <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                    <div class="bg-[#090c13] p-2 rounded-lg border border-white/5">
+                        <div class="text-[9px] text-slate-500">HEART RATE</div>
+                        <div class="text-sm font-extrabold text-rose-400 flex items-center justify-between">
+                            <span id="vital-hr">118</span>
+                            <span class="text-[9px] font-normal text-slate-400">BPM</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#090c13] p-2 rounded-lg border border-white/5">
+                        <div class="text-[9px] text-slate-500">SPO2 BLOOD OXYGEN</div>
+                        <div class="text-sm font-extrabold text-cyan-400 flex items-center justify-between">
+                            <span id="vital-spo2">93%</span>
+                            <span class="text-[9px] font-normal text-slate-400">O2</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#090c13] p-2 rounded-lg border border-white/5">
+                        <div class="text-[9px] text-slate-500">BLOOD PRESSURE</div>
+                        <div class="text-sm font-extrabold text-amber-400 flex items-center justify-between">
+                            <span id="vital-bp">95/62</span>
+                            <span class="text-[9px] font-normal text-slate-400">mmHg</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#090c13] p-2 rounded-lg border border-white/5">
+                        <div class="text-[9px] text-slate-500">GLASGOW COMA SCALE</div>
+                        <div class="text-sm font-extrabold text-purple-400 flex items-center justify-between">
+                            <span id="vital-gcs">E3V4M6 (13)</span>
+                            <span class="text-[9px] font-normal text-slate-400">GCS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 10: INCIDENT RESOLUTION & HANDOVER -->
+            <div class="glass-panel rounded-xl p-3.5 space-y-3 flex-1 flex flex-col justify-between">
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                            <h3 class="font-display font-bold text-xs text-white uppercase tracking-wider">10. INCIDENT RESOLUTION</h3>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="handover-status">PENDING ARRIVAL</span>
+                    </div>
+
+                    <div class="text-xs font-mono bg-[#090c13] p-2.5 rounded-lg border border-white/5 space-y-1.5">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">INCIDENT ID</span>
+                            <span class="text-slate-200 font-bold" id="res-cad-id">CAD-2026-0948</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">RECEIVING DOCTOR</span>
+                            <span class="text-slate-200 font-semibold" id="res-dr-name">Dr. R. Vance, MD (Attending)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">HANDOVER STATUS</span>
+                            <span class="text-emerald-400 font-bold" id="res-stage">IN TRANSPORT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Action Buttons -->
+                <div class="space-y-2 pt-2">
+                    <button onclick="completeHandover()" id="handover-btn" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-all shadow-md shadow-emerald-600/30 flex items-center justify-center space-x-2 cursor-pointer active:scale-95">
+                        <i data-lucide="file-check" class="w-4 h-4"></i>
+                        <span>EXECUTE HOSPITAL HANDOVER</span>
+                    </button>
+
+                    <button onclick="downloadReport()" class="w-full py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs font-medium border border-white/5 flex items-center justify-center space-x-1.5 transition-colors">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>EXPORT CAD INCIDENT DEBRIEF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RESOLUTION SUMMARY MODAL (SHOWN ON HANDOVER COMPLETION) -->
+    <div id="resolution-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel-elevated w-full max-w-lg rounded-2xl p-6 space-y-5 border border-emerald-500/40">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-base text-white">EMERGENCY INCIDENT RESOLVED</h2>
+                        <p class="text-[11px] font-mono text-emerald-400">HANDOVER VERIFIED • CAD TICKET CLOSED</p>
+                    </div>
+                </div>
+                <button onclick="closeResolutionModal()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 font-mono text-xs bg-[#090c13] p-4 rounded-xl border border-white/5">
+                <div class="flex justify-between border-b border-white/5 pb-1.5">
+                    <span class="text-slate-500">Total Response Time:</span>
+                    <span class="text-emerald-400 font-bold">06m 42s (Benchmark: 08m 00s)</span>
+                </div>
+                <div class="flex justify-between border-b border-white/5 pb-1.5">
+                    <span class="text-slate-500">Green Corridor Savings:</span>
+                    <span class="text-cyan-400 font-bold">2m 18s Preemption Advantage</span>
+                </div>
+                <div class="flex justify-between border-b border-white/5 pb-1.5">
+                    <span class="text-slate-500">Triage Accuracy:</span>
+                    <span class="text-white font-bold">100% Match (ESI-1 Trauma Protocol)</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Receiving Physician:</span>
+                    <span class="text-white font-bold">Dr. R. Vance (Trauma Attending)</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="closeResolutionModal(); resetCivilianState();" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold shadow-lg shadow-rose-600/30 transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>START NEXT INCIDENT INTAKE</span>
+                </button>
+                <button onclick="closeResolutionModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs font-medium border border-white/10">
+                    CLOSE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO CHIME (SYNTHESIZED VIA WEB AUDIO API) & ENGINE SCRIPTS -->
+    <script>
+        // Initialize Lucide icons
+        if (window.lucide) lucide.createIcons();
+
+        // SCENARIOS DATABASE (10-STEP LIFECYCLE DATA)
+        const SCENARIOS = {
+            mva_trauma: {
+                title: "Highway Multi-Vehicle Collision",
+                caller: "Sarah M. (Cellular)",
+                address: "Industrial Outer Ring Road, KM 14.8",
+                coords: [19.0760, 72.8777],
+                transcript: [
+                    "911, what is your emergency?",
+                    "There's a massive crash on the ring road! Two cars and a heavy truck!",
+                    "Is anyone trapped or unresponsive?",
+                    "Yes, the driver of the blue sedan is trapped! Blood everywhere and they aren't answering!",
+                    "Understood. Starting emergency dispatch. Stay on the line."
+                ],
+                clinical: "High-velocity rollover trauma, traumatic hypovolemic shock, bilateral chest compression, critical airway compromise.",
+                protocol: "SOP-TRAUMA-04: Immediate Dual-Paramedic ALS + Heavy Hydraulic Rescue",
+                esi: "ESI-1",
+                esiLabel: "RESUSCITATION",
+                startColor: "RED: IMMEDIATE",
+                primaryUnit: "MEDIC-04 (ALS)",
+                hospital: "METRO GENERAL TRAUMA CENTER",
+                hospCoords: [19.0850, 72.8900],
+                vitals: { hr: 118, spo2: "93%", bp: "95/62", gcs: "E3V4M6 (13)", rhythm: "SINUS TACHYCARDIA" }
+            },
+            cardiac_arrest: {
+                title: "High-Rise Sudden Cardiac Arrest",
+                caller: "Security Desk (Building 4)",
+                address: "Titanium Tech Park, Tower B, 14th Floor",
+                coords: [19.0820, 72.8650],
+                transcript: [
+                    "911 Dispatch, report your emergency.",
+                    "A male employee collapsed in the cafeteria! No pulse detected!",
+                    "Is someone performing CPR?",
+                    "Security is starting chest compressions now. We need the defibrillator team fast!",
+                    "Units dispatched Code 3. Keep compressions continuous."
+                ],
+                clinical: "Sudden unwitnessed collapse, ventricular fibrillation risk, pulseless electrical activity suspected.",
+                protocol: "SOP-CARDIAC-01: Advanced Cardiac Life Support (ACLS) + Lucas CPR + Defibrillation",
+                esi: "ESI-1",
+                esiLabel: "CARDIAC ARREST",
+                startColor: "RED: IMMEDIATE",
+                primaryUnit: "MEDIC-02 (CARDIAC ALS)",
+                hospital: "ST. JUDE HEART & VASCULAR INSTITUTE",
+                hospCoords: [19.0910, 72.8720],
+                vitals: { hr: 154, spo2: "88%", bp: "70/40", gcs: "E1V1M1 (3)", rhythm: "VENTRICULAR FIBRILLATION" }
+            },
+            chemical_fire: {
+                title: "Warehouse Hazmat Flash Fire",
+                caller: "Plant Shift Supervisor",
+                address: "East Industrial Zone, Chemical Shed 9",
+                coords: [19.0680, 72.8950],
+                transcript: [
+                    "Emergency CAD, state your location.",
+                    "Chemical fire in Shed 9! Toluene drum ruptured and caught fire!",
+                    "Are toxic fumes venting?",
+                    "Yes, thick acrid orange vapor! Three workers coughing blood outside the perimeter!",
+                    "Dispatching Hazmat Response and Burn Critical Care units now."
+                ],
+                clinical: "Thermal flash burns (2nd & 3rd degree, 25% BSA), toxic aromatic hydrocarbon inhalation injury.",
+                protocol: "SOP-HAZMAT-09: Chemical Decontamination + Nebulized Bronchodilators + Burn Triage",
+                esi: "ESI-2",
+                esiLabel: "EMERGENT",
+                startColor: "YELLOW: DELAYED",
+                primaryUnit: "HAZMAT-01 + MEDIC-08",
+                hospital: "VALLEY BURN & CRITICAL CARE CENTER",
+                hospCoords: [19.0620, 72.8700],
+                vitals: { hr: 128, spo2: "91%", bp: "135/88", gcs: "E4V4M6 (14)", rhythm: "SINUS TACHYCARDIA" }
+            },
+            flood_submersion: {
+                title: "Urban Underpass Flash Flood Submersion",
+                caller: "Transit Camera Automated Alert",
+                address: "South Underpass Crossing, Metro Line 3",
+                coords: [19.0600, 72.8550],
+                transcript: [
+                    "Automated Flood Alert triggering.",
+                    "Water depth sensor exceeded 2.2 meters in underpass basin.",
+                    "Vehicle identified submerged with occupants waving on roof.",
+                    "Rapid current detected. Immediate swift water boat deployment required.",
+                    "Dispatching Water Rescue Unit 3."
+                ],
+                clinical: "Hypothermia risk, near-drowning / aspiration risk, physical entrapment above rising torrent.",
+                protocol: "SOP-WATER-03: Swiftwater Inflatable Rescue + Hypothermia Protocol",
+                esi: "ESI-2",
+                esiLabel: "LIFE THREAT IN PROGRESS",
+                startColor: "RED: IMMEDIATE",
+                primaryUnit: "WATER-RESCUE-03",
+                hospital: "METRO GENERAL TRAUMA CENTER",
+                hospCoords: [19.0850, 72.8900],
+                vitals: { hr: 104, spo2: "95%", bp: "110/70", gcs: "E4V5M6 (15)", rhythm: "SINUS RHYTHM" }
+            }
+        };
+
+        let currentScenarioKey = 'mva_trauma';
+        let currentStep = 1;
+        let isAutoDemoActive = false;
+        let autoDemoTimer = null;
+        let map = null;
+        let incidentMarker = null;
+        let ambulanceMarker = null;
+        let hospitalMarker = null;
+        let routePolyline = null;
+        let audioCtx = null;
+        let animWaveformId = null;
+        let animEcgId = null;
+
+        // INITIALIZE MAP (LEAFLET WITH DARK THEME)
+        function initEmergencyMap() {
+            const sc = SCENARIOS[currentScenarioKey];
+            map = L.map('emergency-map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([19.0760, 72.8777], 13);
+
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            // Dark CartoDB Tiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            renderMapEntities();
+        }
+
+        function renderMapEntities() {
+            if (!map) return;
+            const sc = SCENARIOS[currentScenarioKey];
+
+            if (incidentMarker) map.removeLayer(incidentMarker);
+            if (ambulanceMarker) map.removeLayer(ambulanceMarker);
+            if (hospitalMarker) map.removeLayer(hospitalMarker);
+            if (routePolyline) map.removeLayer(routePolyline);
+
+            // 1. Incident Distress Location Marker (Pulsing Red)
+            const incidentIcon = L.divIcon({
+                className: 'custom-incident-marker',
+                html: `<div class="relative flex items-center justify-center">
+                    <span class="w-8 h-8 rounded-full bg-rose-500/30 pulse-beacon absolute"></span>
+                    <span class="w-4 h-4 rounded-full bg-rose-600 border-2 border-white shadow-lg flex items-center justify-center text-[8px] text-white font-bold">!</span>
+                </div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
+            });
+            incidentMarker = L.marker(sc.coords, { icon: incidentIcon }).addTo(map);
+            incidentMarker.bindPopup(`<b style="color:#f43f5e">DISTRESS POINT:</b><br/>${sc.address}`);
+
+            // 2. Hospital Marker (Emerald Cross)
+            const hospIcon = L.divIcon({
+                className: 'custom-hosp-marker',
+                html: `<div class="w-7 h-7 rounded-lg bg-emerald-600 border border-white text-white flex items-center justify-center shadow-lg font-bold text-xs">H</div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
+            });
+            hospitalMarker = L.marker(sc.hospCoords, { icon: hospIcon }).addTo(map);
+            hospitalMarker.bindPopup(`<b style="color:#10b981">DESTINATION HOSPITAL:</b><br/>${sc.hospital}`);
+
+            // 3. Dispatched Emergency Unit Marker (Ambulance Moving)
+            const ambCoords = [sc.coords[0] - 0.015, sc.coords[1] - 0.018];
+            const ambIcon = L.divIcon({
+                className: 'custom-amb-marker',
+                html: `<div class="w-8 h-8 rounded-full bg-blue-600 border-2 border-cyan-400 text-white flex items-center justify-center shadow-xl shadow-blue-500/50">
+                    <span style="font-size:14px">🚑</span>
+                </div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
+            });
+            ambulanceMarker = L.marker(ambCoords, { icon: ambIcon }).addTo(map);
+
+            // 4. Calculated Green Corridor Polyline
+            const routePoints = [
+                ambCoords,
+                [ambCoords[0] + 0.005, ambCoords[1] + 0.007],
+                [ambCoords[0] + 0.010, ambCoords[1] + 0.012],
+                sc.coords,
+                [sc.coords[0] + 0.004, sc.coords[1] + 0.006],
+                sc.hospCoords
+            ];
+
+            routePolyline = L.polyline(routePoints, {
+                color: '#06b6d4',
+                weight: 4,
+                opacity: 0.85,
+                dashArray: '8, 8',
+                lineJoin: 'round'
+            }).addTo(map);
+
+            map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+        }
+
+        // WEB AUDIO API SYNTHESIZER (DISPATCH CHIMES & ALERTS)
+        function playChime(type) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'dispatch') {
+                    // Two-tone CAD Alert (880Hz -> 1760Hz)
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.setValueAtTime(1760, now + 0.15);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                } else if (type === 'resolve') {
+                    // Pleasant Major Third Chord
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.12); // E5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio synthesized silently.");
+            }
+        }
+
+        // PROCEDURAL AUDIO WAVEFORM VISUALIZER
+        function startWaveformAnimation() {
+            const canvas = document.getElementById('audio-waveform-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let phase = 0;
+
+            function render() {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#f43f5e';
+                ctx.beginPath();
+
+                const sliceWidth = canvas.width / 50;
+                let x = 0;
+
+                for (let i = 0; i < 50; i++) {
+                    const amp = (Math.sin(i * 0.3 + phase) * Math.cos(i * 0.2 - phase * 0.7)) * (canvas.height * 0.35);
+                    const y = (canvas.height / 2) + amp;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                    x += sliceWidth;
+                }
+
+                ctx.stroke();
+                phase += 0.08;
+                animWaveformId = requestAnimationFrame(render);
+            }
+            render();
+        }
+
+        // PROCEDURAL ECG WAVEFORM VISUALIZER
+        function startEcgAnimation() {
+            const canvas = document.getElementById('ecg-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let offset = 0;
+
+            function render() {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.lineWidth = 1.8;
+                ctx.strokeStyle = '#10b981';
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+
+                const mid = canvas.height / 2;
+                for (let x = 0; x < canvas.width; x++) {
+                    const pos = (x + offset) % 180;
+                    let y = mid;
+
+                    // QRS complex waveform simulation
+                    if (pos > 80 && pos < 88) y = mid + 3; // P wave
+                    else if (pos >= 88 && pos < 94) y = mid - 4; // PR segment
+                    else if (pos >= 94 && pos < 98) y = mid + 6; // Q wave
+                    else if (pos >= 98 && pos < 106) y = mid - 26; // R wave (Spike)
+                    else if (pos >= 106 && pos < 112) y = mid + 10; // S wave
+                    else if (pos >= 112 && pos < 122) y = mid; // ST segment
+                    else if (pos >= 122 && pos < 134) y = mid - 6; // T wave
+
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+
+                ctx.stroke();
+                offset += 1.8;
+                animEcgId = requestAnimationFrame(render);
+            }
+            render();
+        }
+
+        // STREAM TRANSCRIPT TEXT
+        function streamTranscript(lines) {
+            const box = document.getElementById('transcript-box');
+            if (!box) return;
+            box.innerHTML = '';
+            lines.forEach((line, idx) => {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = idx % 2 === 0 ? 'text-slate-400' : 'text-cyan-300 font-semibold';
+                    p.textContent = line;
+                    box.appendChild(p);
+                    box.scrollTop = box.scrollHeight;
+                }, idx * 600);
+            });
+        }
+
+        // LOAD SCENARIO INTO UI
+        function loadScenario(key) {
+            const sc = SCENARIOS[key];
+            if (!sc) return;
+            currentScenarioKey = key;
+
+            document.getElementById('caller-name').textContent = sc.caller;
+            document.getElementById('caller-address').textContent = sc.address;
+            document.getElementById('clinical-presentation').textContent = sc.clinical;
+            document.getElementById('protocol-sop').textContent = sc.protocol;
+            document.getElementById('esi-badge').textContent = sc.esi;
+            document.getElementById('esi-label').textContent = sc.esiLabel;
+            document.getElementById('start-label').textContent = sc.startColor;
+            document.getElementById('hud-unit-id').textContent = sc.primaryUnit;
+            document.getElementById('hospital-name').textContent = sc.hospital;
+            document.getElementById('map-target-name').textContent = sc.hospital;
+
+            // Vitals
+            document.getElementById('vital-hr').textContent = sc.vitals.hr;
+            document.getElementById('vital-spo2').textContent = sc.vitals.spo2;
+            document.getElementById('vital-bp').textContent = sc.vitals.bp;
+            document.getElementById('vital-gcs').textContent = sc.vitals.gcs;
+            document.getElementById('ecg-rhythm').textContent = sc.vitals.rhythm;
+
+            streamTranscript(sc.transcript);
+            renderMapEntities();
+        }
+
+        // UPDATE PHASE STEPPER INDICATORS (1 to 10)
+        function updatePhaseStepper(phaseNum) {
+            currentStep = phaseNum;
+            for (let i = 1; i <= 10; i++) {
+                const el = document.getElementById(`step-pill-${i}`);
+                if (!el) continue;
+                if (i === phaseNum) {
+                    el.className = "phase-indicator px-2.5 py-0.5 rounded-full bg-rose-500 text-white font-extrabold shadow-md shadow-rose-500/30 border border-white/20";
+                } else if (i < phaseNum) {
+                    el.className = "phase-indicator px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30";
+                } else {
+                    el.className = "phase-indicator px-2.5 py-0.5 rounded-full text-slate-500";
+                }
+            }
+        }
+
+        // EXECUTE CAD DISPATCH (STEP 6)
+        function executeDispatch() {
+            playChime('dispatch');
+            updatePhaseStepper(6);
+
+            const btn = document.getElementById('dispatch-action-btn');
+            btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i><span>DISPATCHED - CODE 3 EN ROUTE</span>`;
+            btn.className = "px-4 py-2 rounded-lg bg-emerald-600 text-white font-mono text-xs font-bold flex items-center space-x-1.5";
+            if (window.lucide) lucide.createIcons();
+
+            document.getElementById('cad-code').textContent = "ACKNOWLEDGED (00:08s)";
+            document.getElementById('res-stage').textContent = "UNITS EN ROUTE";
+
+            // Animate ambulance moving towards distress point
+            animateAmbulanceRoute();
+        }
+
+        // ANIMATE AMBULANCE POSITION ALONG ROUTE (STEP 7)
+        function animateAmbulanceRoute() {
+            if (!ambulanceMarker) return;
+            updatePhaseStepper(7);
+
+            const sc = SCENARIOS[currentScenarioKey];
+            const start = [sc.coords[0] - 0.015, sc.coords[1] - 0.018];
+            const end = sc.coords;
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 0.05;
+                if (progress >= 1) {
+                    clearInterval(interval);
+                    ambulanceMarker.setLatLng(end);
+                    document.getElementById('hud-eta').textContent = "ON SCENE";
+                    document.getElementById('hud-distance').textContent = "0.0 km";
+                    updatePhaseStepper(8);
+                    return;
+                }
+                const curLat = start[0] + (end[0] - start[0]) * progress;
+                const curLng = start[1] + (end[1] - start[1]) * progress;
+                ambulanceMarker.setLatLng([curLat, curLng]);
+
+                const remMin = Math.max(0, Math.floor((1 - progress) * 3));
+                const remSec = Math.floor(((1 - progress) * 60) % 60);
+                document.getElementById('hud-eta').textContent = `0${remMin}m ${remSec < 10 ? '0' : ''}${remSec}s`;
+                document.getElementById('hud-distance').textContent = `${((1 - progress) * 1.8).toFixed(1)} km`;
+            }, 300);
+        }
+
+        // TRANSMIT PRE-ALERT (STEP 8)
+        function transmitPreAlert() {
+            playChime('dispatch');
+            updatePhaseStepper(8);
+
+            const btn = document.getElementById('prealert-btn');
+            btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i><span>FHIR TELEMETRY TRANSMITTED TO ER DESK</span>`;
+            btn.className = "w-full py-1.5 rounded bg-emerald-600 text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5";
+            if (window.lucide) lucide.createIcons();
+
+            document.getElementById('trauma-bay-status').textContent = "SURGEON ACKNOWLEDGED";
+            updatePhaseStepper(9);
+        }
+
+        // COMPLETE HANDOVER (STEP 10)
+        function completeHandover() {
+            playChime('resolve');
+            updatePhaseStepper(10);
+
+            document.getElementById('handover-status').textContent = "RESOLVED";
+            document.getElementById('res-stage').textContent = "HANDOVER COMPLETE";
+            document.getElementById('resolution-modal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeResolutionModal() {
+            document.getElementById('resolution-modal').classList.add('hidden');
+        }
+
+        function downloadReport() {
+            alert("CAD Debrief & HL7 FHIR Emergency Care Record compiled. Ready for dispatch archive.");
+        }
+
+        // RESET STATE
+        function resetCivilianState() {
+            updatePhaseStepper(1);
+            loadScenario(currentScenarioKey);
+            const btn = document.getElementById('dispatch-action-btn');
+            btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span id="dispatch-btn-text">AUTHORIZE CAD DISPATCH</span>`;
+            btn.className = "px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold tracking-wide transition-all shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 cursor-pointer";
+
+            const preBtn = document.getElementById('prealert-btn');
+            preBtn.innerHTML = `<i data-lucide="radio-tower" class="w-3.5 h-3.5"></i><span>TRANSMIT PRE-ARRIVAL FHIR PACKET</span>`;
+            preBtn.className = "w-full py-1.5 rounded bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all";
+
+            document.getElementById('trauma-bay-status').textContent = "BAY 1 RESERVED";
+            document.getElementById('handover-status').textContent = "PENDING ARRIVAL";
+            document.getElementById('res-stage').textContent = "IN TRANSPORT";
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // AUTOMATED 10-STEP DEMONSTRATION WIZARD (FOR EVALUATORS / JUDGES)
+        function toggleAutoDemo() {
+            if (isAutoDemoActive) {
+                isAutoDemoActive = false;
+                clearInterval(autoDemoTimer);
+                document.getElementById('demo-btn-label').textContent = "SIMULATE AUTO DEMO";
+                return;
+            }
+
+            isAutoDemoActive = true;
+            document.getElementById('demo-btn-label').textContent = "RUNNING DEMO...";
+            resetCivilianState();
+
+            let demoStep = 1;
+            autoDemoTimer = setInterval(() => {
+                demoStep++;
+                if (demoStep === 2) {
+                    updatePhaseStepper(2); // Intake
+                } else if (demoStep === 3) {
+                    updatePhaseStepper(3); // AI Triage
+                } else if (demoStep === 4) {
+                    updatePhaseStepper(4); // Severity
+                } else if (demoStep === 5) {
+                    updatePhaseStepper(5); // Unit selection
+                } else if (demoStep === 6) {
+                    executeDispatch(); // Dispatch
+                } else if (demoStep === 8) {
+                    transmitPreAlert(); // Hospital pre-alert
+                } else if (demoStep === 10) {
+                    completeHandover(); // Handover resolution
+                    clearInterval(autoDemoTimer);
+                    isAutoDemoActive = false;
+                    document.getElementById('demo-btn-label').textContent = "SIMULATE AUTO DEMO";
+                }
+            }, 2200);
+        }
+
+        // ON PAGE LOAD
+        window.addEventListener('DOMContentLoaded', () => {
+            initEmergencyMap();
+            loadScenario('mva_trauma');
+            startWaveformAnimation();
+            startEcgAnimation();
+            updatePhaseStepper(1);
+        });
+    </script>
+</body>
+</html>

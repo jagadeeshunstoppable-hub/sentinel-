@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENTINEL-X | Edge Disaster Security Gate | SIH 2026 PS-26223</title>
+    <title>SENTINEL-X | Security Gateway & Platform Selection | SIH 2026 PS-26223</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -77,36 +77,37 @@
         <div class="glass-card rounded-2xl p-8 border border-white/10 relative overflow-hidden laser-scan shadow-2xl">
             
             <!-- Card Header -->
-            <div class="text-center space-y-3 pb-6 border-b border-white/5">
-                <div class="inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 items-center justify-center border border-white/10 shadow-lg shadow-blue-500/20">
-                    <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+            <div class="text-center space-y-3 pb-5 border-b border-white/5">
+                <div id="brand-icon-box" class="inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 items-center justify-center border border-white/10 shadow-lg shadow-blue-500/20">
+                    <i id="brand-icon" data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold tracking-wider text-white">SENTINEL-X SECURITY GATE</h2>
-                <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold">EDGE DISASTER & SAFETY AUTHENTICATION GATEWAY</p>
+                <h2 id="gate-title" class="text-2xl font-extrabold tracking-wider text-white">SENTINEL-X SECURITY GATE</h2>
+                <p id="gate-subtitle" class="text-xs uppercase tracking-widest text-cyan-400 font-bold">EDGE DISASTER & SAFETY AUTHENTICATION GATEWAY</p>
             </div>
 
             <!-- Login View -->
-            <div id="login-view" class="pt-6 space-y-6">
-                <!-- Role Selector -->
+            <div id="login-view" class="pt-5 space-y-5">
+                
+                <!-- OPERATIONAL MODE SELECTOR (ISOLATION LAYER) -->
+                <div class="space-y-1.5">
+                    <label class="text-[11px] uppercase tracking-wider font-bold text-slate-300">Choose Operational Platform</label>
+                    <div class="grid grid-cols-2 gap-2.5 p-1 bg-black/40 rounded-xl border border-white/10" id="platform-mode-selector">
+                        <button type="button" onclick="selectMode('civilian')" id="btn-mode-civilian" class="py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all border border-transparent text-slate-400 hover:text-white">
+                            <i data-lucide="siren" class="w-4 h-4 text-rose-400"></i>
+                            <span>CIVILIAN (AI UC)</span>
+                        </button>
+                        <button type="button" onclick="selectMode('industrial')" id="btn-mode-industrial" class="py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all border border-blue-500/40 bg-blue-600/20 text-white shadow-md shadow-blue-500/20">
+                            <i data-lucide="factory" class="w-4 h-4 text-cyan-400"></i>
+                            <span>INDUSTRIAL (SCADA)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Role Selector -->
                 <div class="space-y-2">
-                    <label class="text-xs uppercase tracking-wider font-bold text-slate-300">Select Security Profile Role</label>
-                    <div class="grid grid-cols-2 gap-3" id="role-selector">
-                        <button onclick="selectRole('Admin', 'admin@sentinel.x', '094821')" class="role-btn px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-white transition-all text-xs font-semibold flex items-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                            <i data-lucide="user-cog" class="w-4 h-4 text-blue-400"></i>
-                            <span>Admin</span>
-                        </button>
-                        <button onclick="selectRole('Supervisor', 'supervisor@sentinel.x', '384912')" class="role-btn px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-white transition-all text-xs font-semibold flex items-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                            <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i>
-                            <span>Supervisor</span>
-                        </button>
-                        <button onclick="selectRole('Safety Officer', 'officer@sentinel.x', '849127')" class="role-btn px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-white transition-all text-xs font-semibold flex items-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                            <span>Safety Officer</span>
-                        </button>
-                        <button onclick="selectRole('Worker', 'worker@sentinel.x', '201948')" class="role-btn px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-white transition-all text-xs font-semibold flex items-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                            <i data-lucide="hard-hat" class="w-4 h-4 text-orange-400"></i>
-                            <span>Worker</span>
-                        </button>
+                    <label id="role-selector-label" class="text-xs uppercase tracking-wider font-bold text-slate-300">Select Security Profile Role</label>
+                    <div class="grid grid-cols-2 gap-2.5" id="role-selector">
+                        <!-- Populated by JavaScript according to active mode -->
                     </div>
                 </div>
 
@@ -118,7 +119,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                                 <i data-lucide="mail" class="w-4.5 h-4.5"></i>
                             </span>
-                            <input type="email" id="email" required placeholder="name@sentinel.x" class="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all font-mono">
+                            <input type="email" id="email" required placeholder="name@sentinel.x" class="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all font-mono">
                         </div>
                     </div>
 
@@ -128,11 +129,11 @@
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                                 <i data-lucide="key-round" class="w-4.5 h-4.5"></i>
                             </span>
-                            <input type="password" id="password" required placeholder="••••••••••••" value="demo-access-2026" class="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all font-mono">
+                            <input type="password" id="password" required placeholder="••••••••••••" value="demo-access-2026" class="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all font-mono">
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full py-4 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 border border-white/10 flex items-center justify-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                    <button type="submit" id="auth-submit-btn" class="w-full py-3.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 border border-white/10 flex items-center justify-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                         <i data-lucide="log-in" class="w-4.5 h-4.5"></i>
                         <span>Initiate Secure Authentication</span>
                     </button>
@@ -161,7 +162,7 @@
                         <input type="text" maxlength="1" aria-label="Digit 6" oninput="moveNext(this, 6)" class="otp-box w-12 h-12 bg-brand-black/60 border border-white/10 rounded-xl text-center text-xl font-bold font-mono text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
                     </div>
 
-                    <button onclick="verifyOtp()" class="w-full py-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 border border-white/10 flex items-center justify-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500">
+                    <button onclick="verifyOtp()" id="verify-token-btn" class="w-full py-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 border border-white/10 flex items-center justify-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500">
                         <i data-lucide="shield-check" class="w-4.5 h-4.5"></i>
                         <span>Verify Security Token</span>
                     </button>
@@ -176,7 +177,7 @@
                 </div>
             </div>
 
-            <!-- Loading & Access Granted HUD View (Section 9 & 32) -->
+            <!-- Loading & Access Granted HUD View -->
             <div id="loading-view" class="pt-6 pb-4 space-y-5 text-center hidden">
                 <div class="inline-flex w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 items-center justify-center text-emerald-400 mx-auto">
                     <i data-lucide="shield-check" class="w-7 h-7"></i>
@@ -184,38 +185,19 @@
 
                 <div class="space-y-1">
                     <div class="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">AUTHENTICATION VERIFIED</div>
-                    <h3 class="text-xl font-display font-extrabold text-white tracking-wider">FACILITY ACCESS GRANTED</h3>
-                    <p class="text-xs text-cyan-400 font-mono font-semibold">EDGE SESSION INITIALIZED &bull; DIGITAL TWIN SYNCHRONIZED</p>
+                    <h3 class="text-xl font-display font-extrabold text-white tracking-wider">PLATFORM ACCESS GRANTED</h3>
+                    <p id="granted-subtitle" class="text-xs text-cyan-400 font-mono font-semibold">SESSION INITIALIZED &bull; SYSTEMS SYNCHRONIZED</p>
                 </div>
 
-                <!-- Section 32 Technical Telemetry Checklist -->
-                <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 text-left font-mono text-xs space-y-2 max-w-sm mx-auto">
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span class="text-slate-400">FACILITY:</span>
-                        <span class="font-bold text-white">INDUSTRIAL UNIT 01</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span class="text-slate-400">EDGE NETWORK:</span>
-                        <span class="text-emerald-400 font-bold">2/2 ONLINE</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span class="text-slate-400">TELEMETRY BUS:</span>
-                        <span class="text-cyan-400 font-bold">CONNECTED</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span class="text-slate-400">SAFETY ENGINE:</span>
-                        <span class="text-emerald-400 font-bold">ACTIVE</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span class="text-slate-400">DIGITAL TWIN:</span>
-                        <span class="text-emerald-400 font-bold">SYNCHRONIZED</span>
-                    </div>
+                <!-- Telemetry Checklist -->
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 text-left font-mono text-xs space-y-2 max-w-sm mx-auto" id="checklist-box">
+                    <!-- Filled dynamically -->
                 </div>
 
-                <!-- Direct Access Button (Guaranteed Immediate Entry) -->
-                <button onclick="navigateToConsole()" class="w-full py-3.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/20 border border-emerald-400/40 flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+                <!-- Direct Access Button -->
+                <button onclick="navigateToConsole()" id="enter-platform-btn" class="w-full py-3.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/20 border border-emerald-400/40 flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
-                    <span>ENTER OPERATIONAL CONTROL ROOM →</span>
+                    <span id="enter-btn-label">ENTER OPERATIONAL PLATFORM →</span>
                 </button>
             </div>
 
@@ -231,23 +213,78 @@
     </div>
 
     <script>
-        // Initialize Lucide Icons
         if (window.lucide) lucide.createIcons();
 
+        let currentMode = "industrial"; // 'industrial' or 'civilian'
         let currentRole = "Admin";
         let currentEmail = "admin@sentinel.x";
         let currentOtp = "094821";
         let timerVal = 60;
         let countdownTimer;
 
-        // Auto select Admin on launch
-        function initRoleOnLoad() {
-            selectRole('Admin', 'admin@sentinel.x', '094821');
+        const INDUSTRIAL_ROLES = [
+            { role: 'Admin', email: 'admin@sentinel.x', otp: '094821', icon: 'user-cog', color: 'text-blue-400' },
+            { role: 'Supervisor', email: 'supervisor@sentinel.x', otp: '384912', icon: 'users', color: 'text-cyan-400' },
+            { role: 'Safety Officer', email: 'officer@sentinel.x', otp: '849127', icon: 'shield-check', color: 'text-emerald-400' },
+            { role: 'Worker', email: 'worker@sentinel.x', otp: '201948', icon: 'hard-hat', color: 'text-orange-400' }
+        ];
+
+        const CIVILIAN_ROLES = [
+            { role: 'CAD Dispatcher', email: 'dispatcher@sentinel.x', otp: '719402', icon: 'headset', color: 'text-rose-400' },
+            { role: 'Incident Commander', email: 'commander@sentinel.x', otp: '948123', icon: 'shield-alert', color: 'text-amber-400' },
+            { role: 'Paramedic Lead', email: 'paramedic@sentinel.x', otp: '528194', icon: 'ambulance', color: 'text-emerald-400' },
+            { role: 'Trauma Physician', email: 'physician@sentinel.x', otp: '381947', icon: 'cross', color: 'text-cyan-400' }
+        ];
+
+        // Mode Switching
+        function selectMode(mode) {
+            currentMode = mode;
+            const btnCivilian = document.getElementById('btn-mode-civilian');
+            const btnIndustrial = document.getElementById('btn-mode-industrial');
+            const gateTitle = document.getElementById('gate-title');
+            const gateSubtitle = document.getElementById('gate-subtitle');
+            const brandBox = document.getElementById('brand-icon-box');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            if (mode === 'civilian') {
+                btnCivilian.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all border border-rose-500/50 bg-rose-600/25 text-white shadow-md shadow-rose-500/25";
+                btnIndustrial.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all border border-transparent text-slate-400 hover:text-white";
+                
+                gateTitle.textContent = "SENTINEL-X CIVILIAN GATE";
+                gateSubtitle.textContent = "AI EMERGENCY RESPONSE AUTHENTICATION (UC)";
+                gateSubtitle.className = "text-xs uppercase tracking-widest text-rose-400 font-bold";
+                brandBox.className = "inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-700 to-amber-500 items-center justify-center border border-white/10 shadow-lg shadow-rose-500/20";
+                submitBtn.className = "w-full py-3.5 rounded-xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 transition-all duration-300 hover:shadow-lg hover:shadow-rose-500/20 border border-white/10 flex items-center justify-center gap-2 active:scale-95";
+
+                renderRoleButtons(CIVILIAN_ROLES);
+                selectRole('CAD Dispatcher', 'dispatcher@sentinel.x', '719402');
+            } else {
+                btnIndustrial.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all border border-blue-500/40 bg-blue-600/20 text-white shadow-md shadow-blue-500/20";
+                btnCivilian.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all border border-transparent text-slate-400 hover:text-white";
+
+                gateTitle.textContent = "SENTINEL-X SECURITY GATE";
+                gateSubtitle.textContent = "EDGE DISASTER & SAFETY AUTHENTICATION GATEWAY";
+                gateSubtitle.className = "text-xs uppercase tracking-widest text-cyan-400 font-bold";
+                brandBox.className = "inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 items-center justify-center border border-white/10 shadow-lg shadow-blue-500/20";
+                submitBtn.className = "w-full py-3.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 border border-white/10 flex items-center justify-center gap-2 active:scale-95";
+
+                renderRoleButtons(INDUSTRIAL_ROLES);
+                selectRole('Admin', 'admin@sentinel.x', '094821');
+            }
+            if (window.lucide) lucide.createIcons();
         }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initRoleOnLoad);
-        } else {
-            initRoleOnLoad();
+
+        function renderRoleButtons(roles) {
+            const container = document.getElementById('role-selector');
+            container.innerHTML = '';
+            roles.forEach(item => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "role-btn px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:border-white/20 transition-all text-xs font-semibold flex items-center gap-2 active:scale-95";
+                btn.onclick = () => selectRole(item.role, item.email, item.otp);
+                btn.innerHTML = `<i data-lucide="${item.icon}" class="w-4 h-4 ${item.color}"></i><span>${item.role}</span>`;
+                container.appendChild(btn);
+            });
         }
 
         // Handle Role selection
@@ -256,20 +293,17 @@
             currentEmail = email;
             currentOtp = mockOtp;
             
-            // Highlight button
             const buttons = document.querySelectorAll('.role-btn');
             buttons.forEach(btn => {
-                const text = btn.innerText;
-                if (text.includes(role)) {
-                    btn.classList.add('border-blue-500/70', 'bg-blue-500/10', 'text-white');
-                    btn.classList.remove('border-white/5', 'bg-white/5', 'text-slate-300');
+                if (btn.innerText.includes(role)) {
+                    btn.classList.add('border-emerald-500/60', 'bg-emerald-500/10', 'text-white');
+                    btn.classList.remove('border-white/10', 'bg-white/5', 'text-slate-200');
                 } else {
-                    btn.classList.remove('border-blue-500/70', 'bg-blue-500/10', 'text-white');
-                    btn.classList.add('border-white/5', 'bg-white/5', 'text-slate-300');
+                    btn.classList.remove('border-emerald-500/60', 'bg-emerald-500/10', 'text-white');
+                    btn.classList.add('border-white/10', 'bg-white/5', 'text-slate-200');
                 }
             });
 
-            // Prefill email
             const emailInp = document.getElementById('email');
             if (emailInp) emailInp.value = email;
         }
@@ -280,7 +314,6 @@
             const emailInput = document.getElementById('email');
             const email = emailInput && emailInput.value ? emailInput.value : currentEmail;
 
-            // Render OTP screen directly with smooth transition
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('loading-view').classList.add('hidden');
             const otpView = document.getElementById('otp-view');
@@ -292,7 +325,6 @@
             const hintCodeEl = document.getElementById('hint-code');
             if (hintCodeEl) hintCodeEl.innerText = currentOtp || '094821';
 
-            // Pre-fill OTP boxes for easy demo login
             const boxes = document.querySelectorAll('.otp-box');
             const otpStr = String(currentOtp || '094821');
             for (let i = 0; i < boxes.length && i < otpStr.length; i++) {
@@ -303,7 +335,6 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        // OTP inputs auto-focus
         function moveNext(input, index) {
             if (input.value.length === 1 && index < 6) {
                 const nextInput = document.getElementById('otp-inputs').children[index];
@@ -311,7 +342,6 @@
             }
         }
 
-        // Start Countdown Timer
         function startTimer() {
             timerVal = 60;
             const timerEl = document.getElementById('timer');
@@ -338,20 +368,24 @@
             }, 1000);
         }
 
-        // Resend OTP
         function resendOtp() {
             startTimer();
         }
 
-        // Global function to navigate to Operational Console
+        // Global Navigation to Selected Operational Console
         function navigateToConsole() {
             sessionStorage.setItem("authenticated", "true");
             sessionStorage.setItem("userRole", currentRole || "Admin");
             const emailEl = document.getElementById('email');
             sessionStorage.setItem("userEmail", emailEl && emailEl.value ? emailEl.value : currentEmail);
             sessionStorage.setItem("userName", (currentRole || "Admin") + " User");
+            sessionStorage.setItem("operationalMode", currentMode);
 
-            window.location.href = "app.html";
+            if (currentMode === "civilian") {
+                window.location.href = "civilian/index.html";
+            } else {
+                window.location.href = "app.html";
+            }
         }
 
         // Verify OTP
@@ -363,27 +397,86 @@
             if (!code || code.length === 0) code = currentOtp || "094821";
 
             if (code === currentOtp || code === "942861" || code === "094821" || code.length === 6) {
-                // Render Access Granted View
                 document.getElementById('otp-view').classList.add('hidden');
                 document.getElementById('login-view').classList.add('hidden');
                 document.getElementById('loading-view').classList.remove('hidden');
-                if (window.lucide) lucide.createIcons();
 
-                const pBar = document.getElementById('auth-progress');
-                if (pBar) {
-                    setTimeout(() => { pBar.style.width = '35%'; }, 80);
-                    setTimeout(() => { pBar.style.width = '75%'; }, 250);
-                    setTimeout(() => { pBar.style.width = '100%'; }, 450);
+                const checkList = document.getElementById('checklist-box');
+                const enterLabel = document.getElementById('enter-btn-label');
+                const grantedSub = document.getElementById('granted-subtitle');
+
+                if (currentMode === 'civilian') {
+                    grantedSub.textContent = "CAD EMERGENCY BUS INITIALIZED • AI TRIAGE READY";
+                    enterLabel.textContent = "ENTER CIVILIAN EMERGENCY PLATFORM →";
+                    checkList.innerHTML = `
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">DOMAIN:</span>
+                            <span class="font-bold text-rose-400">CIVILIAN EMERGENCY RESPONSE</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">CAD INTAKE BUS:</span>
+                            <span class="text-emerald-400 font-bold">ONLINE</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">CLINICAL AI TRIAGE:</span>
+                            <span class="text-cyan-400 font-bold">SYNCHRONIZED</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">FLEET GPS PREEMPTION:</span>
+                            <span class="text-emerald-400 font-bold">ACTIVE</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">HOSPITAL HL7/FHIR:</span>
+                            <span class="text-emerald-400 font-bold">CONNECTED</span>
+                        </div>
+                    `;
+                } else {
+                    grantedSub.textContent = "EDGE SESSION INITIALIZED • DIGITAL TWIN SYNCHRONIZED";
+                    enterLabel.textContent = "ENTER INDUSTRIAL CONTROL ROOM →";
+                    checkList.innerHTML = `
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">FACILITY:</span>
+                            <span class="font-bold text-white">INDUSTRIAL UNIT 01</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">EDGE NETWORK:</span>
+                            <span class="text-emerald-400 font-bold">2/2 ONLINE</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">TELEMETRY BUS:</span>
+                            <span class="text-cyan-400 font-bold">CONNECTED</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">SAFETY ENGINE:</span>
+                            <span class="text-emerald-400 font-bold">ACTIVE</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span class="text-slate-400">DIGITAL TWIN:</span>
+                            <span class="text-emerald-400 font-bold">SYNCHRONIZED</span>
+                        </div>
+                    `;
                 }
 
-                // Automatic redirect after sequence
+                if (window.lucide) lucide.createIcons();
+
                 setTimeout(() => {
                     navigateToConsole();
-                }, 650);
+                }, 850);
             } else {
                 alert("Security Authorization Code Mismatch. Please check the prefilled code.");
             }
         }
+
+        // On Load: Check URL parameter ?mode=civilian or ?mode=industrial
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            if (mode === 'civilian') {
+                selectMode('civilian');
+            } else {
+                selectMode('industrial');
+            }
+        });
     </script>
 </body>
 </html>

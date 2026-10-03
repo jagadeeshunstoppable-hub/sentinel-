@@ -72,6 +72,23 @@ app.get('/ppe.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'app.html'));
 });
 
+// Serve civilian application (Isolated AI Emergency Response Platform)
+app.use('/civilian', express.static(path.join(__dirname, 'src', 'civilian')));
+app.get('/civilian', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'civilian', 'index.html'));
+});
+app.get('/civilian/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'civilian', 'index.html'));
+});
+
+// Serve industrial application alias
+app.get('/industrial', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'app.html'));
+});
+app.get('/industrial/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'app.html'));
+});
+
 // Serve stakeholders-impacts.html for Presentation Slide Exporter
 app.get('/stakeholders', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'stakeholders-impacts.html'));
