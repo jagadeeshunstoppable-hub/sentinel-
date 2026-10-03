@@ -170,7 +170,16 @@
             <span class="text-blue-300">→</span>
             <span id="st-9" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">9. Monitor</span>
             <span class="text-blue-300">→</span>
-            <span id="st-10" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">10. Complete</sp        <!-- Right: Language Switcher, Accessibility, Modes & Demo -->
+            <span id="st-10" class="step-pill px-2.5 py-0.5 rounded-full text-blue-200">10. Complete</span>
+        </div>
+
+        <!-- Compact Stepper (< xl) to avoid stepper overflow and provide clear status -->
+        <div class="xl:hidden flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-900/80 border border-blue-700/60 text-xs font-semibold text-amber-300">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span id="compact-step-label">Step 1: Distress</span>
+        </div>
+
+        <!-- Right: Language Switcher, Accessibility, Modes & Demo -->
         <div class="flex items-center space-x-2">
 
             <!-- Accessibility Controls: Text Scale & High Contrast (Desktop) -->
@@ -189,25 +198,22 @@
                 <option value="en">English</option>
                 <option value="hi">हिन्दी (Hindi)</option>
                 <option value="te">తెలుగు (Telugu)</option>
-                <option value="ml">மலയാളம் (Malayalam)</option>
+                <option value="ml">മലയാളம் (Malayalam)</option>
                 <option value="kn">ಕನ್ನಡ (Kannada)</option>
             </select>
 
-            <!-- Mode Selector: Citizen vs Dispatcher (Always Visible) -->
+            <!-- Mode Selector: Citizen vs Dispatcher vs Easy Mode (Always Accessible) -->
             <div class="flex items-center bg-blue-950 p-0.5 rounded-lg border border-blue-800 text-xs font-semibold">
-                <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2 py-1 rounded-md transition-all text-blue-200 hover:text-white">
-                    <span id="lbl-citizen-mode">Citizen</span>
+                <button type="button" onclick="setInterfaceMode('citizen')" id="btn-view-citizen" class="px-2.5 py-1 rounded-md transition-all text-blue-200 hover:text-white">
+                    <span id="lbl-citizen-mode">🚨 Citizen</span>
                 </button>
-                <button type="button" onclick="setInterfaceMode('dispatcher')" id="btn-view-dispatcher" class="px-2 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm">
-                    <span id="lbl-dispatcher-mode">Dispatcher</span>
+                <button type="button" onclick="setInterfaceMode('dispatcher')" id="btn-view-dispatcher" class="px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm">
+                    <span id="lbl-dispatcher-mode">🖥️ Dispatcher</span>
+                </button>
+                <button type="button" onclick="setInterfaceMode('easy')" id="btn-view-easy" class="px-2 py-1 rounded-md text-amber-300 hover:text-white">
+                    <span id="lbl-easy-mode">👵 Easy</span>
                 </button>
             </div>
-
-            <!-- Elderly / Easy Mode (Desktop / Tablet) -->
-            <button onclick="toggleEasyMode()" id="btn-easy-mode" title="Elderly Easy Mode" class="hidden lg:flex px-2.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold items-center gap-1.5 transition-all shadow-sm">
-                <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
-                <span id="lbl-easy-mode">Easy</span>
-            </button>
 
             <!-- Jury Demo Automation (Desktop / Tablet) -->
             <button id="btn-jury-demo" onclick="toggleJuryDemo()" class="hidden sm:flex px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold items-center space-x-1 shadow-sm active:scale-95">
@@ -221,9 +227,9 @@
             </button>
 
             <!-- Global Platform Switcher: Direct Route to Industrial Safety & Digital Twin -->
-            <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1 transition-all shadow-sm">
+            <a href="../app.html" id="btn-topbar-industrial" title="Switch to Industrial Safety & Digital Twin" class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm">
                 <i data-lucide="factory" class="w-3.5 h-3.5 text-amber-400"></i>
-                <span class="hidden md:inline">🏭 Industrial SCADA →</span>
+                <span class="hidden md:inline">🏭 Industrial Safety →</span>
                 <span class="md:hidden">🏭 SCADA</span>
             </a>
 
@@ -245,6 +251,23 @@
             <span class="text-xs font-bold uppercase tracking-wider text-blue-300">Quick Controls &amp; Settings</span>
             <button type="button" onclick="toggleCivilianMobileMenu(false)" class="text-blue-300 hover:text-white p-1 text-sm font-bold">✕ Close</button>
         </div>
+        
+        <!-- Mobile Mode Switcher -->
+        <div>
+            <label class="block text-[10px] text-blue-300 mb-1">PLATFORM OPERATIONAL MODE</label>
+            <div class="grid grid-cols-3 gap-1.5 bg-blue-900 p-1 rounded-lg border border-blue-700 text-center font-bold text-xs">
+                <button type="button" onclick="setInterfaceMode('citizen'); toggleCivilianMobileMenu(false);" class="py-1.5 rounded bg-white text-blue-950 shadow-sm" id="btn-mob-citizen">
+                    🚨 Citizen
+                </button>
+                <button type="button" onclick="setInterfaceMode('dispatcher'); toggleCivilianMobileMenu(false);" class="py-1.5 rounded text-blue-200 hover:text-white" id="btn-mob-dispatcher">
+                    🖥️ Dispatch
+                </button>
+                <button type="button" onclick="setInterfaceMode('easy'); toggleCivilianMobileMenu(false);" class="py-1.5 rounded text-amber-300 hover:text-white" id="btn-mob-easy">
+                    👵 Easy
+                </button>
+            </div>
+        </div>
+
         <div class="grid grid-cols-2 gap-2 text-xs">
             <div>
                 <label class="block text-[10px] text-blue-300 mb-1">LANGUAGE</label>
@@ -268,130 +291,277 @@
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-            <button onclick="toggleEasyMode()" class="flex-1 py-2 px-3 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold flex items-center justify-center gap-1.5 shadow-sm">
-                <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
-                <span>Easy Mode</span>
-            </button>
-            <button onclick="toggleJuryDemo()" class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-1.5 shadow-sm">
+            <button onclick="toggleJuryDemo(); toggleCivilianMobileMenu(false);" class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-1.5 shadow-sm">
                 <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
                 <span>Start Demo</span>
             </button>
-            <button onclick="openComplianceModal()" class="py-2 px-3 rounded-lg bg-blue-900 border border-blue-700 text-blue-100 font-semibold flex items-center justify-center gap-1.5">
+            <button onclick="openComplianceModal(); toggleCivilianMobileMenu(false);" class="py-2 px-3 rounded-lg bg-blue-900 border border-blue-700 text-blue-100 font-semibold flex items-center justify-center gap-1.5">
                 <i data-lucide="award" class="w-3.5 h-3.5"></i>
                 <span>SIH Spec</span>
             </button>
+            <a href="../app.html" class="py-2 px-3 rounded-lg bg-amber-500/20 border border-amber-400 text-amber-300 font-semibold flex items-center justify-center gap-1.5">
+                <i data-lucide="factory" class="w-3.5 h-3.5"></i>
+                <span>Industrial</span>
+            </a>
             <a href="../auth.html" class="py-2 px-3 rounded-lg bg-rose-900/60 border border-rose-700 text-rose-200 font-semibold flex items-center justify-center gap-1.5">
                 <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                 <span>Exit</span>
             </a>
         </div>
-    </div>-lucide="log-out" class="w-4 h-4"></i>
-            </a>
-        </div>
-    </header>
+    </div>
 
     <!-- ======================================================== -->
     <!-- VIEW A: CITIZEN MODE (CLEAN, CALM, HIGHLY ACCESSIBLE)    -->
     <!-- Simple emergency assistance for Tamil Nadu citizens      -->
     <!-- ======================================================== -->
-    <main id="citizen-view-container" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 max-w-3xl mx-auto w-full space-y-6">
+    <main id="citizen-view-container" class="flex-1 overflow-y-auto p-4 sm:p-6 max-w-3xl mx-auto w-full space-y-5">
         
-        <!-- Big Primary Emergency Button -->
-        <div class="text-center space-y-2 py-2">
-            <button onclick="triggerCitizenEmergency()" class="w-full max-w-lg mx-auto py-7 px-6 rounded-2xl bg-red-600 hover:bg-red-700 text-white shadow-lg border-2 border-red-500 active:scale-95 transition-all flex flex-col items-center justify-center space-y-2 cursor-pointer">
-                <i data-lucide="alert-circle" class="w-12 h-12 text-white"></i>
-                <span class="text-2xl sm:text-3xl font-extrabold uppercase tracking-wide" id="lbl-get-help-btn">🚨 அவசர உதவி பெறுங்கள்</span>
-                <span class="text-sm font-medium text-red-100" id="lbl-get-help-sub">உடனடி உதவி தேவைப்பட்டால் இங்கு அழுத்தவும்</span>
+        <!-- Emergency Help Header -->
+        <div class="text-center space-y-1">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-extrabold uppercase tracking-wide border border-red-200">
+                <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+                <span>EMERGENCY CITIZEN PORTAL (108 / 112)</span>
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight" id="lbl-citizen-heading">
+                Need Emergency Help?
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto" id="lbl-citizen-subheading">
+                Are you or someone near you in danger? Tap SOS immediately or choose an option below.
+            </p>
+        </div>
+
+        <!-- 1. Massive Primary SOS Button (Section 5) -->
+        <div class="text-center py-1">
+            <button onclick="triggerCitizenEmergency('sos')" id="btn-citizen-sos" class="w-full max-w-lg mx-auto py-7 px-6 rounded-3xl bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-xl shadow-red-600/30 border-4 border-red-400 active:scale-95 transition-all flex flex-col items-center justify-center space-y-2 cursor-pointer group">
+                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="alert-circle" class="w-10 h-10 text-white"></i>
+                </div>
+                <span class="text-2xl sm:text-3xl font-black uppercase tracking-wider text-white" id="lbl-get-help-btn">
+                    🚨 SOS — GET HELP NOW
+                </span>
+                <span class="text-xs sm:text-sm font-semibold text-red-100" id="lbl-get-help-sub">
+                    1-Tap Instant Police, Fire & Medical Emergency Alert
+                </span>
             </button>
         </div>
 
-        <!-- 3 Essential Citizen Options: Voice, Location, SMS -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <button onclick="openVoiceModal()" class="service-card p-4 rounded-xl hover:border-red-500 flex items-center space-x-3 text-left transition-all active:scale-95">
-                <div class="w-11 h-11 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+        <!-- SOS Confirmation Card (Section 6 & 7) -->
+        <div id="citizen-sos-confirmation" class="hidden p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-500 space-y-2.5 shadow-md transition-all">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-600 animate-ping"></span>
+                    <h3 class="font-extrabold text-sm text-emerald-950 uppercase tracking-wide" id="lbl-sos-confirmed-title">
+                        ✓ EMERGENCY HELP REQUESTED
+                    </h3>
+                </div>
+                <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-200 text-emerald-900 font-bold" id="citizen-ticket-badge">
+                    #TN-EMG-0814
+                </span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+                    <span class="text-slate-500 font-medium block text-[10px]">INCIDENT STATUS:</span>
+                    <span class="font-bold text-slate-900" id="citizen-sos-type-label">Emergency SOS Received</span>
+                </div>
+                <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+                    <span class="text-slate-500 font-medium block text-[10px]">LOCATION:</span>
+                    <span class="font-bold text-emerald-800" id="citizen-sos-loc-label">GPS Locked: Anna Nagar, Chennai (±4.8m)</span>
+                </div>
+            </div>
+            <p class="text-xs text-emerald-900 font-medium" id="citizen-sos-instruction">
+                Help is being coordinated by 108 Emergency Control. Emergency vehicle is being dispatched. Stay on the line if possible.
+            </p>
+            <div class="flex items-center gap-2 pt-1">
+                <button onclick="setInterfaceMode('dispatcher')" class="px-3.5 py-1.5 rounded-lg bg-blue-900 text-white text-xs font-bold hover:bg-blue-800">
+                    View Live Dispatcher Console →
+                </button>
+                <button onclick="openClarificationModal()" id="btn-citizen-clarify" class="px-3.5 py-1.5 rounded-lg bg-white border border-emerald-400 text-emerald-900 text-xs font-bold hover:bg-emerald-100">
+                    Clarify Details
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. The 4 Obvious Primary Actions Grid (Section 2 & 4) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <!-- 🚨 SOS 1-Tap -->
+            <button onclick="triggerCitizenEmergency('sos')" class="service-card p-3.5 rounded-2xl hover:border-red-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                    <i data-lucide="alert-octagon" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="font-extrabold text-xs text-slate-900" id="lbl-action-sos">🚨 SOS Fast</div>
+                    <div class="text-[10px] text-slate-500">1-Tap Distress</div>
+                </div>
+            </button>
+
+            <!-- 🎙 SPEAK EMERGENCY -->
+            <button onclick="openVoiceModal()" class="service-card p-3.5 rounded-2xl hover:border-blue-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                     <i data-lucide="mic" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="font-bold text-sm text-slate-800" id="lbl-voice-sos">🎙 Speak Emergency</div>
-                    <div class="text-xs text-slate-500">Tamil / English / Hindi</div>
+                    <div class="font-extrabold text-xs text-slate-900" id="lbl-voice-sos">🎙 Speak</div>
+                    <div class="text-[10px] text-slate-500">Tamil / En / Hindi</div>
                 </div>
             </button>
 
-            <button onclick="detectCitizenLocation()" class="service-card p-4 rounded-xl hover:border-blue-500 flex items-center space-x-3 text-left transition-all active:scale-95">
-                <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <!-- ⌨ TYPE EMERGENCY -->
+            <button onclick="openTypeEmergencyModal()" class="service-card p-3.5 rounded-2xl hover:border-indigo-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <i data-lucide="keyboard" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="font-extrabold text-xs text-slate-900" id="lbl-type-sos">⌨ Type</div>
+                    <div class="text-[10px] text-slate-500">Quick Text Form</div>
+                </div>
+            </button>
+
+            <!-- 📍 SHARE LOCATION -->
+            <button onclick="openLocationModal()" class="service-card p-3.5 rounded-2xl hover:border-emerald-500 hover:shadow-md flex flex-col items-center text-center space-y-2 transition-all active:scale-95 group">
+                <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                     <i data-lucide="map-pin" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="font-bold text-sm text-slate-800" id="lbl-share-loc">📍 Share Location</div>
-                    <div class="text-xs text-slate-500 truncate" id="citizen-loc-preview">Anna Nagar, Chennai</div>
-                </div>
-            </button>
-
-            <button onclick="triggerSmsSos()" class="service-card p-4 rounded-xl hover:border-amber-500 flex items-center space-x-3 text-left transition-all active:scale-95">
-                <div class="w-11 h-11 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                    <i data-lucide="message-square" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-sm text-slate-800" id="lbl-sms-sos">💬 SMS / Text SOS</div>
-                    <div class="text-xs text-slate-500">Offline cellular backup</div>
+                    <div class="font-extrabold text-xs text-slate-900" id="lbl-share-loc">📍 Location</div>
+                    <div class="text-[10px] text-slate-500 truncate max-w-[100px]" id="citizen-loc-preview">GPS / Landmark</div>
                 </div>
             </button>
         </div>
 
-        <!-- Emergency Category Tiles -->
+        <!-- 3. Emergency Category Tiles -->
         <div class="space-y-2.5">
-            <h2 class="text-xs font-bold text-slate-600 uppercase tracking-wider" id="lbl-types-title">What type of emergency is this?</h2>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <button onclick="selectCitizenCategory('catMedical')" class="service-card p-4 rounded-xl hover:border-red-400 flex flex-col items-center justify-center space-y-2 text-center transition-all active:scale-95">
+            <h2 class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center justify-between" id="lbl-types-title">
+                <span>Select Emergency Category</span>
+                <span class="text-[10px] text-slate-400 font-normal">Tap category for targeted crew</span>
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <button onclick="selectCitizenCategory('catMedical')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
                     <span class="text-2xl">❤️</span>
                     <span class="text-xs font-bold text-slate-800" id="lbl-cat-medical">Medical Emergency</span>
                 </button>
-                <button onclick="selectCitizenCategory('catAccident')" class="service-card p-4 rounded-xl hover:border-red-400 flex flex-col items-center justify-center space-y-2 text-center transition-all active:scale-95">
+                <button onclick="selectCitizenCategory('catAccident')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
                     <span class="text-2xl">🚗</span>
                     <span class="text-xs font-bold text-slate-800" id="lbl-cat-accident">Road Accident</span>
                 </button>
-                <button onclick="selectCitizenCategory('catFire')" class="service-card p-4 rounded-xl hover:border-red-400 flex flex-col items-center justify-center space-y-2 text-center transition-all active:scale-95">
+                <button onclick="selectCitizenCategory('catFire')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
                     <span class="text-2xl">🔥</span>
                     <span class="text-xs font-bold text-slate-800" id="lbl-cat-fire">Fire Emergency</span>
                 </button>
-                <button onclick="selectCitizenCategory('catFlood')" class="service-card p-4 rounded-xl hover:border-red-400 flex flex-col items-center justify-center space-y-2 text-center transition-all active:scale-95">
+                <button onclick="selectCitizenCategory('catFlood')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
                     <span class="text-2xl">🌊</span>
                     <span class="text-xs font-bold text-slate-800" id="lbl-cat-flood">Flood / Disaster</span>
                 </button>
-                <button onclick="selectCitizenCategory('catPolice')" class="service-card p-4 rounded-xl hover:border-red-400 flex flex-col items-center justify-center space-y-2 text-center transition-all active:scale-95">
+                <button onclick="selectCitizenCategory('catPolice')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
                     <span class="text-2xl">👮</span>
                     <span class="text-xs font-bold text-slate-800" id="lbl-cat-police">Police / Security</span>
                 </button>
-                <button onclick="selectCitizenCategory('catOther')" class="service-card p-4 rounded-xl hover:border-red-400 flex flex-col items-center justify-center space-y-2 text-center transition-all active:scale-95">
+                <button onclick="selectCitizenCategory('catOther')" class="service-card p-3.5 rounded-2xl hover:border-red-400 flex flex-col items-center justify-center space-y-1.5 text-center transition-all active:scale-95">
                     <span class="text-2xl">🆘</span>
                     <span class="text-xs font-bold text-slate-800" id="lbl-cat-other">Other Urgent Help</span>
                 </button>
             </div>
         </div>
 
-        <!-- Citizen Active Status Banner (Answers: What is happening? Who is coming? How long?) -->
-        <div class="service-card p-4 rounded-xl border-l-4 border-l-emerald-600 space-y-2">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                    <span id="citizen-status-title">Help is on the way (உதவி வருகிறது)</span>
-                </span>
-                <span class="text-xs font-bold text-slate-700" id="citizen-eta-title">ETA: 4 minutes</span>
+        <!-- 4. Citizen Live Status & Tracking Card: MY EMERGENCY (Section 33 & 34) -->
+        <div class="service-card rounded-2xl p-4 sm:p-5 border-l-4 border-l-emerald-600 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">MY EMERGENCY STATUS</span>
+                    <div class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                        <span id="citizen-status-title">Ambulance En Route (உதவி வழியில் உள்ளது)</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ESTIMATED ARRIVAL</span>
+                    <div class="text-base font-black text-emerald-700" id="citizen-eta-title">04 min 00 sec</div>
+                </div>
             </div>
-            <div class="text-sm font-semibold text-slate-900" id="citizen-unit-desc">
-                Ambulance: TN-108-ALS-04 (Advanced Life Support)
+
+            <!-- Unit & Destination -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-0.5">
+                    <span class="text-[10px] text-slate-500 font-medium">ASSIGNED UNIT</span>
+                    <div class="font-bold text-slate-900 text-xs flex items-center gap-1.5" id="citizen-unit-desc">
+                        <span>🚑</span> <span>TN-108-ALS-04 (Advanced Life Support)</span>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-0.5">
+                    <span class="text-[10px] text-slate-500 font-medium">RECEIVING HOSPITAL</span>
+                    <div class="font-bold text-slate-900 text-xs truncate" id="citizen-hosp-desc">
+                        <span>🏥</span> <span>Rajiv Gandhi Govt General Hospital (Chennai GH)</span>
+                    </div>
+                </div>
             </div>
-            <div class="text-xs text-slate-600" id="citizen-hosp-desc">
-                Destination: Rajiv Gandhi Government General Hospital (Chennai GH)
+
+            <!-- Emergency Safety Instructions (Section 35) -->
+            <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 space-y-1">
+                <div class="text-[10px] font-bold text-blue-900 uppercase flex items-center gap-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-blue-700"></i>
+                    <span>EMERGENCY FIRST-AID INSTRUCTIONS</span>
+                </div>
+                <p class="text-xs text-blue-950 font-medium leading-relaxed" id="citizen-guidelines-text">
+                    • Move away from active smoke and flames if safe. Do not inhale chemical fumes.<br>
+                    • If a person is burned, cool with clean ambient water. Do not apply ice or grease.<br>
+                    • Keep phone line clear so emergency responders can call for exact gate directions.
+                </p>
             </div>
-            <div class="pt-2 flex items-center gap-3">
-                <button onclick="setInterfaceMode('dispatcher')" class="px-4 py-2 rounded-lg bg-[#1e3a8a] text-white text-xs font-bold hover:bg-blue-900">
-                    View Live Map & Route →
+
+            <!-- Actions -->
+            <div class="pt-1 flex flex-wrap items-center gap-2">
+                <button onclick="setInterfaceMode('dispatcher')" class="px-4 py-2 rounded-xl bg-[#1e3a8a] text-white text-xs font-bold hover:bg-blue-900 shadow-sm flex items-center gap-1.5">
+                    <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                    <span>View Live Map & Route →</span>
                 </button>
-                <a href="tel:108" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold">
-                    Call 108 Emergency Control
+                <a href="tel:108" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5">
+                    <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                    <span>Call 108 Hotline</span>
                 </a>
             </div>
+        </div>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- VIEW C: EASY / ELDERLY MODE (HIGH CONTRAST, EXTRA LARGE) -->
+    <!-- Large text, Voice-first, Tamil support, Minimal actions   -->
+    <!-- ======================================================== -->
+    <main id="easy-view-container" class="hidden flex-1 overflow-y-auto p-4 sm:p-8 max-w-xl mx-auto w-full space-y-6">
+        <div class="text-center space-y-2">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wide">
+                👵 ELDERLY / EASY EMERGENCY HELP (எளிய அவசர உதவி)
+            </span>
+            <h1 class="text-3xl sm:text-4xl font-black text-slate-900">
+                🚨 NEED HELP? / உதவி தேவையா?
+            </h1>
+            <p class="text-base text-slate-700 font-semibold">
+                Tap any button below to get immediate emergency help.
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- Giant Call 108 -->
+            <a href="tel:108" class="w-full py-6 px-6 rounded-2xl bg-red-600 hover:bg-red-700 text-white shadow-xl flex items-center justify-center space-x-3 text-2xl font-black active:scale-95 transition-all text-center">
+                <i data-lucide="phone-call" class="w-9 h-9"></i>
+                <span>🚨 CALL 108 FOR HELP</span>
+            </a>
+
+            <!-- Giant Speak Emergency -->
+            <button onclick="openVoiceModal()" class="w-full py-6 px-6 rounded-2xl bg-blue-800 hover:bg-blue-900 text-white shadow-xl flex items-center justify-center space-x-3 text-2xl font-black active:scale-95 transition-all text-center">
+                <i data-lucide="mic" class="w-9 h-9 text-amber-300"></i>
+                <span>🎙 SPEAK / பேசவும்</span>
+            </button>
+
+            <!-- Giant Send Location -->
+            <button onclick="detectCitizenLocation()" class="w-full py-6 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white shadow-xl flex items-center justify-center space-x-3 text-2xl font-black active:scale-95 transition-all text-center">
+                <i data-lucide="map-pin" class="w-9 h-9 text-white"></i>
+                <span>📍 SEND MY LOCATION</span>
+            </button>
+        </div>
+
+        <div class="pt-4 text-center">
+            <button onclick="setInterfaceMode('citizen')" class="py-3 px-6 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-bold">
+                ← Exit Easy Mode (சாதாரண முறைக்கு திரும்பு)
+            </button>
         </div>
     </main>
 
@@ -401,26 +571,31 @@
     <!-- ZONE 2: Clean Map & Dynamic Route                       -->
     <!-- ZONE 3: Unit Match, Hospital Pre-alert, Vitals          -->
     <!-- ======================================================== -->
-    <main id="dispatcher-view-container" class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-y-auto lg:overflow-hidden">
+    <main id="dispatcher-view-container" class="hidden flex-1 grid grid-cols-12 gap-3 p-3 overflow-y-auto lg:overflow-hidden">
 
         <!-- ==================================================== -->
         <!-- ZONE 1: INCIDENTS & EXPLAINABLE AI (3 COLS)          -->
         <!-- ==================================================== -->
         <section aria-label="Incident Information and AI Assessment" class="col-span-12 lg:col-span-4 xl:col-span-3 flex flex-col gap-3 overflow-y-auto pr-1">
 
-            <!-- Incident Scenario Selector (Realistic Tamil Nadu Scenarios) -->
-            <div class="service-card rounded-xl p-3 space-y-1.5">
+            <!-- Incident Feed Selector (Section 47) -->
+            <div class="service-card rounded-xl p-3 space-y-2">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                         <i data-lucide="radio" class="w-3.5 h-3.5 text-blue-700"></i>
                         <span id="lbl-active-channel">ACTIVE INCIDENT FEED</span>
                     </span>
-                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300" id="badge-source">VOICE 108</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-300" id="badge-incident-count">5 ACTIVE</span>
+                </div>
+
+                <!-- Rich Interactive Incident Cards List -->
+                <div id="incident-feed-cards" class="space-y-1.5 max-h-48 overflow-y-auto pr-0.5">
+                    <!-- Dynamically rendered selectable cards -->
                 </div>
 
                 <select id="scenario-selector" onchange="switchScenario(this.value)" class="w-full text-xs font-medium bg-slate-50 border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-blue-600 focus:outline-none">
-                    <option value="chemical_fire" selected>🚨 [PRIMARY DEMO] Factory Fire + Injured Person (Industrial Chemical Estate, Ennore)</option>
-                    <option value="tamil_medical">Tamil Voice: Elderly Fall & Breathing Distress (Anna Nagar, Chennai)</option>
+                    <option value="chemical_fire" selected>🚨 [DEMO] Factory Fire + Injured Person (Ennore)</option>
+                    <option value="tamil_medical">Tamil Voice: Elderly Fall & Breathing Distress (Anna Nagar)</option>
                     <option value="highway_accident">GST Road NH-48 Multi-Vehicle Collision (Sriperumbudur)</option>
                     <option value="kavaraipettai_flood">Kavaraipettai Railway Subway Flash Flood Submersion</option>
                     <option value="hindi_worker_cardiac">Hindi Voice: OMR IT Corridor Acute Cardiac Event</option>
@@ -803,26 +978,57 @@
                 </div>
 
                 <div class="space-y-1.5 text-xs">
-                    <div class="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
                         <span class="text-slate-800 font-medium flex items-center gap-1.5">
-                            <span>🚑</span> <span id="lbl-agency-med">108 Ambulance</span>
+                            <span>🚑</span> <span id="lbl-agency-med">108 Ambulance (ALS)</span>
                         </span>
                         <span class="text-[10px] font-bold text-emerald-700" id="status-agency-med">EN ROUTE</span>
                     </div>
 
-                    <div class="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
                         <span class="text-slate-800 font-medium flex items-center gap-1.5">
-                            <span>👮</span> <span id="lbl-agency-pol">Police Patrol (100)</span>
+                            <span>🚒</span> <span id="lbl-agency-fire">101 Fire &amp; HAZMAT</span>
+                        </span>
+                        <span class="text-[10px] font-bold text-red-700" id="status-agency-fire">DISPATCHED (FT-02)</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-slate-800 font-medium flex items-center gap-1.5">
+                            <span>👮</span> <span id="lbl-agency-pol">100 Police Traffic Patrol</span>
                         </span>
                         <span class="text-[10px] font-bold text-blue-700" id="status-agency-pol">SIGNALS CLEARED</span>
                     </div>
 
-                    <div class="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
                         <span class="text-slate-800 font-medium flex items-center gap-1.5">
                             <span>🏥</span> <span id="lbl-agency-hosp">Govt General Hospital</span>
                         </span>
-                        <span class="text-[10px] font-bold text-emerald-700" id="status-agency-hosp">PRE-ALERT ACKNOWLEDGED</span>
+                        <span class="text-[10px] font-bold text-emerald-700" id="status-agency-hosp">PRE-ALERT READY</span>
                     </div>
+                </div>
+
+                <!-- Functional Agency Coordination Actions (Section 31) -->
+                <div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                    <button type="button" onclick="requestAgency('fire')" class="py-1.5 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+                        <span>🚒 Request Fire</span>
+                    </button>
+                    <button type="button" onclick="requestAgency('police')" class="py-1.5 px-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+                        <span>👮 Clear Corridor</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Incident Timeline Card (Section 32) -->
+            <div class="service-card rounded-xl p-3.5 space-y-2">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-blue-700"></i>
+                        <h2 class="font-bold text-xs text-slate-900 uppercase tracking-wider">INCIDENT TIMELINE</h2>
+                    </div>
+                    <span class="text-[10px] font-semibold text-emerald-700 font-mono" id="timeline-count">LIVE LOG</span>
+                </div>
+                <div id="incident-timeline-list" class="space-y-2 text-xs max-h-36 overflow-y-auto pr-1">
+                    <!-- Real chronologically updated events -->
                 </div>
             </div>
 
@@ -890,6 +1096,129 @@
                 <button onclick="restartVoiceRecognition()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300 flex items-center justify-center space-x-1.5">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                     <span id="lbl-try-again">Speak Again</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TYPE EMERGENCY MODAL (SECTION 9)                         -->
+    <!-- Simple, fast, no long questionnaires                     -->
+    <!-- ======================================================== -->
+    <div id="type-sos-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i data-lucide="keyboard" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base text-slate-900">Type Emergency Report</h2>
+                        <p class="text-[11px] text-slate-500">Quick text distress input (Tamil / English / Hindi)</p>
+                    </div>
+                </div>
+                <button onclick="closeTypeEmergencyModal()" class="text-slate-400 hover:text-slate-700 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" id="lbl-type-desc-prompt">WHAT HAPPENED? (விபத்து விவரம்) *</label>
+                    <textarea id="input-type-desc" rows="3" class="w-full text-xs p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-slate-50 text-slate-900" placeholder="e.g. Fire near factory gate. One person is injured and trapped. Need ambulance and fire engine immediately."></textarea>
+                    <p id="type-desc-error" class="text-[11px] text-red-600 font-semibold hidden pt-1">Please enter an emergency description.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">PEOPLE INJURED</label>
+                        <select id="input-type-casualties" class="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white">
+                            <option value="1">1 Person Injured</option>
+                            <option value="2">2 Persons</option>
+                            <option value="3+">3+ Multiple Casualties</option>
+                            <option value="Unknown">Unknown / Assessing</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">HAZARD SEVERITY</label>
+                        <select id="input-type-hazard" class="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white font-bold text-red-700">
+                            <option value="CRITICAL">CRITICAL (தீவிரமானது)</option>
+                            <option value="HIGH">HIGH (அவசரம்)</option>
+                            <option value="MODERATE">MODERATE (மிதமானது)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">LANDMARK / LOCATION</label>
+                    <input type="text" id="input-type-landmark" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 bg-white" placeholder="e.g. Near Ennore Creek Bridge, Manali Industrial Park, Chennai" value="Near Ennore Creek Bridge, Manali Industrial Park, Chennai">
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center space-x-2">
+                <button onclick="submitTypeEmergency()" class="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>SEND EMERGENCY HELP REQUEST</span>
+                </button>
+                <button onclick="closeTypeEmergencyModal()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SHARE LOCATION MODAL (SECTION 10)                        -->
+    <!-- Real GPS Geolocation + Transparent Accuracy Report       -->
+    <!-- ======================================================== -->
+    <div id="location-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 space-y-4 border border-slate-200 shadow-xl">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base text-slate-900">Incident Location</h2>
+                        <p class="text-[11px] text-slate-500">Live GPS sensor coordinates &amp; landmark</p>
+                    </div>
+                </div>
+                <button onclick="closeLocationModal()" class="text-slate-400 hover:text-slate-700 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">GPS SENSOR STATUS</span>
+                        <span id="loc-sensor-status" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                            LOCKED (±4.8m)
+                        </span>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800" id="loc-coords-display">
+                        13.2120° N, 80.3150° E
+                    </div>
+                    <div class="text-slate-600 font-medium" id="loc-accuracy-display">
+                        Accuracy: Approximately ± 4.8 meters
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">LANDMARK / STREET NAME</label>
+                    <input type="text" id="loc-landmark-input" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 bg-white" value="Near Ennore Creek Bridge, Manali Industrial Park, Chennai">
+                    <p class="text-[10px] text-slate-500 mt-1">Responders verify both coordinates and physical landmarks.</p>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center space-x-2">
+                <button onclick="acquireRealGeolocation()" class="flex-1 py-2.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="crosshair" class="w-4 h-4"></i>
+                    <span>Detect Device GPS</span>
+                </button>
+                <button onclick="confirmLocationShare()" class="flex-1 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Confirm Location</span>
                 </button>
             </div>
         </div>
@@ -1135,6 +1464,7 @@
             resetIncidentState();
             renderScenarioData();
             renderMapRoute();
+            renderIncidentFeed();
         }
 
         function renderScenarioData() {
@@ -1147,7 +1477,7 @@
             setElText('citizen-loc-preview', sc.caller.locationName);
             setElText('badge-source', sc.caller.source);
 
-            // Render Missing Information Check / Incident Clarification
+            // Render Missing Information Check / Incident Clarification (Section 48)
             const missingInfo = sc.missingInfoCheck ? (sc.missingInfoCheck[currentLang] || sc.missingInfoCheck.en) : "All essential incident parameters verified via 108 CAD.";
             setElText('val-missing-info-detail', missingInfo);
 
@@ -1173,7 +1503,8 @@
             setElText('val-crew', sc.fleet.crew);
             setElText('val-equip', sc.fleet.equipment);
 
-            setElText('hosp-name', (currentLang === 'ta' && sc.hospital.tamilName) ? sc.hospital.tamilName : sc.hospital.name);
+            const hospName = (currentLang === 'ta' && sc.hospital.tamilName) ? sc.hospital.tamilName : sc.hospital.name;
+            setElText('hosp-name', hospName);
             setElText('hosp-specialty', sc.hospital.type);
             setElText('val-beds', sc.hospital.bedsAvailable + " AVAIL");
             setElText('val-hosp-eta', sc.hospital.eta);
@@ -1186,6 +1517,21 @@
             streamTranscripts(sc.voiceTranscript);
             setElText('voice-recognized-text', `"${sc.youSaidText}"`);
             setElText('voice-understood-text', sc.weUnderstoodSummary[currentLang] || sc.weUnderstoodSummary.en);
+
+            // Citizen Mode Specific Bindings (Sections 33, 34, 35)
+            setElText('citizen-unit-desc', "🚑 " + sc.fleet.selectedUnit);
+            setElText('citizen-hosp-desc', "🏥 " + hospName);
+
+            // Contextual First-Aid Safety Advice
+            const guidelinesMap = {
+                'chemical_fire': "• Move away from active smoke and flames if safe. Do not inhale chemical fumes.<br>• If a person is burned, cool with clean ambient water. Do not apply ice or grease.<br>• Keep phone line clear so emergency responders can call for exact gate directions.",
+                'tamil_medical': "• Keep patient resting calmly in a comfortable position. Loosen tight clothing around chest/neck.<br>• If experiencing chest pain or breathing distress, encourage slow deep breaths. Do not give food or drink.<br>• Be ready to guide the ambulance crew from the main street entrance.",
+                'highway_accident': "• Do NOT move injured individuals unless there is immediate danger of fire or secondary collision.<br>• Turn on hazard lights of nearby vehicles to warn oncoming highway traffic.<br>• Keep patient warm and still until paramedic extrication team arrives.",
+                'kavaraipettai_flood': "• Move to highest accessible dry floor or elevated structure. Avoid standing in rapid flood waters.<br>• Do not touch submerged electrical appliances, meters, or downed power wires.<br>• Wave a bright cloth or phone torch toward emergency rescue boat crews.",
+                'hindi_worker_cardiac': "• Have patient sit upright or in comfortable resting posture. Loosen tight collar.<br>• Do not let patient walk or exert themselves physically.<br>• Keep elevator doors open and clear ground entrance for rapid stretcher access."
+            };
+            const guideEl = document.getElementById('citizen-guidelines-text');
+            if (guideEl) guideEl.innerHTML = guidelinesMap[currentScenarioKey] || guidelinesMap['chemical_fire'];
         }
 
         function streamTranscripts(dialogueList) {
@@ -1533,12 +1879,12 @@
 
         function confirmVoiceEmergency() {
             closeVoiceModal();
-            setInterfaceMode('dispatcher');
-            executeDispatchAuthorization();
+            triggerCitizenEmergency('voice');
+            showEmergencyToast("🎙 Voice Emergency Captured & Dispatched to Control Room");
         }
 
         // ========================================================
-        // 6. ACCESSIBILITY & MODE SWITCHERS
+        // 6. ACCESSIBILITY, 3-MODE SYSTEM & CITIZEN ACTIONS
         // ========================================================
         function setTextScale(scale) {
             const body = document.getElementById('app-body');
@@ -1553,59 +1899,361 @@
 
         function toggleEasyMode() {
             isEasyMode = !isEasyMode;
-            document.body.classList.toggle('easy-mode-active', isEasyMode);
-            const btn = document.getElementById('btn-easy-mode');
-            if (isEasyMode) {
-                btn.className = "px-3 py-1.5 rounded-lg bg-red-600 text-white font-bold text-xs flex items-center gap-1.5 shadow";
-                setInterfaceMode('citizen');
-            } else {
-                btn.className = "px-2.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm";
-            }
+            setInterfaceMode(isEasyMode ? 'easy' : 'citizen');
         }
 
         function setInterfaceMode(mode) {
+            if (!['citizen', 'dispatcher', 'easy'].includes(mode)) mode = 'citizen';
             currentUiMode = mode;
+            try { localStorage.setItem('sentinel_civilian_mode', mode); } catch(e) {}
+
             const citizenBox = document.getElementById('citizen-view-container');
             const dispatcherBox = document.getElementById('dispatcher-view-container');
+            const easyBox = document.getElementById('easy-view-container');
+
             const btnCit = document.getElementById('btn-view-citizen');
             const btnDisp = document.getElementById('btn-view-dispatcher');
+            const btnEasy = document.getElementById('btn-view-easy');
+
+            const mobCit = document.getElementById('btn-mob-citizen');
+            const mobDisp = document.getElementById('btn-mob-dispatcher');
+            const mobEasy = document.getElementById('btn-mob-easy');
+
+            // Hide all views first
+            if (citizenBox) citizenBox.classList.add('hidden');
+            if (dispatcherBox) dispatcherBox.classList.add('hidden');
+            if (easyBox) easyBox.classList.add('hidden');
+
+            // Reset desktop buttons
+            const inactiveClass = "px-2.5 py-1 rounded-md transition-all text-blue-200 hover:text-white";
+            const activeClass = "px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm";
+            const easyInactive = "px-2.5 py-1 rounded-md transition-all text-amber-300 hover:text-white";
+            const easyActive = "px-2.5 py-1 rounded-md bg-amber-400 text-slate-950 font-bold shadow-sm";
+
+            if (btnCit) btnCit.className = inactiveClass;
+            if (btnDisp) btnDisp.className = inactiveClass;
+            if (btnEasy) btnEasy.className = easyInactive;
+
+            // Reset mobile drawer buttons
+            if (mobCit) mobCit.className = "py-1.5 rounded text-blue-200 hover:text-white";
+            if (mobDisp) mobDisp.className = "py-1.5 rounded text-blue-200 hover:text-white";
+            if (mobEasy) mobEasy.className = "py-1.5 rounded text-amber-300 hover:text-white";
 
             if (mode === 'citizen') {
-                citizenBox.classList.remove('hidden');
-                dispatcherBox.classList.add('hidden');
-                btnCit.className = "px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm";
-                btnDisp.className = "px-2.5 py-1 rounded-md text-blue-200 hover:text-white";
-            } else {
-                citizenBox.classList.add('hidden');
-                dispatcherBox.classList.remove('hidden');
-                btnDisp.className = "px-2.5 py-1 rounded-md bg-white text-blue-900 font-bold shadow-sm";
-                btnCit.className = "px-2.5 py-1 rounded-md text-blue-200 hover:text-white";
+                if (citizenBox) citizenBox.classList.remove('hidden');
+                if (btnCit) btnCit.className = activeClass;
+                if (mobCit) mobCit.className = "py-1.5 rounded bg-white text-blue-950 font-bold shadow-sm";
+            } else if (mode === 'easy') {
+                if (easyBox) easyBox.classList.remove('hidden');
+                if (btnEasy) btnEasy.className = easyActive;
+                if (mobEasy) mobEasy.className = "py-1.5 rounded bg-amber-400 text-slate-950 font-bold shadow-sm";
+            } else { // dispatcher
+                if (dispatcherBox) dispatcherBox.classList.remove('hidden');
+                if (btnDisp) btnDisp.className = activeClass;
+                if (mobDisp) mobDisp.className = "py-1.5 rounded bg-white text-blue-950 font-bold shadow-sm";
                 if (map) {
                     setTimeout(() => map.invalidateSize(), 150);
                 }
             }
         }
 
-        function triggerCitizenEmergency() {
-            setInterfaceMode('dispatcher');
-            executeDispatchAuthorization();
+        // Citizen Emergency Triggers (Sections 4, 5, 6, 7)
+        let citizenTimer = null;
+        let citizenRemSec = 240;
+
+        function triggerCitizenEmergency(triggerType = 'sos') {
+            playSynthesizedTone('alert');
+            const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
+
+            // Reveal SOS Confirmation Banner (Section 5)
+            const confBanner = document.getElementById('citizen-sos-confirmation');
+            if (confBanner) confBanner.classList.remove('hidden');
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            setElText('citizen-sos-time', `Logged at ${timeStr} • 108 Emergency Control Room`);
+
+            setElText('citizen-status-title', 'Emergency Received — Help Coordinated (உதவி ஒருங்கிணைக்கப்படுகிறது)');
+            setElText('citizen-eta-title', '04 min 00 sec');
+
+            // Start live countdown timer on citizen card
+            if (citizenTimer) clearInterval(citizenTimer);
+            citizenRemSec = 240;
+            citizenTimer = setInterval(() => {
+                citizenRemSec--;
+                if (citizenRemSec <= 0) {
+                    clearInterval(citizenTimer);
+                    setElText('citizen-status-title', 'Ambulance Arrived On Scene (இடத்தை அடைந்தது)');
+                    setElText('citizen-eta-title', '00 min 00 sec');
+                } else {
+                    const m = Math.floor(citizenRemSec / 60);
+                    const s = citizenRemSec % 60;
+                    setElText('citizen-eta-title', `0${m} min ${s < 10 ? '0' : ''}${s} sec`);
+                }
+            }, 1000);
+
+            // Synchronize with Dispatcher state machine
+            updateStepPill(2);
+            addTimelineEvent(timeStr, `Distress SOS Signal received from ${sc.caller.locationName} via Citizen App (${triggerType.toUpperCase()}).`, 'alert');
+            showEmergencyToast(`🚨 Emergency Signal Sent to 108 Dispatcher! Ticket: #TN-EMG-0814`);
         }
 
         function selectCitizenCategory(cat) {
-            setInterfaceMode('dispatcher');
-            executeDispatchAuthorization();
+            const catMap = {
+                'catMedical': 'tamil_medical',
+                'catAccident': 'highway_accident',
+                'catFire': 'chemical_fire',
+                'catFlood': 'kavaraipettai_flood',
+                'catPolice': 'highway_accident',
+                'catOther': 'chemical_fire'
+            };
+            const targetScenario = catMap[cat] || 'chemical_fire';
+            switchScenario(targetScenario);
+            triggerCitizenEmergency('category_' + cat);
         }
 
         function triggerSmsSos() {
+            playSynthesizedTone('alert');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            addTimelineEvent(timeStr, "Offline SMS SOS broadcast sent to 112 TN Emergency Hub with GPS coordinates.", 'alert');
             alert("SMS SOS triggered. Offline SMS broadcast sent with location coordinates to 112 TN Emergency Hub.");
         }
 
+        // Type Emergency Modal Handlers (Section 9)
+        function openTypeEmergencyModal() {
+            document.getElementById('type-sos-modal').classList.remove('hidden');
+            const errorEl = document.getElementById('type-desc-error');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeTypeEmergencyModal() {
+            document.getElementById('type-sos-modal').classList.add('hidden');
+        }
+
+        function submitTypeEmergency() {
+            const descInput = document.getElementById('input-type-desc');
+            const desc = descInput ? descInput.value.trim() : '';
+            const errorEl = document.getElementById('type-desc-error');
+
+            if (!desc) {
+                if (errorEl) errorEl.classList.remove('hidden');
+                if (descInput) descInput.focus();
+                return;
+            }
+            if (errorEl) errorEl.classList.add('hidden');
+
+            const casualties = document.getElementById('input-type-casualties').value;
+            const hazard = document.getElementById('input-type-hazard').value;
+            const landmark = document.getElementById('input-type-landmark').value;
+
+            const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
+            sc.caller.name = "Citizen Report (Text Form)";
+            if (landmark) sc.caller.landmark = landmark;
+            setElText('caller-address', sc.caller.landmark + ", " + sc.caller.locationName);
+
+            closeTypeEmergencyModal();
+            triggerCitizenEmergency('type_form');
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            addTimelineEvent(timeStr, `Citizen text distress report filed: "${desc.substring(0, 45)}..." [Casualties: ${casualties}, Severity: ${hazard}]`, 'info');
+        }
+
+        // Real Geolocation and Location Modal Handlers (Section 10)
+        function openLocationModal() {
+            document.getElementById('location-modal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeLocationModal() {
+            document.getElementById('location-modal').classList.add('hidden');
+        }
+
+        function acquireRealGeolocation() {
+            const statusBadge = document.getElementById('loc-sensor-status');
+            const coordsDisp = document.getElementById('loc-coords-display');
+            const accDisp = document.getElementById('loc-accuracy-display');
+
+            if (!navigator.geolocation) {
+                if (statusBadge) {
+                    statusBadge.textContent = "GPS NOT SUPPORTED";
+                    statusBadge.className = "px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[10px]";
+                }
+                if (accDisp) accDisp.textContent = "Browser Geolocation API not supported. Using verified landmark.";
+                return;
+            }
+
+            if (statusBadge) {
+                statusBadge.textContent = "ACQUIRING FIX...";
+                statusBadge.className = "px-2 py-0.5 rounded bg-blue-100 text-blue-900 font-bold text-[10px]";
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const acc = Math.round(pos.coords.accuracy);
+
+                    if (statusBadge) {
+                        statusBadge.textContent = `LOCKED (±${acc}m)`;
+                        statusBadge.className = "px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]";
+                    }
+                    if (coordsDisp) {
+                        coordsDisp.textContent = `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`;
+                    }
+                    if (accDisp) {
+                        accDisp.textContent = `Hardware GPS Accuracy: Approximately ±${acc} meters`;
+                    }
+
+                    const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
+                    if (sc && sc.caller) {
+                        sc.caller.coords = [lat, lng];
+                        if (incidentMarker) incidentMarker.setLatLng([lat, lng]);
+                        if (map) map.setView([lat, lng], 15);
+                    }
+                },
+                (err) => {
+                    if (statusBadge) {
+                        statusBadge.textContent = "GPS PERMISSION DENIED";
+                        statusBadge.className = "px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]";
+                    }
+                    if (accDisp) {
+                        accDisp.textContent = "Location permission unavailable or timed out. Responders will verify entered landmark.";
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+            );
+        }
+
+        function confirmLocationShare() {
+            const landmarkInput = document.getElementById('loc-landmark-input');
+            const landmark = landmarkInput ? landmarkInput.value.trim() : '';
+
+            if (landmark) {
+                const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
+                sc.caller.landmark = landmark;
+                setElText('caller-address', sc.caller.landmark + ", " + sc.caller.locationName);
+                setElText('citizen-loc-preview', sc.caller.landmark.split(',')[0]);
+            }
+
+            closeLocationModal();
+            showEmergencyToast("📍 Location & Landmark Confirmed with Emergency CAD");
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            addTimelineEvent(timeStr, `Location verified with 108 CAD: ${landmark || 'GPS Coordinates'}`, 'info');
+        }
+
         function detectCitizenLocation() {
-            alert("GPS coordinates locked: Anna Nagar, Chennai (13.0850° N, 80.2101° E). Location confirmed with 108 CAD.");
+            acquireRealGeolocation();
+            confirmLocationShare();
+        }
+
+        // Cross-Agency Coordination Handlers (Section 31)
+        function requestAgency(agency) {
+            playSynthesizedTone('alert');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (agency === 'fire') {
+                setElText('status-agency-fire', 'DISPATCHED (TN-FRS-02 ACK)');
+                addTimelineEvent(timeStr, "101 Fire & Rescue Unit TN-FRS-02 dispatched. Water tender en route.", 'alert');
+                showEmergencyToast("🚒 101 Fire & Rescue Unit Dispatched & Acknowledged!");
+            } else if (agency === 'police') {
+                setElText('status-agency-pol', 'PATROL EN ROUTE (CLEARING)');
+                addTimelineEvent(timeStr, "100 Police Highway Patrol assigned for emergency green corridor clearance.", 'info');
+                showEmergencyToast("👮 100 Police Highway Patrol Dispatched for Corridor Clearance!");
+            } else if (agency === 'hospital') {
+                sendHospitalPreAlert();
+            }
+        }
+
+        // Incident Timeline & Live Log (Section 32)
+        function addTimelineEvent(timeStr, text, type = 'info') {
+            const list = document.getElementById('incident-timeline-list');
+            if (!list) return;
+
+            const div = document.createElement('div');
+            div.className = "flex items-start space-x-2 border-l-2 pl-2 " + 
+                (type === 'alert' ? 'border-red-500 bg-red-50/50 p-1 rounded-r' : 
+                 (type === 'success' ? 'border-emerald-500 bg-emerald-50/50 p-1 rounded-r' : 'border-blue-400 p-1'));
+
+            const timeSpan = document.createElement('span');
+            timeSpan.className = "font-mono font-bold text-[10px] text-slate-500 shrink-0";
+            timeSpan.textContent = timeStr;
+
+            const textSpan = document.createElement('span');
+            textSpan.className = "text-[11px] text-slate-800";
+            textSpan.textContent = text;
+
+            div.appendChild(timeSpan);
+            div.appendChild(textSpan);
+
+            list.insertBefore(div, list.firstChild);
+
+            const countEl = document.getElementById('timeline-count');
+            if (countEl) countEl.textContent = `${list.children.length} EVENTS`;
+        }
+
+        // Emergency Toast Notification System (Section 58)
+        function showEmergencyToast(msg) {
+            let toast = document.getElementById('civilian-emergency-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'civilian-emergency-toast';
+                toast.className = "fixed bottom-5 right-5 max-w-sm bg-slate-950 text-white px-4 py-3 rounded-xl shadow-2xl z-50 text-xs font-bold border border-slate-700 flex items-center space-x-2 transition-all transform duration-300 pointer-events-none";
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<span class="text-base">🔔</span><span>${msg}</span>`;
+            toast.style.display = 'flex';
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => { toast.style.display = 'none'; }, 300);
+            }, 3500);
+        }
+
+        // Incident Feed Cards Renderer (Section 47)
+        function renderIncidentFeed() {
+            const container = document.getElementById('incident-feed-cards');
+            if (!container) return;
+            container.innerHTML = '';
+
+            Object.keys(CIVILIAN_SCENARIOS).forEach(key => {
+                const sc = CIVILIAN_SCENARIOS[key];
+                const isActive = (key === currentScenarioKey);
+
+                const card = document.createElement('div');
+                card.className = `p-2 rounded-lg border cursor-pointer transition-all ${
+                    isActive 
+                        ? 'bg-blue-50 border-blue-600 shadow-sm' 
+                        : 'bg-white border-slate-200 hover:border-slate-300'
+                }`;
+                card.onclick = () => switchScenario(key);
+
+                const urgencyColor = sc.triage.urgency === 'CRITICAL' 
+                    ? 'bg-red-100 text-red-800 border-red-300' 
+                    : (sc.triage.urgency === 'HIGH' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-blue-100 text-blue-800 border-blue-300');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-[11px] mb-0.5">
+                        <span class="font-extrabold text-slate-900 truncate max-w-[150px]">${sc.caller.locationName}</span>
+                        <span class="text-[9px] font-black px-1.5 py-0.2 rounded border ${urgencyColor}">${sc.triage.urgency}</span>
+                    </div>
+                    <div class="text-[10px] text-slate-600 truncate">${sc.caller.landmark}</div>
+                    <div class="flex items-center justify-between text-[9px] text-slate-500 mt-1">
+                        <span>${sc.caller.name.split(' ')[0]}</span>
+                        <span class="font-mono text-emerald-700 font-semibold">${sc.fleet.selectedUnit.split(' ')[0]}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         // ========================================================
-        // 7. JURY DEMO 60-90 SECOND AUTOMATION WIZARD
+        // 7. JURY DEMO 60-90 SECOND AUTOMATION WIZARD (SECTION 37)
         // ========================================================
         function toggleJuryDemo() {
             if (isJuryDemoActive) {
@@ -1692,11 +2340,18 @@
             document.getElementById('compliance-modal').classList.add('hidden');
         }
 
-        // Onload Initialization
+        // Onload Initialization (Section 3)
         window.addEventListener('DOMContentLoaded', () => {
             initMap();
             changeLanguage(currentLang);
             switchScenario('chemical_fire');
+            renderIncidentFeed();
+
+            // Default to Citizen mode unless URL explicitly requests dispatcher or easy mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const modeParam = urlParams.get('mode') || (window.location.hash ? window.location.hash.replace('#', '') : null);
+            const savedMode = modeParam || localStorage.getItem('sentinel_civilian_mode') || 'citizen';
+            setInterfaceMode(savedMode);
         });
     </script>
 </body>
