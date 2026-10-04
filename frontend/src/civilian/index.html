@@ -2627,6 +2627,34 @@
             if (!container) return;
             container.innerHTML = '';
 
+            // 1. Check for Active Industrial Disaster Escalation via Cross-Platform Bridge
+            if (window.SentinelCoordination) {
+                const indEvent = window.SentinelCoordination.getActiveEvent();
+                if (indEvent && indEvent.status !== 'RESOLVED') {
+                    const indCard = document.createElement('div');
+                    indCard.className = 'p-2.5 rounded-lg border border-red-500 bg-red-50/90 hover:bg-red-100/90 shadow-sm cursor-pointer transition-all space-y-1 mb-2 animate-pulse';
+                    indCard.onclick = () => {
+                        switchScenario('chemical_fire');
+                        showCivilianToast(`Viewing Industrial Emergency: ${indEvent.incidentType} (${indEvent.eventId})`);
+                    };
+                    indCard.innerHTML = `
+                        <div class="flex items-center justify-between text-[11px] mb-0.5">
+                            <span class="font-extrabold text-red-950 truncate flex items-center gap-1">
+                                <span>🏭</span>
+                                <span>${indEvent.eventId || 'SX-1042'}: INDUSTRIAL FIRE</span>
+                            </span>
+                            <span class="text-[9px] font-black px-1.5 py-0.2 rounded border bg-red-600 text-white font-mono">CRITICAL</span>
+                        </div>
+                        <div class="text-[10px] text-slate-700 truncate">${indEvent.location}</div>
+                        <div class="flex items-center justify-between text-[9px] text-slate-600 font-mono pt-0.5 border-t border-red-200">
+                            <span class="text-rose-700 font-bold">🚒 Fire + 🚑 108 + 👮 Police</span>
+                            <span class="text-emerald-700 font-bold">${indEvent.status}</span>
+                        </div>
+                    `;
+                    container.appendChild(indCard);
+                }
+            }
+
             Object.keys(CIVILIAN_SCENARIOS).forEach(key => {
                 const sc = CIVILIAN_SCENARIOS[key];
                 const isActive = (key === currentScenarioKey);
@@ -2770,6 +2798,7 @@
                 if (a.id === 'AGY-SDRF' && sdrfStatus) sdrfStatus.textContent = a.status + ` (ETA ${a.eta})`;
             });
 
+            renderIncidentFeed();
             showCivilianToast(`🚨 INDUSTRIAL DISASTER COORDINATION: ${activeEvent.incidentType} (${activeEvent.location}) - Public Safety CAD Active`);
         }
 

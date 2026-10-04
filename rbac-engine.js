@@ -114,33 +114,41 @@
     // 17: Owner Executive Overview
     const ROLE_WORKSPACES = {
         [ROLES.WORKER]: [
-            { idx: 8, label: 'MY SAFETY & EVACUATION', icon: 'shield-alert', badge: 'WORKER SAFETY' },
-            { idx: 7, label: 'INCIDENTS & REPORTING', icon: 'alert-triangle', badge: 'REPORTING' }
+            { idx: 0, label: 'MY SAFETY (HOME)', icon: 'activity', badge: 'STATUS: SAFE' },
+            { idx: 1, label: 'MY AREA (DIGITAL TWIN)', icon: 'box', badge: 'ZONE B' },
+            { idx: 2, label: 'EVACUATION INSTRUCTIONS', icon: 'compass', badge: 'EGRESS' },
+            { idx: 5, label: 'ASSIGNED CREW & STATUS', icon: 'users', badge: 'PERSONNEL' },
+            { idx: 7, label: 'MY ALERTS & HAZARDS', icon: 'alert-triangle', badge: 'ALERTS' },
+            { idx: 8, label: 'EMERGENCY / REPORT SOS', icon: 'shield-alert', badge: '1-TAP SOS' }
         ],
         [ROLES.SUPERVISOR]: [
-            { idx: 0, label: 'COMMAND CENTER', icon: 'activity', badge: 'OPERATIONS' },
+            { idx: 0, label: 'AREA SAFETY (HOME)', icon: 'activity', badge: 'OPERATIONS' },
             { idx: 1, label: 'DIGITAL TWIN', icon: 'box', badge: '3D TWIN' },
-            { idx: 4, label: 'RISK FIELD', icon: 'layers', badge: 'HAZARDS' },
-            { idx: 5, label: 'TEAM & WORKERS', icon: 'users', badge: 'PERSONNEL' },
-            { idx: 6, label: 'MACHINES & TELEMETRY', icon: 'cpu', badge: 'ASSETS' },
+            { idx: 2, label: 'DISASTER READINESS', icon: 'compass', badge: 'EVACUATION' },
+            { idx: 3, label: 'EDGE TELEMETRY', icon: 'radio', badge: 'SENSORS' },
+            { idx: 4, label: 'RISK FIELD', icon: 'layers', badge: 'HEATMAPS' },
+            { idx: 5, label: 'WORKERS & CREW', icon: 'users', badge: 'PERSONNEL' },
+            { idx: 6, label: 'MACHINES & ASSETS', icon: 'cpu', badge: 'ASSETS' },
             { idx: 7, label: 'INCIDENTS', icon: 'alert-triangle', badge: 'ACTIVE' },
             { idx: 8, label: 'EMERGENCY RESPONSE', icon: 'shield', badge: 'EGRESS' },
-            { idx: 16, label: 'DEPT COORDINATION', icon: 'share-2', badge: 'DISPATCH' }
+            { idx: 16, label: 'DEPARTMENT COORDINATION', icon: 'share-2', badge: 'DISPATCH' }
         ],
         [ROLES.OWNER]: [
             { idx: 17, label: 'EXECUTIVE OVERVIEW', icon: 'briefcase', badge: 'EXECUTIVE' },
-            { idx: 0, label: 'COMMAND CENTER', icon: 'activity', badge: 'OVERVIEW' },
-            { idx: 1, label: 'DIGITAL TWIN', icon: 'box', badge: 'FACILITY' },
-            { idx: 7, label: 'ACTIVE INCIDENTS', icon: 'alert-triangle', badge: 'HAZARDS' },
-            { idx: 16, label: 'DEPT COORDINATION', icon: 'share-2', badge: 'EMERGENCY' },
-            { idx: 9, label: 'BUSINESS RECOVERY', icon: 'refresh-cw', badge: 'STABILIZATION' },
-            { idx: 11, label: 'CONTINUITY & RESILIENCE', icon: 'shield-check', badge: 'CONTINUITY' }
+            { idx: 0, label: 'ENTERPRISE SAFETY', icon: 'activity', badge: 'FACILITY' },
+            { idx: 1, label: 'FACILITY DIGITAL TWIN', icon: 'box', badge: 'SPATIAL' },
+            { idx: 4, label: 'ENTERPRISE RISK FIELD', icon: 'layers', badge: 'HAZARDS' },
+            { idx: 7, label: 'HIGH-LEVEL INCIDENTS', icon: 'alert-triangle', badge: 'RISK' },
+            { idx: 9, label: 'BUSINESS CONTINUITY', icon: 'refresh-cw', badge: 'RESILIENCE' },
+            { idx: 11, label: 'RESILIENCE & AUDIT', icon: 'shield-check', badge: 'DGMS' },
+            { idx: 16, label: 'DEPARTMENT READINESS', icon: 'share-2', badge: 'READINESS' }
         ],
         [ROLES.COORDINATOR]: [
-            { idx: 16, label: 'EMERGENCY COORDINATION', icon: 'share-2', badge: 'COORDINATION' },
-            { idx: 7, label: 'INCIDENT LOG', icon: 'alert-triangle', badge: 'TRIAGE' },
-            { idx: 8, label: 'EVACUATION ROUTES', icon: 'shield', badge: 'MUSTERING' },
-            { idx: 0, label: 'COMMAND CENTER', icon: 'activity', badge: 'OVERVIEW' }
+            { idx: 16, label: 'COMMAND CENTER (DISPATCH)', icon: 'share-2', badge: 'COORDINATION' },
+            { idx: 7, label: 'ACTIVE INCIDENTS QUEUE', icon: 'alert-triangle', badge: 'CAD QUEUE' },
+            { idx: 8, label: 'EMERGENCY RESPONSE EGRESS', icon: 'shield', badge: 'EGRESS' },
+            { idx: 1, label: '3D EVACUATION CORRIDORS', icon: 'box', badge: 'CORRIDORS' },
+            { idx: 0, label: 'OVERALL DISASTER STATUS', icon: 'activity', badge: 'OVERVIEW' }
         ],
         [ROLES.ADMIN]: [
             { idx: 0, label: '01 COMMAND CENTER' },
@@ -170,7 +178,7 @@
             title: 'Worker Safety Profile',
             badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
             description: 'Focused on personal safety, assigned zone alerts, evacuation egress routes, and rapid SOS reporting.',
-            defaultWorkspace: 8
+            defaultWorkspace: 0
         },
         [ROLES.SUPERVISOR]: {
             title: 'Operations Supervisor',
@@ -178,23 +186,23 @@
             description: 'Responsible for active personnel safety, machine telemetry, incident triage, and department escalations.',
             defaultWorkspace: 0
         },
-        [ROLES.ADMIN]: {
-            title: 'System Administrator',
-            badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
-            description: 'Full operational control, security architecture, system configurations, edge node provision, and audit ledger.',
-            defaultWorkspace: 0
-        },
         [ROLES.OWNER]: {
-            title: 'Executive Facility Owner',
+            title: 'Owner & Executive Command',
             badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
-            description: 'Executive-level situational awareness, business continuity, worker welfare metrics, and multi-agency liaison.',
+            description: 'Strategic view of plant operations, financial risk exposure, business continuity, and DGMS compliance.',
             defaultWorkspace: 17
         },
         [ROLES.COORDINATOR]: {
-            title: 'Department Emergency Coordinator',
-            badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-            description: 'Dedicated multi-department dispatch, internal readiness management, and external public safety liaison.',
+            title: 'Multi-Department Emergency Coordinator',
+            badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+            description: 'Commands emergency response across 11 internal plant departments and 5 public safety agencies (108, 101, 100, Hospital, SDRF).',
             defaultWorkspace: 16
+        },
+        [ROLES.ADMIN]: {
+            title: 'Systems Administrator & Engineer',
+            badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+            description: 'Unrestricted administration: hardware sensor calibrations, user access roles, system failovers, and forensic ledger.',
+            defaultWorkspace: 0
         }
     };
 

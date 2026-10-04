@@ -398,6 +398,13 @@
 
         <!-- Right Operational Actions & Demo Controls -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <!-- INDUSTRIAL EMERGENCY ESCALATION BUTTON (Supervisor / Admin / Coordinator) -->
+            <button onclick="openActivateEmergencyModal()" id="btn-activate-emergency-coord" class="hidden px-2.5 sm:px-3 py-1 rounded-md bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-mono text-xs font-bold items-center gap-1.5 shadow-md shadow-red-900/50 border border-red-400/60 transition-all active:scale-95 cursor-pointer shrink-0 animate-pulse" title="Trigger Multi-Department Emergency Escalation">
+                <span>🚨</span>
+                <span class="hidden sm:inline">ACTIVATE EMERGENCY COORDINATION</span>
+                <span class="sm:hidden">EMERGENCY</span>
+            </button>
+
             <!-- Enterprise Role Badge & Quick Switcher (Sections 2 & 19) -->
             <div class="relative inline-block text-left shrink-0" id="role-switcher-container">
                 <button onclick="toggleRoleDropdown()" id="btn-active-role-badge" class="px-2 sm:px-2.5 py-1 rounded bg-blue-950/80 hover:bg-blue-900 border border-blue-400/60 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer" title="Active Role Profile — Click to Switch Role">
@@ -428,9 +435,14 @@
                         <span class="text-[9px] text-slate-400">Executive View</span>
                     </button>
                     <button onclick="selectUserRole('COORDINATOR')" class="w-full text-left p-1.5 rounded hover:bg-emerald-950/50 hover:text-emerald-300 text-slate-300 flex items-center justify-between transition-colors">
-                        <span class="flex items-center gap-1.5 font-bold"><span class="text-emerald-400">📡</span><span>COORDINATOR</span></span>
-                        <span class="text-[9px] text-slate-400">Depts &amp; Agencies</span>
+                        <span class="flex items-center gap-1.5 font-bold"><span class="text-rose-400">🚨</span><span>COORDINATOR</span></span>
+                        <span class="text-[9px] text-slate-400">Multi-Dept CAD</span>
                     </button>
+                    <div class="pt-1.5 border-t border-white/10 text-center">
+                        <button onclick="openIndustrialLoginModal(); toggleRoleDropdown();" class="w-full py-1 rounded bg-white/5 hover:bg-white/10 text-cyan-400 hover:text-cyan-300 text-[10px] font-bold font-mono transition-colors">
+                            🔍 OPEN FULL ROLE SELECTOR ↗
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -4517,6 +4529,176 @@
         </div>
     </div>
 
+    <!-- ==================================================================== -->
+    <!-- INDUSTRIAL LOGIN & ROLE SELECTION MODAL (MANDATORY REQUIREMENT)      -->
+    <!-- ==================================================================== -->
+    <div id="modal-industrial-login" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-industrial-login')">
+        <div class="modal-box p-5 sm:p-6 space-y-4 max-w-2xl bg-[#0b0f19] border border-cyan-500/40 shadow-2xl rounded-2xl w-[95%] sm:w-auto my-auto max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-cyan-500/30 shrink-0">
+                        🛡️
+                    </div>
+                    <div>
+                        <h3 class="font-display font-extrabold text-sm sm:text-base text-white tracking-wide">SENTINEL-X INDUSTRIAL LOGIN</h3>
+                        <p class="text-[11px] text-cyan-400 font-mono">Industrial Safety &amp; Digital Twin — Select Your Role</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-industrial-login')" class="text-slate-400 hover:text-white p-1 text-sm font-mono cursor-pointer" aria-label="Close Role Selection">✕</button>
+            </div>
+
+            <p class="text-xs text-slate-300 font-sans leading-relaxed">
+                Select your designated role to enter your specific operational workspace. Each role receives a strictly separated navigation hierarchy, permissions, and emergency response capabilities:
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- 1. WORKER -->
+                <div onclick="selectUserRole('WORKER')" class="p-3.5 rounded-xl border border-amber-500/30 bg-amber-950/20 hover:bg-amber-950/40 hover:border-amber-400 transition-all cursor-pointer space-y-1.5 group active:scale-98">
+                    <div class="flex items-center justify-between">
+                        <span class="font-display font-bold text-amber-300 text-sm flex items-center gap-2">
+                            <span>👷</span><span>WORKER</span>
+                        </span>
+                        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-[9px] font-bold">SAFETY &amp; SOS</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Personal Safety &bull; Alerts &amp; Emergency</div>
+                    <p class="text-[11px] text-slate-300 leading-snug">
+                        Personal safety status, assigned zone hazard alerts, digital twin egress routes, and rapid 1-tap SOS distress reporting. Protected from administrative overhead.
+                    </p>
+                </div>
+
+                <!-- 2. SUPERVISOR -->
+                <div onclick="selectUserRole('SUPERVISOR')" class="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20 hover:bg-cyan-950/40 hover:border-cyan-400 transition-all cursor-pointer space-y-1.5 group active:scale-98">
+                    <div class="flex items-center justify-between">
+                        <span class="font-display font-bold text-cyan-300 text-sm flex items-center gap-2">
+                            <span>👥</span><span>SUPERVISOR</span>
+                        </span>
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono text-[9px] font-bold">TEAM &amp; AREA</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Area &amp; Team Safety &bull; Incident Response</div>
+                    <p class="text-[11px] text-slate-300 leading-snug">
+                        Monitor assigned workers, zone telemetry, machine health, incident triage, and authority to activate multi-department emergency coordination.
+                    </p>
+                </div>
+
+                <!-- 3. ADMIN -->
+                <div onclick="selectUserRole('ADMIN')" class="p-3.5 rounded-xl border border-blue-500/30 bg-blue-950/20 hover:bg-blue-950/40 hover:border-blue-400 transition-all cursor-pointer space-y-1.5 group active:scale-98">
+                    <div class="flex items-center justify-between">
+                        <span class="font-display font-bold text-blue-300 text-sm flex items-center gap-2">
+                            <span>⚙️</span><span>ADMIN</span>
+                        </span>
+                        <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-mono text-[9px] font-bold">FULL SYSTEM</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">System Operations &bull; Users &amp; Devices</div>
+                    <p class="text-[11px] text-slate-300 leading-snug">
+                        Hardware sensor calibrations (MQ-135, ADXL345), system configuration, user roles, emergency agencies directory, and SHA-256 event ledger audit.
+                    </p>
+                </div>
+
+                <!-- 4. OWNER -->
+                <div onclick="selectUserRole('OWNER')" class="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 hover:bg-purple-950/40 hover:border-purple-400 transition-all cursor-pointer space-y-1.5 group active:scale-98">
+                    <div class="flex items-center justify-between">
+                        <span class="font-display font-bold text-purple-300 text-sm flex items-center gap-2">
+                            <span>🏢</span><span>OWNER</span>
+                        </span>
+                        <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-mono text-[9px] font-bold">EXECUTIVE</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Executive Safety &bull; Enterprise Risk</div>
+                    <p class="text-[11px] text-slate-300 leading-snug">
+                        Executive plant overview, business continuity, enterprise risk exposure, department readiness overview, resilience metrics, and DGMS compliance.
+                    </p>
+                </div>
+
+                <!-- 5. MULTIPLE DEPARTMENT / EMERGENCY COORDINATOR -->
+                <div onclick="selectUserRole('COORDINATOR')" class="col-span-1 sm:col-span-2 p-3.5 rounded-xl border border-rose-500/40 bg-gradient-to-r from-rose-950/30 via-slate-900 to-rose-950/20 hover:border-rose-400 hover:bg-rose-950/40 transition-all cursor-pointer space-y-1.5 group active:scale-98">
+                    <div class="flex items-center justify-between">
+                        <span class="font-display font-bold text-rose-300 text-sm flex items-center gap-2">
+                            <span>🚨</span><span>MULTIPLE DEPARTMENT / EMERGENCY COORDINATOR</span>
+                        </span>
+                        <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-mono text-[9px] font-bold">COMMAND CENTER</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Emergency Coordination &bull; Fire • Police • Ambulance • Hospital • Rescue</div>
+                    <p class="text-[11px] text-slate-300 leading-snug">
+                        Unified emergency coordination command center. Oversees multi-department dispatch tasks, live unit acknowledgements, ambulance 108 &amp; fire 101 en-route tracking, hospital trauma bay pre-alerts, and real-time coordination timeline.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-white/10 text-xs font-mono text-slate-400">
+                <span class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span>Role-Based Access Control (RBAC) Active</span>
+                </span>
+                <a href="auth.html?mode=industrial" class="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">Open Gateway Portal &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- MULTI-DEPARTMENT EMERGENCY ACTIVATION CONFIRMATION MODAL             -->
+    <!-- ==================================================================== -->
+    <div id="modal-activate-emergency-confirm" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-activate-emergency-confirm')">
+        <div class="modal-box p-5 space-y-4 max-w-lg bg-[#0d1117] border border-rose-500/60 shadow-2xl rounded-2xl w-[95%] sm:w-auto my-auto">
+            <div class="flex items-center gap-2.5 text-rose-400 border-b border-white/10 pb-3">
+                <span class="text-2xl animate-pulse">🚨</span>
+                <div>
+                    <h4 class="font-display font-black text-sm text-white tracking-wide uppercase">ACTIVATE MULTI-DEPARTMENT RESPONSE?</h4>
+                    <p class="text-[11px] font-mono text-rose-300">Authorized Escalation — Emergency Coordination Engine</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-black/50 border border-white/10 space-y-2 text-xs font-mono">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">INCIDENT ID:</span>
+                    <span class="text-rose-400 font-bold">SX-INC-1042</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">INCIDENT TYPE:</span>
+                    <span class="text-white font-bold">FACTORY FIRE + INJURED WORKER</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">LOCATION:</span>
+                    <span class="text-cyan-300 font-bold">Unit 01 / Factory Gate &amp; Zone B</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">SEVERITY:</span>
+                    <span class="px-2 py-0.5 rounded bg-red-600/30 text-red-300 border border-red-500/50 font-bold">CRITICAL ESCALATION</span>
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <div class="text-[11px] font-bold text-slate-300 font-mono">POTENTIAL DEPARTMENTS TO ALERT:</div>
+                <div class="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
+                        <span>🚒</span><span>Fire &amp; Rescue (TNFRS)</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
+                        <span>🚑</span><span>Ambulance (108 ALS)</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
+                        <span>👮</span><span>Police (Perimeter Cordon)</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
+                        <span>🏥</span><span>Hospital (Trauma Bay 1)</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-[11px] text-amber-300/90 font-sans">
+                ⚠️ Confirming will alert all required internal plant departments and external emergency response agencies, synchronize live CAD dispatcher feed, and open cross-agency command timeline.
+            </p>
+
+            <div class="flex justify-end gap-2.5 pt-2 border-t border-white/10 text-xs font-mono">
+                <button onclick="closeModal('modal-activate-emergency-confirm')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer transition-colors">
+                    CANCEL
+                </button>
+                <button onclick="confirmActivateEmergency()" id="btn-confirm-emergency-activate" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-rose-900/50 transition-all active:scale-95">
+                    <span>🚨</span>
+                    <span>ACTIVATE RESPONSE</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
 
@@ -4536,6 +4718,17 @@
         let fullscreenTwinEngine = null;
         let prototypeTwinEngine = null;
         let activeTwinPreset = 'CONVEYOR';
+
+        // Modal Helpers (Global)
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('open');
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('open');
+        }
 
         // --- Section 30 Routing Paths (18 Workspaces) ---
         const WORKSPACE_ROUTES = [
@@ -4571,6 +4764,15 @@
                 window.location.href = 'auth.html';
                 return false;
             }
+
+            // If session doesn't have an explicit role selected, prompt Industrial Login Role Selection modal
+            const hasRole = !!(sessionStorage.getItem('userRole') || sessionStorage.getItem('sentinel_role'));
+            if (!hasRole && !window.location.search.includes('role=')) {
+                setTimeout(() => {
+                    openIndustrialLoginModal();
+                }, 350);
+            }
+
             return true;
         }
 
@@ -4704,23 +4906,51 @@
         // RBAC & MULTI-DEPARTMENT EMERGENCY COORDINATION CONTROLLERS
         // ====================================================================
         function renderRoleNavigation() {
-            const role = (window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : 'admin').toLowerCase();
+            const role = (window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : (sessionStorage.getItem('userRole') || 'admin')).toLowerCase();
             const navItems = document.querySelectorAll('#scada-nav-list .nav-item');
             navItems.forEach((item, idx) => {
                 const allowed = window.SentinelRBAC ? window.SentinelRBAC.canAccessWorkspace(idx, role) : true;
                 item.style.display = allowed ? 'flex' : 'none';
             });
-            const roleBadge = document.getElementById('current-role-badge-text');
+            const roleBadge = document.getElementById('topbar-role-label') || document.getElementById('current-role-badge-text');
             if (roleBadge) {
                 roleBadge.textContent = role.toUpperCase();
+            }
+            const roleLed = document.getElementById('role-led-indicator');
+            if (roleLed) {
+                const colorMap = {
+                    'worker': 'bg-amber-400',
+                    'supervisor': 'bg-cyan-400',
+                    'admin': 'bg-blue-400',
+                    'owner': 'bg-purple-400',
+                    'coordinator': 'bg-rose-500'
+                };
+                roleLed.className = `w-1.5 h-1.5 rounded-full ${colorMap[role] || 'bg-blue-400'} animate-pulse`;
+            }
+
+            // Emergency escalation button visibility (Supervisor, Admin, Coordinator only; hidden for Worker)
+            const emgBtn = document.getElementById('btn-activate-emergency-coord');
+            if (emgBtn) {
+                const canEscalate = ['supervisor', 'admin', 'coordinator'].includes(role);
+                if (canEscalate) {
+                    emgBtn.classList.remove('hidden');
+                    emgBtn.classList.add('inline-flex');
+                } else {
+                    emgBtn.classList.add('hidden');
+                    emgBtn.classList.remove('inline-flex');
+                }
             }
         }
 
         function toggleRoleDropdown() {
-            const menu = document.getElementById('role-selector-menu');
+            const menu = document.getElementById('role-switcher-dropdown') || document.getElementById('role-selector-menu');
             if (menu) {
                 menu.classList.toggle('hidden');
             }
+        }
+
+        function openIndustrialLoginModal() {
+            openModal('modal-industrial-login');
         }
 
         function selectUserRole(role) {
@@ -4730,9 +4960,11 @@
                 sessionStorage.setItem('sentinel_role', role);
                 sessionStorage.setItem('userRole', role);
             }
+            sessionStorage.setItem('authenticated', 'true');
             renderRoleNavigation();
-            const menu = document.getElementById('role-selector-menu');
+            const menu = document.getElementById('role-switcher-dropdown') || document.getElementById('role-selector-menu');
             if (menu) menu.classList.add('hidden');
+            closeModal('modal-industrial-login');
             
             showToast(`Role switched to ${role.toUpperCase()} (RBAC policy updated)`, 'info');
 
@@ -4745,6 +4977,25 @@
             const role = window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : 'admin';
             const defaultWs = window.SentinelRBAC ? window.SentinelRBAC.getDefaultWorkspace(role) : 0;
             switchWorkspace(defaultWs);
+        }
+
+        function openActivateEmergencyModal() {
+            openModal('modal-activate-emergency-confirm');
+        }
+
+        function confirmActivateEmergency() {
+            closeModal('modal-activate-emergency-confirm');
+            if (window.SentinelCoordination) {
+                window.SentinelCoordination.createEmergencyCoordinationEvent({
+                    incidentType: 'INDUSTRIAL FIRE + INJURED WORKER',
+                    severity: 'CRITICAL',
+                    location: 'Unit 01 / Factory Gate & Zone B',
+                    peopleAffected: 4
+                });
+                window.SentinelCoordination.stepDemoLifecycle(3); // Dispatched and en-route
+            }
+            showToast('🚨 MULTI-DEPARTMENT EMERGENCY RESPONSE ACTIVATED! Agencies Dispatched.', 'error');
+            switchWorkspace(16); // Switch to Workspace 17: DEPT COORDINATION
         }
 
         function renderCoordinationWorkspace() {

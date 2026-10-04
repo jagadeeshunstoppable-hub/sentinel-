@@ -27,6 +27,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="twin-engine.js"></script>
+    <script src="rbac-engine.js"></script>
+    <script src="coordination-engine.js"></script>
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -80,7 +82,7 @@
         <div class="grid grid-cols-3 gap-6">
             <div class="glass-panel rounded-2xl p-5 text-center">
                 <span class="text-xs text-slate-300 uppercase font-bold tracking-wider">Total Assertions</span>
-                <p class="text-3xl font-extrabold text-white mt-1" id="total-tests">11</p>
+                <p class="text-3xl font-extrabold text-white mt-1" id="total-tests">17</p>
             </div>
             <div class="glass-panel rounded-2xl p-5 text-center">
                 <span class="text-xs text-slate-300 uppercase font-bold tracking-wider">Passed</span>
@@ -478,11 +480,83 @@
                                                                         } else {
                                                                             logFail(`Assertion 14 failed: totalImg=${totalImg}, fidelity=${fidelity}`);
                                                                         }
-                                                                    } catch(e) {
-                                                                        logFail("Assertion 14 error: " + e.message);
-                                                                    }
+                                                                    // Assert 15: RBAC Role-Based Access Control and Route Authorization Guard
+                                                                    setTimeout(() => {
+                                                                        try {
+                                                                            if (window.SentinelRBAC) {
+                                                                                const rbac = window.SentinelRBAC;
+                                                                                const workerCanAdmin = rbac.canAccessWorkspace(12, 'WORKER');
+                                                                                const workerCanSelf = rbac.canAccessWorkspace(0, 'WORKER');
+                                                                                const coordCanDispatch = rbac.canAccessWorkspace(16, 'COORDINATOR');
+                                                                                const supervisorCanCoord = rbac.canAccessWorkspace(16, 'SUPERVISOR');
+                                                                                const ownerCanExec = rbac.canAccessWorkspace(17, 'OWNER');
 
-                                                                    logInfo(`Testing sequence complete. Passed: ${passCount} / Failed: ${failCount}`);
+                                                                                if (!workerCanAdmin && workerCanSelf && coordCanDispatch && supervisorCanCoord && ownerCanExec) {
+                                                                                    logPass("Assertion 15: RBAC Engine verified! Worker restricted from Admin/Config (Ws 12), Coordinator & Supervisor permitted Multi-Dept Dispatch (Ws 16), Owner permitted Executive Command (Ws 17).");
+                                                                                } else {
+                                                                                    logFail(`Assertion 15 failed: workerAdmin=${workerCanAdmin}, workerSelf=${workerCanSelf}, coord=${coordCanDispatch}`);
+                                                                                }
+                                                                            } else {
+                                                                                logFail("Assertion 15: window.SentinelRBAC is not defined.");
+                                                                            }
+                                                                        } catch(e) {
+                                                                            logFail("Assertion 15 error: " + e.message);
+                                                                        }
+
+                                                                        // Assert 16: Multi-Department Directory & External Agencies
+                                                                        setTimeout(() => {
+                                                                            try {
+                                                                                if (window.SentinelCoordination) {
+                                                                                    const depts = window.SentinelCoordination.getDepartments();
+                                                                                    const agys = window.SentinelCoordination.getAgencies();
+                                                                                    const hasMed = agys.some(a => a.type === 'AMBULANCE' && a.id === 'AGY-108');
+                                                                                    const hasFire = agys.some(a => a.type === 'FIRE' && a.id === 'AGY-101');
+                                                                                    const hasPol = agys.some(a => a.type === 'POLICE' && a.id === 'AGY-100');
+                                                                                    const hasHosp = agys.some(a => a.type === 'HOSPITAL' && a.id === 'AGY-HOSP');
+
+                                                                                    if (depts.length >= 10 && agys.length >= 5 && hasMed && hasFire && hasPol && hasHosp) {
+                                                                                        logPass(`Assertion 16: Multi-Department & Agency Directories verified! ${depts.length} internal departments and ${agys.length} external agencies (108 Ambulance, 101 Fire, 100 Police, RGGGH Hospital, SDRF) loaded.`);
+                                                                                    } else {
+                                                                                        logFail(`Assertion 16 failed: depts=${depts.length}, agys=${agys.length}`);
+                                                                                    }
+                                                                            } else {
+                                                                                logFail("Assertion 16: window.SentinelCoordination is not defined.");
+                                                                            }
+                                                                        } catch(e) {
+                                                                            logFail("Assertion 16 error: " + e.message);
+                                                                        }
+
+                                                                        // Assert 17: Emergency Escalation Pipeline & Shared Incident Contract
+                                                                        setTimeout(() => {
+                                                                            try {
+                                                                                if (window.SentinelCoordination) {
+                                                                                    const event = window.SentinelCoordination.createEmergencyCoordinationEvent({
+                                                                                        incidentType: 'QA AUTOMATED FACTORY FIRE',
+                                                                                        severity: 'CRITICAL',
+                                                                                        location: 'Unit 01 / QA Bay'
+                                                                                    });
+                                                                                    window.SentinelCoordination.stepDemoLifecycle(3);
+
+                                                                                    const active = window.SentinelCoordination.getActiveEvent();
+                                                                                    const hasContract = active && active.eventId && active.incidentType && active.severity === 'CRITICAL' && active.requiredCapabilities.length > 0;
+                                                                                    
+                                                                                    if (hasContract && active.status === 'RESPONDING') {
+                                                                                        logPass(`Assertion 17: Emergency Escalation Pipeline verified! Event ${active.eventId} created with canonical contract, status transitioned to RESPONDING, external agencies dispatched.`);
+                                                                                    } else {
+                                                                                        logFail(`Assertion 17 failed: activeEvent=${JSON.stringify(active)}`);
+                                                                                    }
+                                                                                } else {
+                                                                                    logFail("Assertion 17: window.SentinelCoordination is not defined.");
+                                                                                }
+                                                                            } catch(e) {
+                                                                                logFail("Assertion 17 error: " + e.message);
+                                                                            }
+
+                                                                            logInfo(`Testing sequence complete. Passed: ${passCount} / Failed: ${failCount}`);
+                                                                        }, 200);
+
+                                                                    }, 200);
+
                                                                 }, 200);
 
                                                             }, 200);
