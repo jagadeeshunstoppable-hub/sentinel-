@@ -258,6 +258,51 @@
             this.agencies = this.loadAgencies();
             this.activeEvent = this.loadActiveEvent();
             this.listeners = [];
+            this.setupCrossTabBus();
+        }
+
+        setupCrossTabBus() {
+            try {
+                if (typeof BroadcastChannel !== 'undefined') {
+                    this.bus = new BroadcastChannel('sentinel_coordination_bus');
+                    this.bus.onmessage = (msg) => {
+                        if (msg && msg.data && msg.data.type === 'COORDINATION_STATE_CHANGED') {
+                            this.reloadState();
+                        }
+                    };
+                }
+            } catch (e) {
+                console.warn('BroadcastChannel not supported or restricted:', e);
+            }
+
+            if (typeof window !== 'undefined' && window.addEventListener) {
+                window.addEventListener('storage', (e) => {
+                    if (e.key && e.key.startsWith('sentinel_')) {
+                        this.reloadState();
+                    }
+                });
+            }
+        }
+
+        reloadState() {
+            this.departments = this.loadDepartments();
+            this.agencies = this.loadAgencies();
+            this.activeEvent = this.loadActiveEvent();
+            this.notifyChange();
+        }
+
+        broadcastBusMessage(action = 'STATE_UPDATE') {
+            if (this.bus) {
+                try {
+                    this.bus.postMessage({
+                        type: 'COORDINATION_STATE_CHANGED',
+                        action: action,
+                        eventId: this.activeEvent ? (this.activeEvent.eventId || this.activeEvent.incidentId) : null,
+                        status: this.activeEvent ? this.activeEvent.status : null,
+                        timestamp: Date.now()
+                    });
+                } catch (e) {}
+            }
         }
 
         loadDepartments() {
@@ -276,6 +321,7 @@
             } catch (e) {
                 console.error('Failed to save departments:', e);
             }
+            this.broadcastBusMessage('DEPARTMENTS_UPDATED');
         }
 
         loadAgencies() {
@@ -294,6 +340,7 @@
             } catch (e) {
                 console.error('Failed to save agencies:', e);
             }
+            this.broadcastBusMessage('AGENCIES_UPDATED');
         }
 
         loadActiveEvent() {
@@ -317,6 +364,7 @@
                 console.error('Failed to persist coordination event:', e);
             }
             this.notifyChange();
+            this.broadcastBusMessage(this.activeEvent ? 'EVENT_SAVED' : 'EVENT_CLEARED');
         }
 
         subscribe(callback) {
@@ -650,6 +698,93 @@
             this.saveDepartments();
             this.saveAgencies();
             this.saveActiveEvent();
+        }
+
+        // Alias: resetAll() for compatibility with app.html
+        resetAll() {
+            return this.resetToNormal();
+        }
+
+        // Deterministic Fire Disaster Demo Scenario (Part 45 of Spec)
+        // Simulates: Motor overheating → thermal runaway → fire → multi-department alert
+        triggerDeterministicFireDisaster() {
+            const event = this.createEmergencyCoordinationEvent({
+                incidentId: 'SX-INC-1042',
+                eventId: 'SX-INC-1042',
+                incidentType: 'INDUSTRIAL FIRE & CHEMICAL RISK',
+                severity: 'CRITICAL',
+                location: 'Zone B — Motor Crankshop #4 (MTR-01)',
+                peopleAffected: 4,
+                affectedWorkers: ['W-017', 'W-024', 'W-031', 'W-042'],
+                hazardDetails: 'Motor MTR-01 thermal runaway. Temperature: 78.4°C (CRITICAL). MQ-135 gas: 480ppm (DANGER ZONE). Smoke plume visible from Control Room CCTV.',
+                source: 'EDGE_SENSOR_MESH + WEARABLE_BEACON_W042'
+            });
+            // Immediately advance to step 1 (all depts alerted, agencies alerted)
+            this.stepDemoLifecycle(1);
+            return event;
+        }
+
+        // Broadcast alert to all or specified departments
+        broadcastAlert(targetDeptIds, message) {
+            const timeStr = new Date().toLocaleTimeString('en-IN', { hour12: false });
+            const isAll = !targetDeptIds || targetDeptIds === 'ALL_DEPTS';
+
+            this.departments.forEach(d => {
+                if (isAll || (Array.isArray(targetDeptIds) && targetDeptIds.includes(d.id))) {
+                    if (d.status === 'STANDBY') {
+                        d.status = 'ALERTED';
+                        d.notificationTime = timeStr;
+                    }
+                }
+            });
+            this.saveDepartments();
+
+            if (this.activeEvent) {
+                this.activeEvent.timeline.unshift({
+                    time: timeStr,
+                    text: `[${timeStr}] ${isAll ? 'ALL DEPARTMENTS' : targetDeptIds} broadcast alert: ${message || 'General Safety Alert'}`
+                });
+                this.activeEvent.updatedAt = new Date().toISOString();
+                this.saveActiveEvent();
+            } else {
+                this.notifyChange();
+            }
+        }
+
+        // Confirm hospital handover (Step 6 completion)
+        confirmHandover() {
+            const timeStr = new Date().toLocaleTimeString('en-IN', { hour12: false });
+            this.agencies.forEach(a => {
+                if (a.type === 'AMBULANCE') a.status = 'HANDOVER_COMPLETE';
+                if (a.type === 'HOSPITAL') a.status = 'PATIENT_RECEIVED';
+            });
+            this.saveAgencies();
+
+            if (this.activeEvent) {
+                this.activeEvent.status = 'HANDOVER';
+                this.activeEvent.timeline.unshift({
+                    time: timeStr,
+                    text: `[${timeStr}] ✓ HOSPITAL HANDOVER CONFIRMED — Patient transferred to Rajiv Gandhi Government General Hospital Trauma Bay 1. Vitals: HR 104 • SpO2 96% • Inhalation: Minor. Burn ICU notified.`
+                });
+                this.activeEvent.updatedAt = new Date().toISOString();
+                this.saveActiveEvent();
+            } else {
+                this.notifyChange();
+            }
+        }
+
+        // Get current demo lifecycle step (for step buttons)
+        getCurrentDemoStep() {
+            if (!this.activeEvent) return 0;
+            const statusMap = {
+                'ALERTED': 1,
+                'ACKNOWLEDGED': 2,
+                'RESPONDING': 3,
+                'ON_SCENE': 5,
+                'HANDOVER': 6,
+                'RESOLVED': 7
+            };
+            return statusMap[this.activeEvent.status] || 1;
         }
     }
 

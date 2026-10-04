@@ -1823,6 +1823,7 @@
         let speechRecognition = null;
         let audioCtx = null;
         let lastOpenedIncidentId = null;
+        let lastOpenedStatus = null;
         let lastResolvedIncidentId = null;
 
         // Mobile drawer controller
@@ -1921,6 +1922,33 @@
         }
 
         function renderScenarioData() {
+            // Check for Active Industrial Emergency (SX-INC-1042)
+            if (window.SentinelCoordination) {
+                const indEvent = window.SentinelCoordination.getActiveEvent();
+                if (indEvent) {
+                    const canonicalId = indEvent.eventId || indEvent.incidentId || 'SX-INC-1042';
+                    setElText('caller-name', `${canonicalId} • INDUSTRIAL RISK COMMAND`);
+                    setElText('caller-address', (indEvent.location || 'Factory Zone A') + " (Ennore Industrial Corridor)");
+                    setElText('citizen-loc-preview', indEvent.location || 'Factory Zone A');
+                    setElText('badge-source', indEvent.source || 'EDGE SENSORS (SCADA)');
+                    setElText('badge-urgency-code', indEvent.severity || 'CRITICAL');
+                    setElText('val-urgency-title', indEvent.incidentType || 'INDUSTRIAL FIRE & CHEMICAL RISK');
+                    setElText('val-urgency-desc', 'Automated edge sensor fusion triggered high hazard alarm. Automatic multi-agency CAD dispatch active.');
+                    setElText('val-possible-condition', indEvent.hazardDetails || 'Thermal runaway, high toxic gas emission, worker evacuation corridor active.');
+                    setElText('val-missing-info-detail', 'Canonical incident SX-INC-1042 synchronized live across industrial command and 108/112 CAD.');
+
+                    const reasonsBox = document.getElementById('ai-reasons-list');
+                    if (reasonsBox) {
+                        reasonsBox.innerHTML = `
+                            <li>[EDGE SCADA] Sensor node triggered thermal & volatile gas threshold (>400 PPM).</li>
+                            <li>[TRIAGE MATRIX] Industrial hazard classified as CRITICAL (Tier-1 Public Impact).</li>
+                            <li>[DISPATCH PROTOCOL] Automated simultaneous callout: 101 Fire, 108 ALS, Police & SDRF.</li>
+                        `;
+                    }
+                    return;
+                }
+            }
+
             const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
             if (!sc) return;
             const t = SENTINEL_LOCALES[currentLang] || SENTINEL_LOCALES.en;
@@ -2032,6 +2060,13 @@
 
         function renderMapRoute() {
             if (!map) return;
+            if (window.SentinelCoordination) {
+                const indEvent = window.SentinelCoordination.getActiveEvent();
+                if (indEvent) {
+                    renderIndustrialIncidentMap(indEvent, window.SentinelCoordination.getAgencies());
+                    return;
+                }
+            }
             const sc = CIVILIAN_SCENARIOS[currentScenarioKey];
 
             if (incidentMarker) map.removeLayer(incidentMarker);
@@ -2968,9 +3003,7 @@
         // ========================================================
         // 8. EMERGENCY COORDINATION CROSS-PLATFORM BRIDGE
         // ========================================================
-        let lastOpenedIncidentId = null;
-        let lastOpenedStatus = null;
-        let lastResolvedIncidentId = null;
+        // (Incident state tracking variables lastOpenedIncidentId, lastOpenedStatus, lastResolvedIncidentId initialized above)
 
         function updateCadConnectionBadge(status) {
             const badge = document.getElementById('cad-connection-badge');
@@ -3023,11 +3056,17 @@
         function viewLiveCadResponse() {
             closePublicSafetyModal();
             setInterfaceMode('dispatcher');
-            switchScenario('chemical_fire');
+            if (window.SentinelCoordination && window.SentinelCoordination.getActiveEvent()) {
+                syncIndustrialEmergencyEvent();
+            } else {
+                switchScenario('chemical_fire');
+            }
             if (map) {
                 setTimeout(() => {
                     map.invalidateSize();
-                    if (incidentMarker) map.setView(incidentMarker.getLatLng(), 14);
+                    if (incidentMarker) {
+                        map.setView(incidentMarker.getLatLng(), 14);
+                    }
                 }, 150);
             }
         }
@@ -3198,6 +3237,14 @@
                 opacity: 0.85,
                 dashArray: '6, 6'
             }).addTo(map);
+
+            // 8. Auto Fit / Pan Map to encompass all units and incident
+            try {
+                const allPoints = [incCoords, fireCoords, medCoords, polCoords, sdrfCoords];
+                map.fitBounds(L.latLngBounds(allPoints), { padding: [50, 50], maxZoom: 15 });
+            } catch (e) {
+                map.setView(incCoords, 14);
+            }
         }
 
         // Master Civilian Emergency Synchronization Engine

@@ -398,8 +398,8 @@
 
         <!-- Right Operational Actions & Demo Controls -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <!-- INDUSTRIAL EMERGENCY ESCALATION BUTTON (Supervisor / Admin / Coordinator) -->
-            <button onclick="openActivateEmergencyModal()" id="btn-activate-emergency-coord" class="hidden px-2.5 sm:px-3 py-1 rounded-md bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-mono text-xs font-bold items-center gap-1.5 shadow-md shadow-red-900/50 border border-red-400/60 transition-all active:scale-95 cursor-pointer shrink-0 animate-pulse" title="Trigger Multi-Department Emergency Escalation">
+            <!-- INDUSTRIAL EMERGENCY ESCALATION BUTTON (Universal Quick Access) -->
+            <button onclick="openActivateEmergencyModal()" id="btn-activate-emergency-coord" class="inline-flex px-2.5 sm:px-3 py-1 rounded-md bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-mono text-xs font-bold items-center gap-1.5 shadow-md shadow-red-900/50 border border-red-400/60 transition-all active:scale-95 cursor-pointer shrink-0 animate-pulse" title="Trigger Multi-Department Emergency Escalation">
                 <span>🚨</span>
                 <span class="hidden sm:inline">ACTIVATE EMERGENCY COORDINATION</span>
                 <span class="sm:hidden">EMERGENCY</span>
@@ -6623,37 +6623,56 @@
 
         // --- Disaster Management Lifecycle & Mode Controls (Section 9 & 23) ---
         function setOperationMode(mode) {
-            const bNorm = document.getElementById('btn-mode-normal');
-            const bResp = document.getElementById('btn-mode-response');
-            const bRec = document.getElementById('btn-mode-recovery');
-            const badge = document.getElementById('topbar-disaster-badge');
+            const bNorm = document.getElementById('opmode-normal') || document.getElementById('btn-mode-normal');
+            const bResp = document.getElementById('opmode-response') || document.getElementById('btn-mode-response');
+            const bRec = document.getElementById('opmode-recovery') || document.getElementById('btn-mode-recovery');
+            const badge = document.getElementById('topbar-disaster-badge') || document.getElementById('topbar-disaster-state');
             const modeStatus = document.getElementById('topbar-mode-status');
 
             document.body.classList.remove('mode-disaster-response', 'mode-recovery');
 
             if (mode === 'NORMAL') {
-                if (bNorm) bNorm.className = 'px-2.5 py-1 rounded bg-slate-800 text-emerald-400 font-bold border border-emerald-500/40 shadow-sm';
-                if (bResp) bResp.className = 'px-2.5 py-1 rounded bg-transparent text-slate-400 hover:text-white border border-transparent';
-                if (bRec) bRec.className = 'px-2.5 py-1 rounded bg-transparent text-slate-400 hover:text-white border border-transparent';
-                if (badge) { badge.className = 'badge-live'; badge.textContent = '● NORMAL'; }
+                if (bNorm) bNorm.className = 'px-2 py-0.5 rounded bg-emerald-600/40 text-emerald-300 font-bold border border-emerald-500/40 transition-all';
+                if (bResp) bResp.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-rose-300 transition-all';
+                if (bRec) bRec.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-cyan-300 transition-all';
+                if (badge) { badge.className = 'badge-live font-bold text-[10px]'; badge.textContent = '● NORMAL'; }
                 if (modeStatus) { modeStatus.textContent = 'AUTONOMOUS EDGE'; modeStatus.className = 'text-emerald-400 font-bold'; }
                 updateLifecycleStep(1);
                 showToast('Operation Mode: NORMAL OPERATIONS', 'success');
-            } else if (mode === 'DISASTER_RESPONSE') {
+
+                // If an active coordination event is running, mark as resolved
+                if (window.SentinelCoordination && window.SentinelCoordination.getActiveEvent() && window.SentinelCoordination.getActiveEvent().status !== 'RESOLVED') {
+                    window.SentinelCoordination.stepDemoLifecycle(7);
+                    renderCoordinationWorkspace();
+                    renderOwnerWorkspace();
+                }
+            } else if (mode === 'RESPONSE' || mode === 'DISASTER_RESPONSE') {
                 document.body.classList.add('mode-disaster-response');
-                if (bNorm) bNorm.className = 'px-2.5 py-1 rounded bg-transparent text-slate-400 hover:text-white border border-transparent';
-                if (bResp) bResp.className = 'px-2.5 py-1 rounded bg-rose-600 text-white font-bold border border-rose-400 shadow-sm shadow-rose-900/50';
-                if (bRec) bRec.className = 'px-2.5 py-1 rounded bg-transparent text-slate-400 hover:text-white border border-transparent';
-                if (badge) { badge.className = 'badge-offline'; badge.textContent = '● CRITICAL HAZARD'; }
+                if (bNorm) bNorm.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-emerald-300 transition-all';
+                if (bResp) bResp.className = 'px-2 py-0.5 rounded bg-rose-600 text-white font-bold border border-rose-400 shadow-sm shadow-rose-900/50 transition-all';
+                if (bRec) bRec.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-cyan-300 transition-all';
+                if (badge) { badge.className = 'badge-offline font-bold text-[10px]'; badge.textContent = '● CRITICAL HAZARD'; }
                 if (modeStatus) { modeStatus.textContent = 'DISASTER RESPONSE'; modeStatus.className = 'text-rose-400 font-bold'; }
                 updateLifecycleStep(4);
                 showToast('DISASTER RESPONSE MODE: Hazard mitigation active', 'error', 4500);
+
+                // Auto-trigger Coordination Disaster if not already active
+                if (window.SentinelCoordination) {
+                    if (!window.SentinelCoordination.getActiveEvent() || window.SentinelCoordination.getActiveEvent().status === 'RESOLVED') {
+                        window.SentinelCoordination.triggerDeterministicFireDisaster();
+                        window.SentinelCoordination.stepDemoLifecycle(3); // Dispatched
+                    } else {
+                        window.SentinelCoordination.stepDemoLifecycle(3);
+                    }
+                    renderCoordinationWorkspace();
+                    renderOwnerWorkspace();
+                }
             } else if (mode === 'RECOVERY') {
                 document.body.classList.add('mode-recovery');
-                if (bNorm) bNorm.className = 'px-2.5 py-1 rounded bg-transparent text-slate-400 hover:text-white border border-transparent';
-                if (bResp) bResp.className = 'px-2.5 py-1 rounded bg-transparent text-slate-400 hover:text-white border border-transparent';
-                if (bRec) bRec.className = 'px-2.5 py-1 rounded bg-cyan-600 text-white font-bold border border-cyan-400 shadow-sm shadow-cyan-900/50';
-                if (badge) { badge.className = 'badge-derived'; badge.textContent = '● RECOVERY'; }
+                if (bNorm) bNorm.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-emerald-300 transition-all';
+                if (bResp) bResp.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-rose-300 transition-all';
+                if (bRec) bRec.className = 'px-2 py-0.5 rounded bg-cyan-600 text-white font-bold border border-cyan-400 shadow-sm shadow-cyan-900/50 transition-all';
+                if (badge) { badge.className = 'badge-derived font-bold text-[10px]'; badge.textContent = '● RECOVERY'; }
                 if (modeStatus) { modeStatus.textContent = 'RECOVERY & STABILIZATION'; modeStatus.className = 'text-cyan-400 font-bold'; }
                 updateLifecycleStep(5);
                 showToast('RECOVERY MODE: Damage inspection and restoration active', 'info', 4500);
