@@ -488,6 +488,47 @@
     </header>
 
     <!-- ==================================================================== -->
+    <!-- ROLE-SPECIFIC DASHBOARD QUICK-SWITCHER BAR (PS-26223 SECTION 2 & 19) -->
+    <!-- ==================================================================== -->
+    <div id="role-quick-switcher-bar" class="bg-[#0b101b] border-b border-cyan-500/20 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2.5 z-40 shadow-md">
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span>ACTIVE ROLE DASHBOARD:</span>
+            </span>
+            <span id="active-role-pill" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-black border uppercase tracking-wider bg-amber-500/20 text-amber-300 border-amber-500/40">
+                👷 WORKER SAFETY CONSOLE
+            </span>
+        </div>
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+            <button onclick="selectUserRole('WORKER')" id="btn-role-worker" class="role-switch-btn px-2.5 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-xs" title="Worker: Personal safety status, alerts, assigned zone & 1-tap SOS">
+                <span>👷</span>
+                <span>WORKER</span>
+            </button>
+            <button onclick="selectUserRole('SUPERVISOR')" id="btn-role-supervisor" class="role-switch-btn px-2.5 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer bg-slate-900 text-slate-300 border-white/10 hover:border-cyan-500/50 hover:text-cyan-300" title="Supervisor: Team and zone safety monitoring, incident escalation & machine health">
+                <span>👥</span>
+                <span>SUPERVISOR</span>
+            </button>
+            <button onclick="selectUserRole('ADMIN')" id="btn-role-admin" class="role-switch-btn px-2.5 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer bg-slate-900 text-slate-300 border-white/10 hover:border-blue-500/50 hover:text-blue-300" title="Admin: System operations, sensor telemetry calibrations, user roles & device registry">
+                <span>⚙️</span>
+                <span>ADMIN</span>
+            </button>
+            <button onclick="selectUserRole('OWNER')" id="btn-role-owner" class="role-switch-btn px-2.5 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer bg-slate-900 text-slate-300 border-white/10 hover:border-purple-500/50 hover:text-purple-300" title="Owner: Enterprise safety overview, business resilience, risk metrics & continuity">
+                <span>💼</span>
+                <span>OWNER</span>
+            </button>
+            <button onclick="selectUserRole('COORDINATOR')" id="btn-role-coordinator" class="role-switch-btn px-2.5 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer bg-slate-900 text-slate-300 border-white/10 hover:border-rose-500/50 hover:text-rose-300" title="Coordinator: Multi-department command center, multi-agency dispatch & hospital coordination">
+                <span>🚨</span>
+                <span>MULTI-DEPT</span>
+            </button>
+            <a href="test-suite.html?autorun=true" class="px-2.5 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 border border-purple-500/40 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 transition-all ml-1" title="Automated QA Test Suite: 17/17 verified assertions">
+                <span>🧪</span>
+                <span class="hidden md:inline">AUTOMATED QA</span> (17/17)
+            </a>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
     <!-- PERSISTENT DISASTER MANAGEMENT LIFECYCLE STRIP (PS-26223 SECTION 9)   -->
     <!-- ==================================================================== -->
     <div id="disaster-lifecycle-strip" class="bg-[#0b0f17] border-b border-white/10 px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs font-mono select-none z-30 overflow-x-auto scrollbar-none gap-3 whitespace-nowrap">
@@ -725,12 +766,245 @@
         <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="hidden fixed inset-0 bg-black/75 z-40 backdrop-blur-xs lg:hidden" aria-hidden="true"></div>
 
         <!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
-        <main class="flex-1 bg-[#090b10] overflow-hidden relative">
+        <main class="flex-1 bg-[#090b10] flex flex-col overflow-hidden relative">
+
+            <!-- ============================================================ -->
+            <!-- DYNAMIC ROLE PERSONA & MISSION BANNER (PS-26223 SECTION 2)    -->
+            <!-- ============================================================ -->
+            <div id="role-persona-banner" class="scada-panel p-3 bg-gradient-to-r from-[#0b1220] via-[#0d1628] to-[#0b1220] border-b border-cyan-500/30 shadow-lg shrink-0 select-none z-20">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-3">
+                        <div id="persona-avatar-box" class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-xl shrink-0 shadow-sm">
+                            <span id="persona-avatar-icon">👷</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span id="persona-who-title" class="font-display font-bold text-white text-sm sm:text-base">Operator Ramesh Kumar (ID: W-042)</span>
+                                <span id="persona-role-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">WORKER ROLE</span>
+                            </div>
+                            <div id="persona-job-desc" class="text-xs font-mono text-slate-300 mt-0.5">
+                                Assigned to Zone B • Motor Crankshop #4 • Direct personal safety status, hazard detection &amp; 1-tap SOS distress.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <div class="p-2 rounded-lg bg-black/50 border border-white/10 text-right font-mono">
+                            <div class="text-[9px] text-slate-400">ASSIGNED WORK AREA</div>
+                            <div id="persona-location-badge" class="text-cyan-300 font-bold text-xs">ZONE B • MOTOR CRANKSHOP #4</div>
+                        </div>
+                        <div id="persona-action-buttons" class="flex items-center gap-1.5 flex-wrap">
+                            <!-- Populated dynamically by renderRolePersonaBanner(role) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Attention Alert Bar -->
+                <div class="mt-2 pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                    <div class="flex items-center gap-2 flex-1">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase shrink-0">ATTENTION:</span>
+                        <div id="persona-attention-text" class="text-amber-300 text-xs font-sans">
+                            ⚠️ Thermal stress advisory in Zone B (31.4°C). Keep hydration bottle nearby. North Egress Corridor to Assembly Point 02 is 100% CLEAR.
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-[10px] text-slate-400 shrink-0">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="persona-status-pill">SYSTEM NORMAL • TELEMETRY LIVE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKSPACE PANELS CONTAINER (Takes remaining height, scrolls each panel independently) -->
+            <div class="flex-1 overflow-hidden relative">
 
             <!-- ============================================================ -->
             <!-- WORKSPACE 01: COMMAND CENTER (Default Screen)                -->
             <!-- ============================================================ -->
             <div id="panel-0" class="workspace-panel active space-y-4">
+
+                <!-- Panel 0 View Mode Selector (Worker Protective View vs Full SCADA Twin) -->
+                <div class="flex flex-wrap items-center justify-between gap-2 p-2 rounded-lg bg-black/40 border border-white/10 text-xs font-mono">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 font-bold">WORKSPACE 01 VIEW:</span>
+                        <button onclick="togglePanel0View('worker')" id="btn-view-worker" class="px-3 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold transition-all cursor-pointer">
+                            👷 WORKER SAFETY CONSOLE
+                        </button>
+                        <button onclick="togglePanel0View('scada')" id="btn-view-scada" class="px-3 py-1 rounded bg-slate-800 text-slate-400 border border-white/10 hover:text-white transition-all cursor-pointer">
+                            🖥️ SCADA ENGINEERING TWIN
+                        </button>
+                    </div>
+                    <div class="text-[11px] text-slate-400 flex items-center gap-2">
+                        <span>ACTIVE VIEWPORT: <strong id="active-viewport-name" class="text-amber-300 font-bold">WORKER PROTECTIVE SAFETY</strong></span>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- DEDICATED WORKER PERSONAL SAFETY CONSOLE (Role: WORKER)      -->
+                <!-- ============================================================ -->
+                <div id="worker-safety-view" class="space-y-4">
+                    <!-- Worker Status Banner -->
+                    <div class="scada-panel p-4 bg-gradient-to-r from-[#0d1624] via-[#0d1117] to-[#0a1420] border border-amber-500/30 shadow-lg">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="badge-live font-mono text-[9px] bg-emerald-500/20 text-emerald-300 border-emerald-500/40" id="worker-status-badge">● PERSONAL STATUS: SAFE &amp; NORMAL</span>
+                                    <span class="text-[9px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">WEARABLE NODE: ESP32-BAND-042</span>
+                                </div>
+                                <h2 class="text-lg font-display font-bold text-white mt-1">PERSONAL SAFETY CONSOLE — OPERATOR RAMESH KUMAR</h2>
+                                <p class="text-xs font-mono text-slate-400">Assigned Area: Zone B (Motor Crankshop #4) • Shift Supervisor: Vikram Malhotra (Ch 4)</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openReportHazardModal()" class="px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer">
+                                    <span>⚠️</span>
+                                    <span>REPORT HAZARD</span>
+                                </button>
+                                <button onclick="switchWorkspace(8)" class="px-3 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer">
+                                    <span>🧭</span>
+                                    <span>VIEW EVACUATION</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 1-TAP EMERGENCY DISTRESS SOS BUTTON (Huge, pulsing, immediate) -->
+                        <div class="mt-4 p-4 rounded-xl bg-gradient-to-b from-red-950/50 to-red-950/20 border-2 border-red-500/40 shadow-inner">
+                            <div class="text-center space-y-2">
+                                <div class="text-xs font-mono text-rose-300 font-bold uppercase tracking-widest">EMERGENCY ASSISTANCE DISTRESS BEACON</div>
+                                <button onclick="triggerWorkerEmergencySOS()" id="btn-worker-huge-sos" class="w-full py-5 sm:py-6 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-500 text-white font-mono font-black text-lg sm:text-2xl tracking-wider shadow-2xl shadow-red-900/80 border-2 border-red-400 active:scale-95 transition-all flex items-center justify-center gap-3 animate-pulse cursor-pointer">
+                                    <span class="text-2xl sm:text-3xl">🚨</span>
+                                    <span>PRESS FOR 1-TAP EMERGENCY SOS DISTRESS</span>
+                                </button>
+                                <p class="text-[11px] font-mono text-slate-400">
+                                    Single press transmits encrypted distress beacon with GPS coordinates, Zone B location tag, and vitals directly to Control Room, Shift Supervisor, and Multi-Agency Dispatch.
+                                </p>
+                            </div>
+
+                            <!-- SOS Active Alert (Appears when SOS triggered) -->
+                            <div id="worker-sos-banner" class="hidden mt-3 p-3 rounded-lg bg-red-900/60 border border-red-400 text-white font-mono text-xs space-y-2 animate-bounce">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                                        <span>🚨 DISTRESS BEACON BROADCASTING! (INCIDENT SX-INC-1042)</span>
+                                    </span>
+                                    <button onclick="cancelWorkerSOS()" class="px-2 py-0.5 rounded bg-black/60 hover:bg-black text-rose-200 text-[10px]">CANCEL SOS ✕</button>
+                                </div>
+                                <p class="text-[11px] text-red-100 font-sans">
+                                    Supervisor &amp; emergency response team notified. Move immediately towards <strong>North Emergency Exit #3</strong> to <strong>Assembly Point 02</strong>. Follow illuminated green floor egress markings.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Micro-Environment Sensor Cards (Live Hardware Telemetry) -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="scada-panel p-3 border-l-4 border-l-cyan-500 bg-[#0c121e]">
+                            <div class="text-[9px] font-mono text-slate-400 uppercase">AMBIENT TEMPERATURE</div>
+                            <div class="text-xl sm:text-2xl font-bold font-mono text-cyan-300 mt-1 flex items-baseline gap-1">
+                                <span id="worker-live-temp">31.4</span><span class="text-xs text-slate-400">°C</span>
+                            </div>
+                            <div class="text-[10px] font-mono text-emerald-400 mt-0.5">● NORMAL (LIMIT: 38.0°C)</div>
+                            <div class="text-[9px] text-slate-500 mt-1">Sensor: DHT22 • GPIO 4</div>
+                        </div>
+
+                        <div class="scada-panel p-3 border-l-4 border-l-emerald-500 bg-[#0c121e]">
+                            <div class="text-[9px] font-mono text-slate-400 uppercase">AIR QUALITY &amp; GAS</div>
+                            <div class="text-xl sm:text-2xl font-bold font-mono text-emerald-300 mt-1 flex items-baseline gap-1">
+                                <span id="worker-live-gas">184</span><span class="text-xs text-slate-400">idx</span>
+                            </div>
+                            <div class="text-[10px] font-mono text-emerald-400 mt-0.5">● SAFE AIR QUALITY</div>
+                            <div class="text-[9px] text-slate-500 mt-1">Sensor: MQ-135 • ADC1_CH0</div>
+                        </div>
+
+                        <div class="scada-panel p-3 border-l-4 border-l-purple-500 bg-[#0c121e]">
+                            <div class="text-[9px] font-mono text-slate-400 uppercase">MOTION &amp; FALL DETECTOR</div>
+                            <div class="text-xl sm:text-2xl font-bold font-mono text-purple-300 mt-1 flex items-baseline gap-1">
+                                <span id="worker-live-vib">0.38</span><span class="text-xs text-slate-400">g</span>
+                            </div>
+                            <div class="text-[10px] font-mono text-emerald-400 mt-0.5">● UPRIGHT • NO FALL DETECTED</div>
+                            <div class="text-[9px] text-slate-500 mt-1">Sensor: ADXL345 • I2C 0x53</div>
+                        </div>
+
+                        <div class="scada-panel p-3 border-l-4 border-l-rose-500 bg-[#0c121e]">
+                            <div class="text-[9px] font-mono text-slate-400 uppercase">HEART RATE &amp; VITALS</div>
+                            <div class="text-xl sm:text-2xl font-bold font-mono text-rose-300 mt-1 flex items-baseline gap-1">
+                                <span id="worker-live-hr">76</span><span class="text-xs text-slate-400">bpm</span>
+                            </div>
+                            <div class="text-[10px] font-mono text-emerald-400 mt-0.5">● STABLE RESTING VITALS</div>
+                            <div class="text-[9px] text-slate-500 mt-1">ESP32 PPG Wearable Band</div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Zone Evacuation Egress Instructions -->
+                    <div class="scada-panel p-4 bg-[#0d121c] border border-white/10 space-y-3">
+                        <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                            <div class="flex items-center gap-2">
+                                <span class="text-emerald-400 text-base">🧭</span>
+                                <h3 class="font-display font-bold text-sm text-white">ASSIGNED EVACUATION ROUTE — ZONE B EGRESS PATH</h3>
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30">
+                                EGRESS CORRIDOR STATUS: 100% CLEAR
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs font-mono">
+                            <div class="p-3 rounded-lg bg-black/40 border border-emerald-500/20 space-y-1">
+                                <div class="text-emerald-400 font-bold">1. WORKSTATION</div>
+                                <div class="text-slate-300 text-[11px]">Exit Bay B-4 tool station</div>
+                                <div class="text-[9px] text-slate-500">Distance: 0m • State: CLEAR</div>
+                            </div>
+                            <div class="p-3 rounded-lg bg-black/40 border border-emerald-500/20 space-y-1">
+                                <div class="text-emerald-400 font-bold">2. CORRIDOR B-2</div>
+                                <div class="text-slate-300 text-[11px]">Follow illuminated green floor beacons north</div>
+                                <div class="text-[9px] text-slate-500">Distance: 24m • Air: Safe</div>
+                            </div>
+                            <div class="p-3 rounded-lg bg-black/40 border border-emerald-500/20 space-y-1">
+                                <div class="text-emerald-400 font-bold">3. FIRE EXIT #3</div>
+                                <div class="text-slate-300 text-[11px]">Push North Emergency Exit Door</div>
+                                <div class="text-[9px] text-slate-500">Door Interlock: UNLOCKED</div>
+                            </div>
+                            <div class="p-3 rounded-lg bg-black/40 border border-emerald-500/40 bg-emerald-950/20 space-y-1">
+                                <div class="text-emerald-400 font-bold">4. ASSEMBLY POINT 02</div>
+                                <div class="text-slate-300 text-[11px]">Muster at North Open Yard #02</div>
+                                <div class="text-[9px] text-emerald-400">Total Time: 38 seconds</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Alerts & Shift Instructions -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="scada-panel p-3.5 space-y-2 bg-[#0c121e]">
+                            <div class="text-[10px] font-mono text-amber-400 font-bold uppercase flex items-center gap-1.5">
+                                <span>⚠️</span>
+                                <span>ACTIVE PERSONAL NOTICES</span>
+                            </div>
+                            <div class="space-y-2 text-xs font-mono">
+                                <div class="p-2 rounded bg-amber-950/30 border border-amber-500/30 text-amber-200">
+                                    • Thermal Heat Advisory: Zone B temp at 31.4°C. Hydration station located at Pillar B-07.
+                                </div>
+                                <div class="p-2 rounded bg-blue-950/30 border border-blue-500/30 text-blue-200">
+                                    • Mandatory PPE: Safety Helmet, Steel-Toe Boots, High-Vis Vest active in Sector 3.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scada-panel p-3.5 space-y-2 bg-[#0c121e]">
+                            <div class="text-[10px] font-mono text-cyan-400 font-bold uppercase flex items-center gap-1.5">
+                                <span>📋</span>
+                                <span>SHIFT SAFETY BRIEFING LOG</span>
+                            </div>
+                            <div class="space-y-1.5 text-xs font-mono text-slate-300">
+                                <div>• Shift: Morning Operational Shift (06:00 - 14:00)</div>
+                                <div>• Supervisor: Vikram Malhotra (Certified Safety Lead)</div>
+                                <div>• Emergency Whistle Frequency: 3 short bursts = Evacuate Zone B</div>
+                                <div>• First Aid Station: Medical Bay 1 (Ext: 104)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- FULL ENGINEERING SCADA VIEW (Role: SUPERVISOR, ADMIN, etc.) -->
+                <!-- ============================================================ -->
+                <div id="scada-command-view" class="space-y-4 hidden">
+
                 <!-- ============================================================ -->
                 <!-- HARDWARE DEMONSTRATION STATUS PANEL (PS-26223 SECTION 27)     -->
                 <!-- ============================================================ -->
@@ -1049,7 +1323,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> <!-- End scada-command-view -->
+            </div> <!-- End panel-0 -->
 
             <!-- ============================================================ -->
             <!-- WORKSPACE 02: FULL-SCREEN 3D DIGITAL TWIN COCKPIT             -->
@@ -3868,6 +4143,7 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- End workspace panels container -->
 
         </main>
     </div>
@@ -4702,6 +4978,76 @@
         </div>
     </div>
 
+    <!-- ==================================================================== -->
+    <!-- WORKER HAZARD / NEAR-MISS REPORTING MODAL                            -->
+    <!-- ==================================================================== -->
+    <div id="modal-report-hazard" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-report-hazard')">
+        <div class="modal-box p-5 space-y-4 max-w-lg bg-[#0d1117] border border-amber-500/60 shadow-2xl rounded-2xl w-[95%] sm:w-auto my-auto font-mono">
+            <div class="flex items-center gap-2.5 text-amber-400 border-b border-white/10 pb-3">
+                <span class="text-2xl">⚠️</span>
+                <div>
+                    <h4 class="font-display font-black text-sm text-white tracking-wide uppercase">REPORT WORKPLACE HAZARD / NEAR-MISS</h4>
+                    <p class="text-[11px] text-amber-300">Worker Safety Shield &bull; Direct Supervisor &amp; Safety Desk Transmission</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">REPORTING OPERATOR &amp; LOCATION</label>
+                    <div class="p-2.5 rounded bg-black/50 border border-white/10 text-slate-300 flex justify-between">
+                        <span>Worker Ramesh Kumar (ID: W-042)</span>
+                        <span class="text-cyan-300 font-bold">Zone B &bull; Sector 3</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">HAZARD CATEGORY</label>
+                    <select id="hazard-category-select" class="w-full p-2.5 rounded bg-slate-900 border border-white/15 text-white text-xs focus:outline-none focus:border-amber-400">
+                        <option value="OIL_SLIP">💧 Oil Spill / Wet Floor Slip Hazard</option>
+                        <option value="MACHINE_HEAT">🔥 Machine Motor Overheating / Unusual Vibration</option>
+                        <option value="GAS_ODOR">💨 Chemical Fumes / Unusual Air Odor (MQ-135 alert)</option>
+                        <option value="EGRESS_BLOCKED">🚪 Blocked Evacuation Door or Fire Corridor</option>
+                        <option value="ELECTRICAL">⚡ Exposed Wiring / Sparking Actuator</option>
+                        <option value="PPE_NON_COMPLIANT">🦺 Unsafe PPE / Missing Helmet in Workcell</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">URGENCY SEVERITY LEVEL</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-amber-400">
+                            <input type="radio" name="hazard-urgency" value="LOW" class="text-amber-500">
+                            <span class="text-[11px] text-slate-300">LOW</span>
+                        </label>
+                        <label class="p-2 rounded bg-slate-900 border border-amber-500/50 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="hazard-urgency" value="MEDIUM" checked class="text-amber-500">
+                            <span class="text-[11px] text-amber-300 font-bold">MEDIUM</span>
+                        </label>
+                        <label class="p-2 rounded bg-slate-900 border border-red-500/50 flex items-center gap-2 cursor-pointer hover:border-red-400">
+                            <input type="radio" name="hazard-urgency" value="HIGH" class="text-red-500">
+                            <span class="text-[11px] text-red-300 font-bold">HIGH</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">OBSERVATION DETAILS (OPTIONAL)</label>
+                    <textarea id="hazard-notes-text" rows="2" placeholder="Brief note on hazard location, equipment number, or condition observed..." class="w-full p-2.5 rounded bg-slate-900 border border-white/15 text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-amber-400"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2.5 pt-2 border-t border-white/10 text-xs">
+                <button onclick="closeModal('modal-report-hazard')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer transition-colors">
+                    CANCEL
+                </button>
+                <button onclick="submitHazardReport()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-amber-900/40 transition-all active:scale-95">
+                    <span>✓</span>
+                    <span>SUBMIT HAZARD REPORT</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
 
@@ -4908,8 +5254,258 @@
         // ====================================================================
         // RBAC & MULTI-DEPARTMENT EMERGENCY COORDINATION CONTROLLERS
         // ====================================================================
+        function renderRolePersonaBanner(roleInput) {
+            const role = (roleInput || (window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : (sessionStorage.getItem('userRole') || 'worker'))).toUpperCase();
+            
+            const avatarBox = document.getElementById('persona-avatar-box');
+            const avatarIcon = document.getElementById('persona-avatar-icon');
+            const whoTitle = document.getElementById('persona-who-title');
+            const roleBadge = document.getElementById('persona-role-badge');
+            const jobDesc = document.getElementById('persona-job-desc');
+            const locBadge = document.getElementById('persona-location-badge');
+            const attentionText = document.getElementById('persona-attention-text');
+            const statusPill = document.getElementById('persona-status-pill');
+            const actionBtns = document.getElementById('persona-action-buttons');
+            
+            if (!whoTitle) return;
+
+            const configs = {
+                'WORKER': {
+                    icon: '👷',
+                    avatarClass: 'bg-amber-500/20 border-amber-500/50 text-amber-300',
+                    who: 'Operator Ramesh Kumar (ID: W-042)',
+                    roleBadgeText: 'WORKER CONSOLE',
+                    roleBadgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+                    job: 'Assigned to Zone B • Motor Crankshop #4 • Direct personal safety status, continuous hazard detection & 1-tap SOS distress.',
+                    location: 'ZONE B • SECTOR 3 (MOTOR SHOP)',
+                    attention: '⚠️ Zone B ambient temp 31.4°C. North Evacuation Corridor to Assembly Point 02 is 100% CLEAR.',
+                    status: 'SAFE &amp; NORMAL • VITAL SENSORS LIVE',
+                    statusColor: 'bg-emerald-400',
+                    actions: `
+                        <button onclick="triggerWorkerEmergencySOS()" class="px-2.5 py-1 rounded bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold flex items-center gap-1 shadow-md shadow-red-900/40 animate-pulse cursor-pointer">
+                            <span>🚨</span><span>1-TAP SOS</span>
+                        </button>
+                        <button onclick="openReportHazardModal()" class="px-2.5 py-1 rounded bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>⚠️</span><span>REPORT HAZARD</span>
+                        </button>
+                        <button onclick="switchWorkspace(8)" class="px-2.5 py-1 rounded bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>🧭</span><span>EGRESS PATH</span>
+                        </button>
+                    `
+                },
+                'SUPERVISOR': {
+                    icon: '👥',
+                    avatarClass: 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300',
+                    who: 'Shift Supervisor Vikram Malhotra (ID: S-008)',
+                    roleBadgeText: 'SUPERVISOR CONSOLE',
+                    roleBadgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+                    job: 'Operational oversight of 42 assigned workers, zone safety mitigation, machine health & rapid emergency escalation.',
+                    location: 'PLANT SECTOR 1 & 2 • CONTROL DESK',
+                    attention: '⚠️ 4 Workers in Zone A boundary nearing heat threshold. Machine #4 bearing vibration nominal (0.38g).',
+                    status: '42 CREW MONITORED • ALL LINES RUNNING',
+                    statusColor: 'bg-cyan-400',
+                    actions: `
+                        <button onclick="openActivateEmergencyModal()" class="px-2.5 py-1 rounded bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-mono text-xs font-bold flex items-center gap-1 shadow-md shadow-red-900/40 cursor-pointer">
+                            <span>🚨</span><span>ESCALATE EMERGENCY</span>
+                        </button>
+                        <button onclick="switchWorkspace(5)" class="px-2.5 py-1 rounded bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>👥</span><span>CREW (42)</span>
+                        </button>
+                        <button onclick="switchWorkspace(6)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>🏭</span><span>MACHINES</span>
+                        </button>
+                    `
+                },
+                'ADMIN': {
+                    icon: '⚙️',
+                    avatarClass: 'bg-blue-500/20 border-blue-500/50 text-blue-300',
+                    who: 'Lead Systems Engineer Ananya Sen (ID: ADM-001)',
+                    roleBadgeText: 'ADMIN CONSOLE',
+                    roleBadgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+                    job: 'Complete hardware telemetry calibrations, ESP32 sensor mesh operations, RBAC policies, and forensic ledger audits.',
+                    location: 'SYSTEM IT & HARDWARE NOC',
+                    attention: '✅ 3/3 Physical Hardware Nodes Online (ESP32 Node-01, DHT22, MQ-135, ADXL345). Kalman filter latency: 12ms.',
+                    status: 'SYSTEM INTEGRITY 100% • HARDWARE NOMINAL',
+                    statusColor: 'bg-blue-400',
+                    actions: `
+                        <button onclick="switchWorkspace(13)" class="px-2.5 py-1 rounded bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>⚡</span><span>PROTOTYPE (W-14)</span>
+                        </button>
+                        <button onclick="switchWorkspace(12)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>⚙️</span><span>CONFIG (W-13)</span>
+                        </button>
+                        <button onclick="switchWorkspace(10)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>📜</span><span>LEDGER (W-11)</span>
+                        </button>
+                    `
+                },
+                'OWNER': {
+                    icon: '💼',
+                    avatarClass: 'bg-purple-500/20 border-purple-500/50 text-purple-300',
+                    who: 'Executive Director Rajesh Singhania (C-Suite)',
+                    roleBadgeText: 'EXECUTIVE OWNER CONSOLE',
+                    roleBadgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+                    job: 'Enterprise safety oversight, DGMS / ISO 45001 compliance, plant operational resilience, and financial risk mitigation.',
+                    location: 'CORPORATE EXECUTIVE BOARDROOM',
+                    attention: '● Overall Plant Safety Index: 94.2/100 (LOW RISK). Zero critical downtime events. Insurance compliance: 98.4%.',
+                    status: 'DGMS COMPLIANT • BUSINESS RESILIENCE HIGH',
+                    statusColor: 'bg-purple-400',
+                    actions: `
+                        <button onclick="switchWorkspace(17)" class="px-2.5 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white font-mono text-xs font-bold flex items-center gap-1 shadow-md shadow-purple-900/40 cursor-pointer">
+                            <span>💼</span><span>EXECUTIVE (W-18)</span>
+                        </button>
+                        <button onclick="switchWorkspace(11)" class="px-2.5 py-1 rounded bg-purple-950/40 hover:bg-purple-900 text-purple-300 border border-purple-500/40 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>🛡️</span><span>DGMS AUDIT (W-12)</span>
+                        </button>
+                    `
+                },
+                'COORDINATOR': {
+                    icon: '🚨',
+                    avatarClass: 'bg-rose-500/20 border-rose-500/50 text-rose-300',
+                    who: 'Emergency Response Commander Priya Sharma (ID: CMD-108)',
+                    roleBadgeText: 'MULTI-DEPARTMENT CAD',
+                    roleBadgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+                    job: 'Cross-agency dispatch orchestration across 11 internal plant teams and 5 public safety agencies (108, 101, 100, Hospital, SDRF).',
+                    location: 'MULTI-AGENCY EMERGENCY COMMAND CENTER',
+                    attention: '🚨 Incident SX-INC-1042 (Factory Fire) ACTIVE — Fire & 108 Ambulance EN ROUTE. Hospital ER cleared.',
+                    status: 'INCIDENT SX-INC-1042 ACTIVE • CAD SYNCED',
+                    statusColor: 'bg-red-400',
+                    actions: `
+                        <button onclick="switchWorkspace(16)" class="px-2.5 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold flex items-center gap-1 shadow-md shadow-rose-900/40 cursor-pointer">
+                            <span>📡</span><span>CAD COMMAND (W-17)</span>
+                        </button>
+                        <button onclick="triggerCoordinationSimulation()" class="px-2.5 py-1 rounded bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <span>🔥</span><span>SIM SCENARIO</span>
+                        </button>
+                    `
+                }
+            };
+
+            const cfg = configs[role] || configs['ADMIN'];
+            avatarIcon.textContent = cfg.icon;
+            avatarBox.className = `w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-sm border ${cfg.avatarClass}`;
+            whoTitle.textContent = cfg.who;
+            roleBadge.textContent = cfg.roleBadgeText;
+            roleBadge.className = `px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border ${cfg.roleBadgeClass}`;
+            jobDesc.textContent = cfg.job;
+            locBadge.textContent = cfg.location;
+            attentionText.innerHTML = cfg.attention;
+            statusPill.innerHTML = cfg.status;
+            actionBtns.innerHTML = cfg.actions;
+        }
+
+        function togglePanel0View(viewMode) {
+            const workerView = document.getElementById('worker-safety-view');
+            const scadaView = document.getElementById('scada-command-view');
+            const btnWorker = document.getElementById('btn-view-worker');
+            const btnScada = document.getElementById('btn-view-scada');
+            const activeViewportName = document.getElementById('active-viewport-name');
+
+            if (viewMode === 'worker') {
+                if (workerView) workerView.classList.remove('hidden');
+                if (scadaView) scadaView.classList.add('hidden');
+                if (btnWorker) {
+                    btnWorker.className = 'px-3 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold transition-all cursor-pointer';
+                }
+                if (btnScada) {
+                    btnScada.className = 'px-3 py-1 rounded bg-slate-800 text-slate-400 border border-white/10 hover:text-white transition-all cursor-pointer';
+                }
+                if (activeViewportName) {
+                    activeViewportName.textContent = 'WORKER PROTECTIVE SAFETY';
+                    activeViewportName.className = 'text-amber-300 font-bold';
+                }
+            } else {
+                if (workerView) workerView.classList.add('hidden');
+                if (scadaView) scadaView.classList.remove('hidden');
+                if (btnWorker) {
+                    btnWorker.className = 'px-3 py-1 rounded bg-slate-800 text-slate-400 border border-white/10 hover:text-white transition-all cursor-pointer';
+                }
+                if (btnScada) {
+                    btnScada.className = 'px-3 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 font-bold transition-all cursor-pointer';
+                }
+                if (activeViewportName) {
+                    activeViewportName.textContent = 'SCADA ENGINEERING TWIN';
+                    activeViewportName.className = 'text-cyan-300 font-bold';
+                }
+                if (cmdTwinEngine && cmdTwinEngine.onWindowResize) {
+                    setTimeout(() => cmdTwinEngine.onWindowResize(), 50);
+                }
+            }
+        }
+
+        function playDistressAlarm() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.6);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.7);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.7);
+            } catch (e) {
+                console.warn('Audio synthesis bypassed', e);
+            }
+        }
+
+        function triggerWorkerEmergencySOS() {
+            playDistressAlarm();
+            const banner = document.getElementById('worker-sos-banner');
+            if (banner) banner.classList.remove('hidden');
+
+            const statusBadge = document.getElementById('worker-status-badge');
+            if (statusBadge) {
+                statusBadge.textContent = '● DISTRESS ACTIVE — RESCUE EN ROUTE';
+                statusBadge.className = 'badge-live font-mono text-[9px] bg-red-600/30 text-red-200 border-red-500 animate-pulse';
+            }
+
+            if (window.SentinelCoordination) {
+                window.SentinelCoordination.createEmergencyCoordinationEvent({
+                    incidentId: 'SX-INC-1042',
+                    eventId: 'SX-INC-1042',
+                    incidentType: 'WORKER INJURY & DISTRESS (SOS BEACON)',
+                    severity: 'CRITICAL',
+                    location: 'Zone B — Motor Crankshop #4',
+                    peopleAffected: 1,
+                    affectedWorkers: ['W-042 (R. Kumar)']
+                });
+            }
+
+            showToast('🚨 1-TAP WORKER SOS BEACON BROADCAST! Emergency dispatch teams alerted to Zone B.', 'error');
+        }
+
+        function cancelWorkerSOS() {
+            const banner = document.getElementById('worker-sos-banner');
+            if (banner) banner.classList.add('hidden');
+
+            const statusBadge = document.getElementById('worker-status-badge');
+            if (statusBadge) {
+                statusBadge.textContent = '● PERSONAL STATUS: SAFE & NORMAL';
+                statusBadge.className = 'badge-live font-mono text-[9px] bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+            }
+
+            showToast('Worker SOS beacon deactivated. Stand down logged.', 'info');
+        }
+
+        function openReportHazardModal() {
+            openModal('modal-report-hazard');
+        }
+
+        function submitHazardReport() {
+            const cat = document.getElementById('hazard-category-select') ? document.getElementById('hazard-category-select').value : 'GENERAL';
+            closeModal('modal-report-hazard');
+            showToast(`✓ Hazard Report submitted for Zone B (${cat}). Supervisor notified.`, 'success');
+        }
+
         function renderRoleNavigation() {
-            const role = (window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : (sessionStorage.getItem('userRole') || 'admin')).toLowerCase();
+            const role = (window.SentinelRBAC ? window.SentinelRBAC.getCurrentRole() : (sessionStorage.getItem('userRole') || 'worker')).toLowerCase();
             const navItems = document.querySelectorAll('#scada-nav-list .nav-item');
             navItems.forEach((item, idx) => {
                 const allowed = window.SentinelRBAC ? window.SentinelRBAC.canAccessWorkspace(idx, role) : true;
@@ -4928,8 +5524,46 @@
                     'owner': 'bg-purple-400',
                     'coordinator': 'bg-rose-500'
                 };
-                roleLed.className = `w-1.5 h-1.5 rounded-full ${colorMap[role] || 'bg-blue-400'} animate-pulse`;
+                roleLed.className = `w-1.5 h-1.5 rounded-full ${colorMap[role] || 'bg-amber-400'} animate-pulse`;
             }
+
+            // Update active role pill in quick-switcher bar
+            const activeRolePill = document.getElementById('active-role-pill');
+            if (activeRolePill) {
+                const pillConfigs = {
+                    'worker': { text: '👷 WORKER SAFETY CONSOLE', class: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
+                    'supervisor': { text: '👥 SUPERVISOR DASHBOARD', class: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' },
+                    'admin': { text: '⚙️ ADMIN CONSOLE', class: 'bg-blue-500/20 text-blue-300 border-blue-500/40' },
+                    'owner': { text: '💼 EXECUTIVE OWNER DASHBOARD', class: 'bg-purple-500/20 text-purple-300 border-purple-500/40' },
+                    'coordinator': { text: '🚨 MULTI-DEPT COMMAND CAD', class: 'bg-rose-500/20 text-rose-300 border-rose-500/40' }
+                };
+                const p = pillConfigs[role] || pillConfigs['worker'];
+                activeRolePill.textContent = p.text;
+                activeRolePill.className = `px-2.5 py-0.5 rounded-full text-xs font-mono font-black border uppercase tracking-wider ${p.class}`;
+            }
+
+            // Highlight button in quick switcher
+            const roleBtns = {
+                'worker': 'btn-role-worker',
+                'supervisor': 'btn-role-supervisor',
+                'admin': 'btn-role-admin',
+                'owner': 'btn-role-owner',
+                'coordinator': 'btn-role-coordinator'
+            };
+            Object.keys(roleBtns).forEach(r => {
+                const btn = document.getElementById(roleBtns[r]);
+                if (btn) {
+                    if (r === role) {
+                        btn.classList.add('shadow-md', 'font-black');
+                        btn.style.opacity = '1';
+                        btn.style.borderColor = 'rgba(6, 182, 212, 0.8)';
+                    } else {
+                        btn.classList.remove('shadow-md', 'font-black');
+                        btn.style.opacity = '0.75';
+                        btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    }
+                }
+            });
 
             // Emergency escalation button visibility (Supervisor, Admin, Coordinator only; hidden for Worker)
             const emgBtn = document.getElementById('btn-activate-emergency-coord');
@@ -4943,6 +5577,9 @@
                     emgBtn.classList.remove('inline-flex');
                 }
             }
+
+            // Update Role Persona Banner
+            renderRolePersonaBanner(role);
         }
 
         function toggleRoleDropdown() {
@@ -4957,23 +5594,41 @@
         }
 
         function selectUserRole(role) {
+            const roleNorm = (role || 'worker').toUpperCase();
             if (window.SentinelRBAC) {
-                window.SentinelRBAC.setCurrentRole(role);
+                window.SentinelRBAC.setCurrentRole(roleNorm);
             } else {
-                sessionStorage.setItem('sentinel_role', role);
-                sessionStorage.setItem('userRole', role);
+                sessionStorage.setItem('sentinel_role', roleNorm);
+                sessionStorage.setItem('userRole', roleNorm);
             }
             sessionStorage.setItem('authenticated', 'true');
+
+            // Reflect in URL search param cleanly without reloading
+            try {
+                const currentHash = window.location.hash || '';
+                const newUrl = window.location.pathname + '?role=' + roleNorm.toLowerCase() + currentHash;
+                history.replaceState({ role: roleNorm }, '', newUrl);
+            } catch (e) {}
+
             renderRoleNavigation();
             const menu = document.getElementById('role-switcher-dropdown') || document.getElementById('role-selector-menu');
             if (menu) menu.classList.add('hidden');
             closeModal('modal-industrial-login');
             
-            showToast(`Role switched to ${role.toUpperCase()} (RBAC policy updated)`, 'info');
+            showToast(`Role switched to ${roleNorm} (RBAC policy & dashboard updated)`, 'info');
 
             // Navigate to authorized workspace for new role
-            const defaultWs = window.SentinelRBAC ? window.SentinelRBAC.getDefaultWorkspace(role) : 0;
+            const defaultWs = window.SentinelRBAC ? window.SentinelRBAC.getDefaultWorkspace(roleNorm) : 0;
             switchWorkspace(defaultWs);
+
+            // Toggle view mode in panel 0 according to role
+            if (defaultWs === 0) {
+                if (roleNorm === 'WORKER') {
+                    togglePanel0View('worker');
+                } else {
+                    togglePanel0View('scada');
+                }
+            }
         }
 
         function returnToAuthorizedWorkspace() {
@@ -7971,31 +8626,74 @@
                 const baseHum = 68.2 + (Math.random() - 0.5) * 0.6;
                 const baseGas = Math.round(184 + (Math.random() - 0.5) * 4);
                 const baseVib = Math.max(0.2, 0.38 + (Math.random() - 0.5) * 0.04);
+                const baseHr = Math.round(76 + (Math.random() - 0.5) * 2);
 
-                document.getElementById('t-val-temp').textContent = baseTemp.toFixed(1);
-                document.getElementById('t-val-hum').textContent = baseHum.toFixed(1);
-                document.getElementById('t-val-gas').textContent = baseGas.toString();
-                document.getElementById('t-val-vib').textContent = baseVib.toFixed(2);
+                const tTemp = document.getElementById('t-val-temp');
+                if (tTemp) tTemp.textContent = baseTemp.toFixed(1);
+                const tHum = document.getElementById('t-val-hum');
+                if (tHum) tHum.textContent = baseHum.toFixed(1);
+                const tGas = document.getElementById('t-val-gas');
+                if (tGas) tGas.textContent = baseGas.toString();
+                const tVib = document.getElementById('t-val-vib');
+                if (tVib) tVib.textContent = baseVib.toFixed(2);
 
-                document.getElementById('node1-temp').textContent = baseTemp.toFixed(1);
-                document.getElementById('node1-hum').textContent = baseHum.toFixed(1);
-                document.getElementById('node1-gas').textContent = baseGas.toString();
-                document.getElementById('node1-vib').textContent = baseVib.toFixed(2);
+                const n1Temp = document.getElementById('node1-temp');
+                if (n1Temp) n1Temp.textContent = baseTemp.toFixed(1);
+                const n1Hum = document.getElementById('node1-hum');
+                if (n1Hum) n1Hum.textContent = baseHum.toFixed(1);
+                const n1Gas = document.getElementById('node1-gas');
+                if (n1Gas) n1Gas.textContent = baseGas.toString();
+                const n1Vib = document.getElementById('node1-vib');
+                if (n1Vib) n1Vib.textContent = baseVib.toFixed(2);
+
+                // Update Worker Personal Telemetry Cards
+                const wTemp = document.getElementById('worker-live-temp');
+                if (wTemp) wTemp.textContent = baseTemp.toFixed(1);
+                const wGas = document.getElementById('worker-live-gas');
+                if (wGas) wGas.textContent = baseGas.toString();
+                const wVib = document.getElementById('worker-live-vib');
+                if (wVib) wVib.textContent = baseVib.toFixed(2);
+                const wHr = document.getElementById('worker-live-hr');
+                if (wHr) wHr.textContent = baseHr.toString();
             }, 1200);
         }
 
         // --- 16. App Init ---
         function initApp() {
             if (!checkAuthSession()) return;
+
+            // Extract role from URL search parameters if provided (e.g. app.html?role=worker)
+            const urlParams = new URLSearchParams(window.location.search);
+            const roleParam = urlParams.get('role');
+            const storedRole = sessionStorage.getItem('sentinel_role') || sessionStorage.getItem('userRole');
+            const initialRole = (roleParam || storedRole || 'worker').toUpperCase();
+
+            if (window.SentinelRBAC) {
+                window.SentinelRBAC.setCurrentRole(initialRole);
+            }
+            sessionStorage.setItem('sentinel_role', initialRole);
+            sessionStorage.setItem('userRole', initialRole);
+            sessionStorage.setItem('authenticated', 'true');
+
             renderRoleNavigation();
+            renderRolePersonaBanner(initialRole);
             initWorkspaceFromRoute();
+
             window.addEventListener('popstate', () => {
                 initWorkspaceFromRoute();
             });
+
+            // Set initial panel 0 view according to role
+            if (initialRole === 'WORKER') {
+                togglePanel0View('worker');
+            } else {
+                togglePanel0View('scada');
+            }
+
             initCommandCenterTwin();
             startTelemetryPoller();
             initSatelliteGroundStation();
-            showToast('SENTINEL-X Edge Disaster & Industrial Safety Intelligence Platform Ready', 'success');
+            showToast(`SENTINEL-X Active Profile: ${initialRole} Dashboard Loaded`, 'success');
         }
 
         if (document.readyState === 'loading') {

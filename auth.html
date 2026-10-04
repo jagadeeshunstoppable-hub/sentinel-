@@ -489,7 +489,7 @@
                     window.location.href = "civilian/index.html?view=dispatcher";
                 }
             } else {
-                window.location.href = "app.html";
+                window.location.href = "app.html?role=" + encodeURIComponent((currentRole || "Admin").toLowerCase());
             }
         }
 
