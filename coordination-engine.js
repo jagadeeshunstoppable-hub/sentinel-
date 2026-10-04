@@ -258,6 +258,51 @@
             this.agencies = this.loadAgencies();
             this.activeEvent = this.loadActiveEvent();
             this.listeners = [];
+            this.setupCrossTabBus();
+        }
+
+        setupCrossTabBus() {
+            try {
+                if (typeof BroadcastChannel !== 'undefined') {
+                    this.bus = new BroadcastChannel('sentinel_coordination_bus');
+                    this.bus.onmessage = (msg) => {
+                        if (msg && msg.data && msg.data.type === 'COORDINATION_STATE_CHANGED') {
+                            this.reloadState();
+                        }
+                    };
+                }
+            } catch (e) {
+                console.warn('BroadcastChannel not supported or restricted:', e);
+            }
+
+            if (typeof window !== 'undefined' && window.addEventListener) {
+                window.addEventListener('storage', (e) => {
+                    if (e.key && e.key.startsWith('sentinel_')) {
+                        this.reloadState();
+                    }
+                });
+            }
+        }
+
+        reloadState() {
+            this.departments = this.loadDepartments();
+            this.agencies = this.loadAgencies();
+            this.activeEvent = this.loadActiveEvent();
+            this.notifyChange();
+        }
+
+        broadcastBusMessage(action = 'STATE_UPDATE') {
+            if (this.bus) {
+                try {
+                    this.bus.postMessage({
+                        type: 'COORDINATION_STATE_CHANGED',
+                        action: action,
+                        eventId: this.activeEvent ? (this.activeEvent.eventId || this.activeEvent.incidentId) : null,
+                        status: this.activeEvent ? this.activeEvent.status : null,
+                        timestamp: Date.now()
+                    });
+                } catch (e) {}
+            }
         }
 
         loadDepartments() {
@@ -276,6 +321,7 @@
             } catch (e) {
                 console.error('Failed to save departments:', e);
             }
+            this.broadcastBusMessage('DEPARTMENTS_UPDATED');
         }
 
         loadAgencies() {
@@ -294,6 +340,7 @@
             } catch (e) {
                 console.error('Failed to save agencies:', e);
             }
+            this.broadcastBusMessage('AGENCIES_UPDATED');
         }
 
         loadActiveEvent() {
@@ -317,6 +364,7 @@
                 console.error('Failed to persist coordination event:', e);
             }
             this.notifyChange();
+            this.broadcastBusMessage(this.activeEvent ? 'EVENT_SAVED' : 'EVENT_CLEARED');
         }
 
         subscribe(callback) {
