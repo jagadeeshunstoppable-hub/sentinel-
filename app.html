@@ -3834,6 +3834,57 @@
                     </div>
                 </div>
 
+                <!-- ============================================================ -->
+                <!-- 7-STEP DETERMINISTIC INCIDENT LIFECYCLE DEMO CONTROLLER        -->
+                <!-- Part 45: Factory Fire Zone B → Multi-Dept Dispatch → Resolution-->
+                <!-- ============================================================ -->
+                <div class="scada-panel p-3 bg-gradient-to-r from-red-950/40 via-slate-900 to-slate-900 border border-amber-500/40">
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-amber-300 font-bold text-xs font-mono">⚡ 7-STEP INCIDENT LIFECYCLE CONTROLLER (PART 45 SPEC)</span>
+                                <span id="demo-lifecycle-status" class="text-[10px] font-mono text-cyan-300">STATUS: STANDBY — Click any step or "TRIGGER FIRE"</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="triggerCoordinationSimulation()" class="px-2.5 py-1 rounded bg-red-600 hover:bg-red-500 text-white font-mono text-[10px] font-bold cursor-pointer transition-all shadow-lg shadow-red-900/40 flex items-center gap-1">
+                                    <span>🔥</span><span>TRIGGER FIRE SCENARIO</span>
+                                </button>
+                                <button onclick="resetCoordinationState()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 border border-white/10 font-mono text-[10px] cursor-pointer">↺ RESET</button>
+                            </div>
+                        </div>
+                        <!-- Step Buttons -->
+                        <div class="flex flex-wrap gap-1.5 items-center">
+                            <button id="demo-step-btn-1" onclick="advanceDemoLifecycle(1)" class="px-2.5 py-1 rounded bg-red-900/60 hover:bg-red-800 text-red-200 border border-red-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>1</span><span>ALERTED</span>
+                            </button>
+                            <span class="text-slate-600">→</span>
+                            <button id="demo-step-btn-2" onclick="advanceDemoLifecycle(2)" class="px-2.5 py-1 rounded bg-cyan-900/60 hover:bg-cyan-800 text-cyan-200 border border-cyan-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>2</span><span>ACKNOWLEDGED</span>
+                            </button>
+                            <span class="text-slate-600">→</span>
+                            <button id="demo-step-btn-3" onclick="advanceDemoLifecycle(3)" class="px-2.5 py-1 rounded bg-amber-900/60 hover:bg-amber-800 text-amber-200 border border-amber-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>3</span><span>DISPATCHED</span>
+                            </button>
+                            <span class="text-slate-600">→</span>
+                            <button id="demo-step-btn-4" onclick="advanceDemoLifecycle(4)" class="px-2.5 py-1 rounded bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>4</span><span>FIRE ARRIVED</span>
+                            </button>
+                            <span class="text-slate-600">→</span>
+                            <button id="demo-step-btn-5" onclick="advanceDemoLifecycle(5)" class="px-2.5 py-1 rounded bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>5</span><span>EMS ON-SCENE</span>
+                            </button>
+                            <span class="text-slate-600">→</span>
+                            <button id="demo-step-btn-6" onclick="advanceDemoLifecycle(6)" class="px-2.5 py-1 rounded bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>6</span><span>HOSPITAL HANDOVER</span>
+                            </button>
+                            <span class="text-slate-600">→</span>
+                            <button id="demo-step-btn-7" onclick="advanceDemoLifecycle(7)" class="px-2.5 py-1 rounded bg-green-900/60 hover:bg-green-800 text-green-200 border border-green-500/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                                <span>7</span><span>RESOLVED</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Active Incident Synopsis & Triage Bar -->
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
                     <div class="scada-panel p-3 border-l-4 border-l-red-500 bg-[#0d121c]">
@@ -5776,18 +5827,22 @@
                 }).join('');
             }
 
-            // Render Timeline
+            // Render Timeline (using correct t.time / t.text properties from coordination-engine.js)
             const timelineContainer = document.getElementById('coord-timeline-feed');
             if (timelineContainer) {
-                timelineContainer.innerHTML = timeline.slice().reverse().map(t => `
-                    <div class="p-1.5 rounded bg-black/50 border border-white/5 space-y-0.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-cyan-300 font-bold">${t.action}</span>
-                            <span class="text-slate-500">${t.timestamp}</span>
+                const timelineData = timeline && timeline.length ? timeline : [];
+                timelineContainer.innerHTML = timelineData.map(t => {
+                    const timeVal = t.time || t.timestamp || '';
+                    const textVal = t.text || t.details || t.action || '';
+                    return `
+                    <div class="p-1.5 rounded bg-black/50 border border-white/5">
+                        <div class="flex items-start gap-2">
+                            <span class="text-cyan-400 font-mono text-[9px] shrink-0 pt-0.5">[${timeVal}]</span>
+                            <span class="text-slate-200 text-[10px] font-sans">${textVal}</span>
                         </div>
-                        <div class="text-slate-300">${t.details}</div>
                     </div>
-                `).join('') || '<div class="text-slate-500 p-2">Zero coordination events logged yet. Standby mode active.</div>';
+                    `;
+                }).join('') || '<div class="text-slate-500 p-2 text-xs font-mono">⏳ No coordination events yet. Trigger a scenario to begin.</div>';
             }
         }
 
@@ -5851,10 +5906,57 @@
 
         function triggerCoordinationSimulation() {
             if (!window.SentinelCoordination) return;
-            const event = window.SentinelCoordination.triggerDeterministicFireDisaster();
-            showToast('🔥 FACTORY FIRE DETECTED: Multi-Department Coordination Dispatched!', 'error');
+            window.SentinelCoordination.triggerDeterministicFireDisaster();
+            showToast('🔥 FACTORY FIRE DETECTED (SX-INC-1042): Multi-Department Coordination Dispatched!', 'error');
             renderCoordinationWorkspace();
             renderOwnerWorkspace();
+            updateDemoStepUI();
+        }
+
+        // Step-by-step demo lifecycle controller
+        function advanceDemoLifecycle(step) {
+            if (!window.SentinelCoordination) return;
+            if (!window.SentinelCoordination.getActiveEvent()) {
+                window.SentinelCoordination.triggerDeterministicFireDisaster();
+            }
+            window.SentinelCoordination.stepDemoLifecycle(step);
+            const stepLabels = {
+                1: '🔥 Step 1: Incident Detected & All Agencies ALERTED',
+                2: '✓ Step 2: All Agencies ACKNOWLEDGED',
+                3: '🚒 Step 3: Units DISPATCHED & EN ROUTE',
+                4: '🚒 Step 4: Fire Unit ARRIVED ON SCENE',
+                5: '🚑 Step 5: Ambulance & Police ARRIVED — Patient Triage',
+                6: '🏥 Step 6: Hospital HANDOVER Complete',
+                7: '✅ Step 7: Incident RESOLVED — Scene Secured'
+            };
+            showToast(stepLabels[step] || `Demo step ${step} executed`, step === 7 ? 'success' : 'info');
+            renderCoordinationWorkspace();
+            renderOwnerWorkspace();
+            updateDemoStepUI();
+        }
+
+        function updateDemoStepUI() {
+            const activeEvent = window.SentinelCoordination ? window.SentinelCoordination.getActiveEvent() : null;
+            const currentStep = window.SentinelCoordination ? window.SentinelCoordination.getCurrentDemoStep() : 0;
+            // Update step buttons visual state
+            for (let i = 1; i <= 7; i++) {
+                const btn = document.getElementById(`demo-step-btn-${i}`);
+                if (btn) {
+                    if (i <= currentStep) {
+                        btn.classList.add('opacity-50');
+                        btn.classList.remove('ring-2', 'ring-cyan-400');
+                    } else if (i === currentStep + 1) {
+                        btn.classList.add('ring-2', 'ring-cyan-400');
+                        btn.classList.remove('opacity-50');
+                    } else {
+                        btn.classList.remove('ring-2', 'ring-cyan-400', 'opacity-50');
+                    }
+                }
+            }
+            const statusText = document.getElementById('demo-lifecycle-status');
+            if (statusText && activeEvent) {
+                statusText.textContent = `INCIDENT: ${activeEvent.incidentId} | STATUS: ${activeEvent.status} | STEP: ${currentStep}/7`;
+            }
         }
 
         function broadcastDeptAlert() {
