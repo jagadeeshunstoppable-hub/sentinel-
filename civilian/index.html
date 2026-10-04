@@ -372,6 +372,115 @@
                 <span>Exit</span>
             </a>
         </div>
+    <!-- ======================================================== -->
+    <!-- PUBLIC SAFETY ALERT BANNER (SECTIONS 20, 21, 22)         -->
+    <!-- Appears when an Industrial Emergency has public safety   -->
+    <!-- impact, keeping public informed without private data leak-->
+    <!-- ======================================================== -->
+    <div id="public-safety-alert-banner" class="hidden bg-gradient-to-r from-red-600 via-rose-700 to-amber-700 text-white px-4 py-3 shadow-2xl border-b-2 border-amber-300 relative z-40 shrink-0">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+                <span class="text-2xl animate-pulse shrink-0">🚨</span>
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-extrabold text-xs sm:text-sm tracking-wide uppercase">PUBLIC SAFETY ALERT &bull; INDUSTRIAL EMERGENCY REPORTED</span>
+                        <span class="px-2 py-0.5 rounded bg-black/40 text-amber-300 font-mono text-[10px] font-bold border border-amber-400/40">STATUS: CRITICAL</span>
+                        <span class="text-xs font-mono text-white/80 font-bold hidden sm:inline" id="psa-banner-incident-id">SX-INC-1042</span>
+                    </div>
+                    <p class="text-xs text-rose-100 mt-0.5 leading-snug" id="psa-banner-text">
+                        Industrial emergency reported near <strong>Factory Zone A</strong>. Emergency services are responding. Please avoid the affected area and keep routes clear.
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end">
+                <button type="button" onclick="openPublicSafetyModal()" class="px-3.5 py-1.5 rounded-lg bg-white text-red-900 font-bold text-xs hover:bg-rose-100 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer">
+                    <span>VIEW EMERGENCY STATUS</span>
+                    <span>&rarr;</span>
+                </button>
+                <button type="button" onclick="dismissPublicSafetyBanner()" class="p-1.5 rounded-lg bg-black/20 hover:bg-black/40 text-white/80 hover:text-white cursor-pointer" aria-label="Dismiss banner">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PUBLIC SAFETY ALERT MODAL DIALOG (PROMPT SECTIONS 20-22) -->
+    <!-- ======================================================== -->
+    <div id="public-safety-alert-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto" onclick="if(event.target===this)closePublicSafetyModal()">
+        <div class="w-full max-w-lg bg-[#0f172a] border-2 border-red-500 rounded-2xl p-6 shadow-2xl space-y-4 my-auto text-white">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div class="flex items-center gap-2.5 text-red-400">
+                    <span class="text-2xl animate-pulse">🚨</span>
+                    <div>
+                        <h3 class="font-extrabold text-base tracking-wide text-white uppercase">PUBLIC SAFETY ALERT</h3>
+                        <p class="text-xs font-mono text-red-300">Incident: SX-INC-1042 &bull; Factory Zone A</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closePublicSafetyModal()" class="p-1.5 rounded-lg bg-white/10 text-slate-300 hover:text-white" aria-label="Close modal">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 space-y-2">
+                <div class="text-xs font-bold text-red-200 uppercase font-mono">Current Status: CRITICAL</div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                    Industrial emergency reported near Factory Zone A. Emergency services are responding.
+                </p>
+            </div>
+
+            <div class="space-y-2">
+                <div class="text-xs font-bold text-amber-300 font-mono uppercase tracking-wider">PLEASE FOLLOW SAFETY PROTOCOLS:</div>
+                <ul class="text-xs text-slate-200 space-y-1.5 font-sans bg-black/40 p-3.5 rounded-xl border border-white/10">
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-400 font-bold">&bull;</span>
+                        <span><strong>Avoid the affected area:</strong> Maintain distance from Factory Zone A.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-400 font-bold">&bull;</span>
+                        <span><strong>Do not approach the incident:</strong> Keep clear of perimeter security.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-400 font-bold">&bull;</span>
+                        <span><strong>Keep emergency routes clear:</strong> Yield immediately to sirens and beacons.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-400 font-bold">&bull;</span>
+                        <span><strong>Follow safety instructions:</strong> Obey instructions from police &amp; emergency crews.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Responding Agencies Live Status -->
+            <div class="space-y-1.5">
+                <div class="text-[11px] font-mono text-slate-400 uppercase">RESPONDING PUBLIC EMERGENCY SERVICES:</div>
+                <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center justify-between">
+                        <span class="text-slate-300">🚒 Fire &amp; Rescue</span>
+                        <span id="psa-status-fire" class="text-amber-400 font-bold">EN ROUTE</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center justify-between">
+                        <span class="text-slate-300">🚑 Ambulance</span>
+                        <span id="psa-status-med" class="text-cyan-400 font-bold">EN ROUTE</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center justify-between">
+                        <span class="text-slate-300">👮 Police</span>
+                        <span id="psa-status-pol" class="text-emerald-400 font-bold">ACKNOWLEDGED</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center justify-between">
+                        <span class="text-slate-300">🏥 Hospital</span>
+                        <span id="psa-status-hosp" class="text-purple-400 font-bold">READY TO RECEIVE</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[10px]">Data sanitized for public safety.</span>
+                <button type="button" onclick="closePublicSafetyModal()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold transition-colors">
+                    CONFIRM &amp; CLOSE
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- ======================================================== -->
@@ -2777,29 +2886,109 @@
         // ========================================================
         // 8. EMERGENCY COORDINATION CROSS-PLATFORM BRIDGE
         // ========================================================
+        function openPublicSafetyModal() {
+            const modal = document.getElementById('public-safety-alert-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closePublicSafetyModal() {
+            const modal = document.getElementById('public-safety-alert-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function dismissPublicSafetyBanner() {
+            const banner = document.getElementById('public-safety-alert-banner');
+            if (banner) banner.classList.add('hidden');
+        }
+
         function syncIndustrialEmergencyEvent() {
             if (!window.SentinelCoordination) return;
             const activeEvent = window.SentinelCoordination.getActiveEvent();
-            if (!activeEvent || activeEvent.status === 'RESOLVED') return;
+            
+            const banner = document.getElementById('public-safety-alert-banner');
+            const bannerIncId = document.getElementById('psa-banner-incident-id');
+            const bannerText = document.getElementById('psa-banner-text');
 
-            // Reflect in agencies status in #disp-coord
+            if (!activeEvent || activeEvent.status === 'RESOLVED') {
+                if (banner) banner.classList.add('hidden');
+                return;
+            }
+
+            // 1. Reflect in Public Safety Banner & Modal (Sections 20, 21, 22)
+            if (banner) {
+                if (activeEvent.severity === 'CRITICAL') {
+                    banner.classList.remove('hidden');
+                    if (bannerIncId) bannerIncId.textContent = activeEvent.eventId || activeEvent.incidentId || 'SX-INC-1042';
+                    if (bannerText) bannerText.innerHTML = `Industrial emergency reported near <strong>${activeEvent.location || 'Factory Zone A'}</strong>. Emergency services are responding. Please avoid the affected area and keep routes clear.`;
+                } else {
+                    banner.classList.add('hidden');
+                }
+            }
+
+            // 2. Reflect in agency tracking strip (#disp-coord & #public-safety-alert-modal)
             const medStatus = document.getElementById('status-agency-med');
             const fireStatus = document.getElementById('status-agency-fire');
             const polStatus = document.getElementById('status-agency-pol');
             const hospStatus = document.getElementById('status-agency-hosp');
             const sdrfStatus = document.getElementById('status-agency-sdrf');
 
+            const psaFire = document.getElementById('psa-status-fire');
+            const psaMed = document.getElementById('psa-status-med');
+            const psaPol = document.getElementById('psa-status-pol');
+            const psaHosp = document.getElementById('psa-status-hosp');
+
             const agencies = window.SentinelCoordination.getAgencies();
             agencies.forEach(a => {
-                if (a.id === 'AGY-108' && medStatus) medStatus.textContent = a.status + ` (ETA ${a.eta})`;
-                if (a.id === 'AGY-101' && fireStatus) fireStatus.textContent = a.status + ` (ETA ${a.eta})`;
-                if (a.id === 'AGY-100' && polStatus) polStatus.textContent = a.status + ` (ETA ${a.eta})`;
-                if (a.id === 'AGY-HOSP' && hospStatus) hospStatus.textContent = a.status + ` (${a.capability})`;
-                if (a.id === 'AGY-SDRF' && sdrfStatus) sdrfStatus.textContent = a.status + ` (ETA ${a.eta})`;
+                const isArrived = ['ARRIVED', 'ON_SCENE', 'HANDOVER_COMPLETE'].includes(a.status);
+                const displayStatus = isArrived ? `✓ ARRIVED ON SCENE` : (a.status === 'EN_ROUTE' ? `EN ROUTE (${a.eta})` : a.status);
+
+                if (a.id === 'AGY-108') {
+                    if (medStatus) medStatus.textContent = displayStatus;
+                    if (psaMed) {
+                        psaMed.textContent = isArrived ? '✓ ARRIVED' : (a.status === 'EN_ROUTE' ? `EN ROUTE (${a.eta})` : a.status);
+                        psaMed.className = isArrived ? 'text-emerald-400 font-bold' : 'text-cyan-400 font-bold';
+                    }
+                }
+                if (a.id === 'AGY-101') {
+                    if (fireStatus) fireStatus.textContent = displayStatus;
+                    if (psaFire) {
+                        psaFire.textContent = isArrived ? '✓ ARRIVED' : (a.status === 'EN_ROUTE' ? `EN ROUTE (${a.eta})` : a.status);
+                        psaFire.className = isArrived ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold';
+                    }
+                }
+                if (a.id === 'AGY-100') {
+                    if (polStatus) polStatus.textContent = displayStatus;
+                    if (psaPol) {
+                        psaPol.textContent = isArrived ? '✓ ARRIVED' : (a.status === 'CORDON_ACTIVE' ? 'CORDON ACTIVE' : a.status);
+                        psaPol.className = isArrived ? 'text-emerald-400 font-bold' : 'text-blue-400 font-bold';
+                    }
+                }
+                if (a.id === 'AGY-HOSP') {
+                    const hospText = a.status === 'PATIENT_RECEIVED' ? 'PATIENT RECEIVED' : (a.status === 'PRE_ALERT_SENT' ? 'READY TO RECEIVE' : a.status);
+                    if (hospStatus) hospStatus.textContent = `${hospText} (${a.capability})`;
+                    if (psaHosp) {
+                        psaHosp.textContent = hospText;
+                        psaHosp.className = a.status === 'PATIENT_RECEIVED' ? 'text-emerald-400 font-bold' : 'text-purple-400 font-bold';
+                    }
+                }
+                if (a.id === 'AGY-SDRF' && sdrfStatus) {
+                    sdrfStatus.textContent = displayStatus;
+                }
             });
 
+            // 3. Log to timeline / notification history
+            const timeStr = new Date().toLocaleTimeString('en-IN', { hour12: false });
+            addTimelineEvent(timeStr, `[${activeEvent.eventId || 'SX-INC-1042'}] Active Multi-Department Incident: ${activeEvent.incidentType} (${activeEvent.location})`, 'alert');
+
             renderIncidentFeed();
-            showCivilianToast(`🚨 INDUSTRIAL DISASTER COORDINATION: ${activeEvent.incidentType} (${activeEvent.location}) - Public Safety CAD Active`);
+            showEmergencyToast(`🚨 INDUSTRIAL EMERGENCY: ${activeEvent.incidentType} — Public Safety CAD Synchronized`);
         }
 
         // Onload Initialization (Section 3)

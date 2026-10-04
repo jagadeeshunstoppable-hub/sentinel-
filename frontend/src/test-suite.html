@@ -72,7 +72,7 @@
                     <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Automated Core Feature Assertions</p>
                 </div>
             </div>
-            <button onclick="runAllTests()" class="px-6 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all border border-white/10 flex items-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+            <button id="btn-run-tests" onclick="runAllTests()" class="px-6 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all border border-white/10 flex items-center gap-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                 <i data-lucide="play" class="w-4 h-4"></i>
                 <span>Execute Diagnostic Routine</span>
             </button>
@@ -161,8 +161,8 @@
 
             logInfo("Initializing quality assurance tests...");
 
-            // Test 1: Check Session Storage structure
-            totalCount = 10;
+            // Total assertions
+            totalCount = 17;
             document.getElementById('total-tests').innerText = totalCount;
 
             setTimeout(() => {
@@ -583,6 +583,10 @@
                 }, 300);
 
             }, 300);
+        }
+
+        if (window.location.search.includes('autorun=true')) {
+            setTimeout(runAllTests, 300);
         }
     </script>
 </body>

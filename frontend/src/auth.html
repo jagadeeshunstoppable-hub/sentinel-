@@ -369,12 +369,28 @@
             });
         }
 
-        // Handle Role selection
+        // Handle Role selection (Prompt Section 3: Role Login Binding)
         function selectRole(role, email, mockOtp) {
             currentRole = role;
             currentEmail = email;
             currentOtp = mockOtp;
             
+            // Persist selectedRole in session
+            sessionStorage.setItem("selectedRole", role.toLowerCase());
+            
+            // Dynamic Role Login Header
+            const gateTitle = document.getElementById('gate-title');
+            if (gateTitle && currentMode === 'industrial') {
+                const titleMap = {
+                    'Worker': 'WORKER LOGIN',
+                    'Supervisor': 'SUPERVISOR LOGIN',
+                    'Admin': 'ADMIN LOGIN',
+                    'Owner': 'OWNER LOGIN',
+                    'Coordinator': 'EMERGENCY COORDINATOR LOGIN'
+                };
+                gateTitle.textContent = titleMap[role] || `${role.toUpperCase()} LOGIN`;
+            }
+
             const buttons = document.querySelectorAll('.role-btn');
             buttons.forEach(btn => {
                 if (btn.innerText.includes(role)) {
@@ -454,10 +470,13 @@
             startTimer();
         }
 
-        // Global Navigation to Selected Operational Console
+        // Global Navigation to Selected Operational Console (Prompt Section 3: RBAC Session State)
         function navigateToConsole() {
             sessionStorage.setItem("authenticated", "true");
             sessionStorage.setItem("userRole", currentRole || "Admin");
+            sessionStorage.setItem("sentinel_role", currentRole || "Admin");
+            sessionStorage.setItem("selectedRole", (currentRole || "Admin").toLowerCase());
+            sessionStorage.setItem("authenticatedRole", (currentRole || "Admin").toLowerCase());
             const emailEl = document.getElementById('email');
             sessionStorage.setItem("userEmail", emailEl && emailEl.value ? emailEl.value : currentEmail);
             sessionStorage.setItem("userName", (currentRole || "Admin") + " User");
@@ -553,14 +572,26 @@
             }
         }
 
-        // On Load: Check URL parameter ?mode=civilian or ?mode=industrial
+        // On Load: Check URL parameter ?mode=civilian or ?mode=industrial & ?role=Worker etc.
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const mode = urlParams.get('mode');
+            const roleParam = urlParams.get('role');
+
             if (mode === 'civilian') {
                 selectMode('civilian');
+                if (roleParam) {
+                    const matchedCiv = CIVILIAN_ROLES.find(r => r.role.toLowerCase() === roleParam.toLowerCase());
+                    if (matchedCiv) selectRole(matchedCiv.role, matchedCiv.email, matchedCiv.otp);
+                }
             } else {
                 selectMode('industrial');
+                if (roleParam) {
+                    const matchedInd = INDUSTRIAL_ROLES.find(r => r.role.toLowerCase() === roleParam.toLowerCase() || (r.role === 'Coordinator' && roleParam.toLowerCase().includes('coord')));
+                    if (matchedInd) {
+                        selectRole(matchedInd.role, matchedInd.email, matchedInd.otp);
+                    }
+                }
             }
         });
     </script>

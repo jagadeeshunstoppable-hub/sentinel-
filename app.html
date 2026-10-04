@@ -4652,33 +4652,36 @@
                     <span class="text-rose-400 font-bold">SX-INC-1042</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-slate-400">INCIDENT TYPE:</span>
-                    <span class="text-white font-bold">FACTORY FIRE + INJURED WORKER</span>
+                    <span class="text-slate-400">INCIDENT:</span>
+                    <span class="text-white font-bold">Industrial Fire</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-slate-400">LOCATION:</span>
-                    <span class="text-cyan-300 font-bold">Unit 01 / Factory Gate &amp; Zone B</span>
+                    <span class="text-cyan-300 font-bold">Factory Zone A</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-slate-400">SEVERITY:</span>
-                    <span class="px-2 py-0.5 rounded bg-red-600/30 text-red-300 border border-red-500/50 font-bold">CRITICAL ESCALATION</span>
+                    <span class="px-2 py-0.5 rounded bg-red-600/30 text-red-300 border border-red-500/50 font-bold">CRITICAL</span>
                 </div>
             </div>
 
             <div class="space-y-1.5">
-                <div class="text-[11px] font-bold text-slate-300 font-mono">POTENTIAL DEPARTMENTS TO ALERT:</div>
-                <div class="grid grid-cols-2 gap-1.5 text-xs font-mono">
-                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
-                        <span>🚒</span><span>Fire &amp; Rescue (TNFRS)</span>
+                <div class="text-[11px] font-bold text-slate-300 font-mono">DEPARTMENTS TO ACTIVATE:</div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-xs font-mono">
+                    <div class="p-2 rounded bg-slate-900 border border-emerald-500/30 flex items-center gap-1.5 text-slate-200">
+                        <span class="text-emerald-400 font-bold">✓</span><span>🚒 Fire &amp; Rescue</span>
                     </div>
-                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
-                        <span>🚑</span><span>Ambulance (108 ALS)</span>
+                    <div class="p-2 rounded bg-slate-900 border border-emerald-500/30 flex items-center gap-1.5 text-slate-200">
+                        <span class="text-emerald-400 font-bold">✓</span><span>🚑 Ambulance</span>
                     </div>
-                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
-                        <span>👮</span><span>Police (Perimeter Cordon)</span>
+                    <div class="p-2 rounded bg-slate-900 border border-emerald-500/30 flex items-center gap-1.5 text-slate-200">
+                        <span class="text-emerald-400 font-bold">✓</span><span>👮 Police</span>
                     </div>
-                    <div class="p-2 rounded bg-slate-900 border border-white/10 flex items-center gap-1.5 text-slate-200">
-                        <span>🏥</span><span>Hospital (Trauma Bay 1)</span>
+                    <div class="p-2 rounded bg-slate-900 border border-emerald-500/30 flex items-center gap-1.5 text-slate-200">
+                        <span class="text-emerald-400 font-bold">✓</span><span>🏥 Hospital</span>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900 border border-emerald-500/30 flex items-center gap-1.5 text-slate-200 col-span-2 sm:col-span-1">
+                        <span class="text-emerald-400 font-bold">✓</span><span>🛟 Rescue</span>
                     </div>
                 </div>
             </div>
@@ -4987,9 +4990,11 @@
             closeModal('modal-activate-emergency-confirm');
             if (window.SentinelCoordination) {
                 window.SentinelCoordination.createEmergencyCoordinationEvent({
-                    incidentType: 'INDUSTRIAL FIRE + INJURED WORKER',
+                    incidentId: 'SX-INC-1042',
+                    eventId: 'SX-INC-1042',
+                    incidentType: 'INDUSTRIAL FIRE',
                     severity: 'CRITICAL',
-                    location: 'Unit 01 / Factory Gate & Zone B',
+                    location: 'Factory Zone A',
                     peopleAffected: 4
                 });
                 window.SentinelCoordination.stepDemoLifecycle(3); // Dispatched and en-route

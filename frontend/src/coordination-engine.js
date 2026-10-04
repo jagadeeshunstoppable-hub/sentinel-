@@ -12,6 +12,7 @@
         {
             id: 'DEP-SAF',
             name: 'Safety & Egress Operations',
+            icon: '🛡️',
             lead: 'K. Balasubramanian (Chief Safety Officer)',
             contact: 'Ext: 2101 / VHF Ch-1 (Emergency)',
             status: 'STANDBY',
@@ -25,6 +26,7 @@
         {
             id: 'DEP-MED',
             name: 'Medical & Occupational Health',
+            icon: '🚑',
             lead: 'Dr. Priya Varma (Lead Industrial Physician)',
             contact: 'Ext: 1108 / VHF Ch-2',
             status: 'STANDBY',
@@ -38,6 +40,7 @@
         {
             id: 'DEP-FIR',
             name: 'Fire & Emergency Response Team',
+            icon: '🚒',
             lead: 'S. Ramanathan (Fire Marshal)',
             contact: 'Ext: 1101 / VHF Ch-3',
             status: 'STANDBY',
@@ -51,6 +54,7 @@
         {
             id: 'DEP-SEC',
             name: 'Plant Security & Gate Control',
+            icon: '👮',
             lead: 'Inspector M. Anthony (Security Chief)',
             contact: 'Ext: 2100 / VHF Ch-4',
             status: 'STANDBY',
@@ -64,6 +68,7 @@
         {
             id: 'DEP-OPS',
             name: 'Plant Operations & SCADA Control',
+            icon: '⚙️',
             lead: 'V. Sundar (Operations Superintendent)',
             contact: 'Ext: 3100 / SCADA Intercom',
             status: 'STANDBY',
@@ -77,6 +82,7 @@
         {
             id: 'DEP-MAI',
             name: 'Mechanical & Hydraulic Maintenance',
+            icon: '🔧',
             lead: 'R. Dinakar (Mechanical Lead)',
             contact: 'Ext: 4102 / VHF Ch-5',
             status: 'STANDBY',
@@ -90,6 +96,7 @@
         {
             id: 'DEP-ELE',
             name: 'Electrical & Automation Engineering',
+            icon: '⚡',
             lead: 'G. Meenakshi (Chief Electrical Engineer)',
             contact: 'Ext: 4101 / VHF Ch-5',
             status: 'STANDBY',
@@ -103,6 +110,7 @@
         {
             id: 'DEP-HAZ',
             name: 'Environment & Hazmat Spill Response',
+            icon: '☣️',
             lead: 'Dr. Arunkumar (Hazmat Specialist)',
             contact: 'Ext: 5100 / VHF Ch-6',
             status: 'STANDBY',
@@ -116,6 +124,7 @@
         {
             id: 'DEP-LOG',
             name: 'Logistics, Warehouse & Transport',
+            icon: '📦',
             lead: 'S. Selvam (Logistics Lead)',
             contact: 'Ext: 6100',
             status: 'STANDBY',
@@ -129,6 +138,7 @@
         {
             id: 'DEP-IT',
             name: 'IT, Edge Networks & Telecom',
+            icon: '💻',
             lead: 'J. Rajesh (Edge Infrastructure Admin)',
             contact: 'Ext: 7100 / NOC Desk',
             status: 'STANDBY',
@@ -142,6 +152,7 @@
         {
             id: 'DEP-MGT',
             name: 'Executive Management & Legal',
+            icon: '🏢',
             lead: 'Executive Board Liaison',
             contact: 'Ext: 9000 / Executive Comm',
             status: 'STANDBY',
@@ -154,34 +165,38 @@
         }
     ];
 
-    // 2. Configurable External Emergency Agency Directory (Section 6)
-    // Note: Labeled with honest [DEMO / SIMULATED] provenance tags as required by Section 6 & 30.
+    // 2. Configurable External Emergency Agency Directory (Prompt Sections 8, 10, 11)
+    // Note: Labeled with honest [DEMO / SIMULATED] provenance tags as required by Section 34.
     const DEFAULT_AGENCIES = [
-        {
-            id: 'AGY-108',
-            type: 'AMBULANCE',
-            name: 'Tamil Nadu 108 Emergency Medical Service (EMRI)',
-            category: 'State Emergency Ambulance',
-            phone: '108',
-            unitAssigned: 'TN-108-ALS-04',
-            capability: 'Advanced Life Support (ALS) • Trauma • Ventilator',
-            location: 'Anna Nagar Depot (1.8 km from Gate 01)',
-            eta: '4 min',
-            status: 'STANDBY',
-            isDemo: true,
-            demoLabel: 'SIMULATED DEMO INTEGRATION'
-        },
         {
             id: 'AGY-101',
             type: 'FIRE',
             name: 'Tamil Nadu Fire & Rescue Services (TNFRS)',
             category: 'Industrial Fire & Rescue Station',
             phone: '101',
-            unitAssigned: 'TNFRS-FT-02 (Ennore Sector)',
-            capability: 'High-Reach Water Tender • Hazmat Chemical Foam • Hydraulic Cutter',
-            location: 'Ambattur / Ennore Fire Station (3.2 km)',
+            unitAssigned: 'Fire Unit F-07',
+            capability: 'Industrial Fire • High-Reach Foam Tender • Hazmat Containment',
+            location: 'Station 4 (3.2 km from Factory Zone A)',
+            distance: '3.2 km',
+            eta: '5 min',
+            status: 'STANDBY',
+            icon: '🚒',
+            isDemo: true,
+            demoLabel: 'SIMULATED DEMO INTEGRATION'
+        },
+        {
+            id: 'AGY-108',
+            type: 'AMBULANCE',
+            name: 'Tamil Nadu 108 Emergency Medical Service (EMRI)',
+            category: 'State Emergency Ambulance',
+            phone: '108',
+            unitAssigned: 'Ambulance ALS Unit 04',
+            capability: 'Advanced Life Support (ALS) • Trauma Resuscitation • Ventilator',
+            location: 'Central Depot (3.8 km from Factory Zone A)',
+            distance: '3.8 km',
             eta: '6 min',
             status: 'STANDBY',
+            icon: '🚑',
             isDemo: true,
             demoLabel: 'SIMULATED DEMO INTEGRATION'
         },
@@ -191,11 +206,13 @@
             name: 'Greater Chennai Police — Traffic & Law Enforcement',
             category: 'Police Patrol & Corridor Control',
             phone: '100 / 112',
-            unitAssigned: 'PCR-14 / Traffic Sector 3',
-            capability: 'Green Corridor Traffic Signal Preemption • Facility Perimeter Cordon',
-            location: 'Sector Checkpost (1.2 km)',
-            eta: '3 min',
+            unitAssigned: 'Police PCR-14',
+            capability: 'Perimeter Cordon • Green Corridor Preemption • Traffic Control',
+            location: 'Precinct Sector (2.1 km from Factory Zone A)',
+            distance: '2.1 km',
+            eta: '4 min',
             status: 'STANDBY',
+            icon: '👮',
             isDemo: true,
             demoLabel: 'SIMULATED DEMO INTEGRATION'
         },
@@ -205,13 +222,15 @@
             name: 'Rajiv Gandhi Government General Hospital (Chennai GH)',
             category: 'Apex Government Trauma & Burn Center',
             phone: '044-25305000',
-            unitAssigned: 'Trauma Bay 1 & Resuscitation Suite',
+            unitAssigned: 'Hospital Trauma Bay 1 & Resuscitation Suite',
             capability: 'Level-1 Apex Trauma • Toxic Fume ICU • Burn Treatment Center',
             location: 'Park Town, Chennai (9.4 km)',
-            eta: '11 min',
+            distance: '9.4 km',
+            eta: '10 min',
             bedsAvailable: 4,
             traumaBayReady: true,
             status: 'STANDBY',
+            icon: '🏥',
             isDemo: true,
             demoLabel: 'SIMULATED DEMO DATA'
         },
@@ -221,11 +240,13 @@
             name: 'State Disaster Response Force (SDRF) Tamil Nadu',
             category: 'Specialized Disaster & Heavy Rescue',
             phone: '1070',
-            unitAssigned: 'SDRF Alpha Rescue Battalion',
-            capability: 'Confined Space Rescue • Structural Collapse Shoring • NBC Hazmat',
-            location: 'Regional Disaster Center (14.0 km)',
-            eta: '18 min',
+            unitAssigned: 'Rescue Unit Alpha',
+            capability: 'Industrial Rescue • Structural Shoring • Hazard Evacuation',
+            location: 'Regional Disaster Center (11.2 km)',
+            distance: '11.2 km',
+            eta: '12 min',
             status: 'STANDBY',
+            icon: '🛟',
             isDemo: true,
             demoLabel: 'SIMULATED DEMO INTEGRATION'
         }
@@ -318,20 +339,66 @@
         }
 
         // ====================================================================
+        // ACCESSOR METHODS & HELPER DISPATCHERS
+        // ====================================================================
+        getDepartments() {
+            return this.departments.map(d => ({
+                ...d,
+                operationalStatus: d.status,
+                availablePersonnel: d.personnelAvailable
+            }));
+        }
+
+        getAgencies() {
+            return this.agencies;
+        }
+
+        getActiveEvent() {
+            return this.activeEvent;
+        }
+
+        getTimeline() {
+            return (this.activeEvent && Array.isArray(this.activeEvent.timeline)) ? this.activeEvent.timeline : [];
+        }
+
+        alertDepartment(deptId) {
+            this.updateDepartmentStatus(deptId, 'ALERTED');
+        }
+
+        deployDepartment(deptId) {
+            this.updateDepartmentStatus(deptId, 'RESPONDING');
+        }
+
+        dispatchAgency(agencyId) {
+            const agy = this.agencies.find(a => a.id === agencyId);
+            if (!agy) return;
+            const cycle = {
+                'STANDBY': 'ALERTED',
+                'ALERTED': 'EN_ROUTE',
+                'EN_ROUTE': 'ARRIVED',
+                'ARRIVED': 'ON_SCENE',
+                'ON_SCENE': 'STANDBY'
+            };
+            const nextStatus = cycle[agy.status] || 'STANDBY';
+            this.updateAgencyStatus(agencyId, nextStatus);
+        }
+
+        // ====================================================================
         // INCIDENT DETECTION & MULTI-DEPARTMENT ALERT PIPELINE (Sections 4, 5, 7)
         // ====================================================================
         createEmergencyCoordinationEvent(options = {}) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-IN', { hour12: false });
-            const dateStr = now.toISOString().slice(0, 10);
 
-            const incidentType = options.incidentType || 'FACTORY FIRE + WORKER INJURY';
+            // Canonical Single Incident ID (Prompt Sections 6, 16, 37)
+            const canonicalId = options.incidentId || options.eventId || 'SX-INC-1042';
+            const incidentType = options.incidentType || 'INDUSTRIAL FIRE';
             const severity = options.severity || 'CRITICAL';
-            const location = options.location || 'Unit 01, Zone B (Rotating Equipment Bay)';
-            const peopleAffected = options.peopleAffected || 4;
+            const location = options.location || 'Factory Zone A';
+            const peopleAffected = options.peopleAffected !== undefined ? options.peopleAffected : 4;
 
-            // Determine Required Response Capabilities based on Incident Classification
-            const requiredCapabilities = ['Fire Suppression', 'Medical Triage', 'Security Cordon', 'Egress Evacuation', 'Process Shutoff'];
+            // Determine Required Response Capabilities based on Incident Classification (Section 8)
+            const requiredCapabilities = ['Fire & Rescue Suppression', 'Medical ALS Triage', 'Police Perimeter Cordon', 'Apex Hospital Readiness', 'Heavy Shoring & Rescue'];
 
             // Match Internal Departments automatically
             const targetDeptIds = ['DEP-SAF', 'DEP-MED', 'DEP-FIR', 'DEP-SEC', 'DEP-OPS', 'DEP-MGT'];
@@ -348,12 +415,13 @@
             });
             this.saveDepartments();
 
-            // Match External Emergency Agencies
+            // Match External Emergency Agencies (Prompt Sections 8, 10, 11)
             const externalMatched = [
-                { id: 'AGY-108', agencyType: 'AMBULANCE', unit: 'TN-108-ALS-04', status: 'ALERTED', eta: '4 min' },
-                { id: 'AGY-101', agencyType: 'FIRE', unit: 'TNFRS-FT-02', status: 'ALERTED', eta: '6 min' },
-                { id: 'AGY-100', agencyType: 'POLICE', unit: 'PCR-14', status: 'ALERTED', eta: '3 min' },
-                { id: 'AGY-HOSP', agencyType: 'HOSPITAL', unit: 'Chennai GH Trauma Bay 1', status: 'PRE-ALERTED', eta: '11 min' }
+                { id: 'AGY-101', agencyType: 'FIRE', unit: 'Fire Unit F-07', status: 'ALERTED', eta: '5 min' },
+                { id: 'AGY-108', agencyType: 'AMBULANCE', unit: 'Ambulance ALS Unit 04', status: 'ALERTED', eta: '6 min' },
+                { id: 'AGY-100', agencyType: 'POLICE', unit: 'Police PCR-14', status: 'ALERTED', eta: '4 min' },
+                { id: 'AGY-HOSP', agencyType: 'HOSPITAL', unit: 'Hospital Trauma Bay 1', status: 'PRE-ALERTED', eta: '10 min' },
+                { id: 'AGY-SDRF', agencyType: 'DISASTER', unit: 'Rescue Unit Alpha', status: 'ALERTED', eta: '12 min' }
             ];
 
             this.agencies.forEach(agy => {
@@ -364,23 +432,25 @@
             });
             this.saveAgencies();
 
-            // Construct Canonical Event Model (Section 18)
+            // Construct Canonical Event Model (Prompt Sections 6, 17, 37)
             this.activeEvent = {
-                eventId: options.eventId || `SX-EMG-${dateStr.replace(/-/g, '')}-${Math.floor(Math.random() * 9000 + 1000)}`,
+                eventId: canonicalId,
+                incidentId: canonicalId,
                 source: options.source || 'INDUSTRIAL_RISK_ENGINE',
                 incidentType: incidentType,
                 severity: severity,
                 location: location,
                 peopleAffected: peopleAffected,
-                hazardDetails: options.hazardDetails || 'MQ-135 Gas Plume > 390 PPM + Thermal Escalation 45.2°C + ADXL345 Resonance 0.88g',
+                affectedWorkers: ['W-017', 'W-024', 'W-031', 'W-042'],
+                hazardDetails: options.hazardDetails || 'Thermal runaway & smoke detected at Factory Zone A • Structural & worker injury risk',
                 requiredCapabilities: requiredCapabilities,
                 departmentsAlerted: targetDeptIds,
                 externalAgenciesMatched: externalMatched,
-                status: 'ALERTED', // ALERTED -> ACKNOWLEDGED -> RESPONDING -> ON_SCENE -> HANDOVER -> RESOLVED
+                status: 'ALERTED', // ALERTED -> ACKNOWLEDGED -> RESPONDING (EN_ROUTE) -> ON_SCENE (ARRIVED) -> HANDOVER -> RESOLVED
                 timeline: [
-                    { time: timeStr, text: `[${timeStr}] Incident Detected by Industrial Sensor Fusion: ${incidentType} (${severity})` },
-                    { time: timeStr, text: `[${timeStr}] Multi-Department Alert Broadcast: Safety, Medical, Fire, Security & Operations` },
-                    { time: timeStr, text: `[${timeStr}] Controlled Emergency Coordination Event Published to Dispatcher Bus` }
+                    { time: timeStr, text: `[${timeStr}] Incident Detected by Industrial Sensors: ${incidentType} (${severity}) at ${location}` },
+                    { time: timeStr, text: `[${timeStr}] Multi-Department Alert Broadcast: Fire, Ambulance, Police, Hospital & Rescue` },
+                    { time: timeStr, text: `[${timeStr}] Controlled Emergency Coordination Event [${canonicalId}] Published to CAD Bus` }
                 ],
                 createdAt: now.toISOString(),
                 updatedAt: now.toISOString()
@@ -419,7 +489,7 @@
             }
         }
 
-        // Update Department Operational Status (ALERTED -> ACKNOWLEDGED -> RESPONDING -> ON_SCENE -> RESOLVED)
+        // Update Department Operational Status
         updateDepartmentStatus(deptId, newStatus) {
             const timeStr = new Date().toLocaleTimeString('en-IN', { hour12: false });
             const dept = this.departments.find(d => d.id === deptId);
@@ -458,7 +528,7 @@
             }
         }
 
-        // Full Progression Simulation (Judge Demo Scenario - Section 29)
+        // Deterministic Demo Lifecycle (Prompt Section 43 - 17 Steps)
         stepDemoLifecycle(step) {
             const timeStr = new Date().toLocaleTimeString('en-IN', { hour12: false });
             if (!this.activeEvent) {
@@ -466,58 +536,88 @@
             }
 
             if (step === 1) {
-                // Initial detection & alert
+                // Step 1-4: Incident detected & Multi-Department alert
                 this.departments.forEach(d => {
                     if (['DEP-SAF', 'DEP-MED', 'DEP-FIR', 'DEP-SEC'].includes(d.id)) {
                         d.status = 'ALERTED';
                         d.notificationTime = timeStr;
                     }
                 });
+                this.agencies.forEach(a => {
+                    a.status = 'ALERTED';
+                });
                 this.activeEvent.status = 'ALERTED';
+                this.activeEvent.timeline.unshift({
+                    time: timeStr,
+                    text: `[${timeStr}] Incident SX-INC-1042 classified as CRITICAL. Fire, Ambulance, Police, Hospital & Rescue alerted.`
+                });
             } else if (step === 2) {
-                // Internal acknowledgements
+                // Step 5-8: Departments & Agencies acknowledge
                 this.departments.forEach(d => {
-                    if (['DEP-SAF', 'DEP-MED', 'DEP-FIR'].includes(d.id)) {
+                    if (['DEP-SAF', 'DEP-MED', 'DEP-FIR', 'DEP-SEC'].includes(d.id)) {
                         d.status = 'ACKNOWLEDGED';
                         d.ackTime = timeStr;
                     }
                 });
+                this.agencies.forEach(a => {
+                    a.status = 'ACKNOWLEDGED';
+                });
                 this.activeEvent.status = 'ACKNOWLEDGED';
                 this.activeEvent.timeline.unshift({
                     time: timeStr,
-                    text: `[${timeStr}] Safety, Medical & Fire response units ACKNOWLEDGED emergency dispatch.`
+                    text: `[${timeStr}] All responding agencies ACKNOWLEDGED emergency dispatch.`
                 });
             } else if (step === 3) {
-                // External agencies dispatched
+                // Step 9-12: Coordinator activates response, units EN ROUTE (Assertion 17 expects status RESPONDING)
                 this.departments.forEach(d => {
                     if (['DEP-FIR', 'DEP-MED'].includes(d.id)) d.status = 'RESPONDING';
+                    if (d.id === 'DEP-SEC') d.status = 'ACKNOWLEDGED';
                 });
                 this.agencies.forEach(a => {
-                    if (a.type === 'AMBULANCE' || a.type === 'FIRE') a.status = 'EN_ROUTE';
-                    if (a.type === 'POLICE') a.status = 'CORDON_ACTIVE';
-                    if (a.type === 'HOSPITAL') a.status = 'PRE_ALERT_SENT';
+                    if (a.type === 'FIRE') { a.status = 'EN_ROUTE'; a.eta = '5 min'; }
+                    if (a.type === 'AMBULANCE') { a.status = 'EN_ROUTE'; a.eta = '6 min'; }
+                    if (a.type === 'POLICE') { a.status = 'EN_ROUTE'; a.eta = '4 min'; }
+                    if (a.type === 'HOSPITAL') { a.status = 'READY_TO_RECEIVE'; a.eta = '10 min'; }
+                    if (a.type === 'DISASTER') { a.status = 'DISPATCHED'; a.eta = '12 min'; }
                 });
                 this.activeEvent.status = 'RESPONDING';
                 this.activeEvent.timeline.unshift({
                     time: timeStr,
-                    text: `[${timeStr}] External Dispatch: Ambulance TN-108 EN ROUTE (4 min) • Fire FT-02 EN ROUTE (6 min).`
+                    text: `[${timeStr}] Multi-Department Response ACTIVATED: Fire Unit F-07 (5m), Ambulance ALS 04 (6m), Police PCR-14 (4m) EN ROUTE.`
                 });
             } else if (step === 4) {
-                // On Scene
+                // Step 13: Fire Unit arrives
                 this.departments.forEach(d => {
-                    if (['DEP-FIR', 'DEP-SAF'].includes(d.id)) d.status = 'ON_SCENE';
+                    if (d.id === 'DEP-FIR') d.status = 'ON_SCENE';
+                });
+                this.agencies.forEach(a => {
+                    if (a.type === 'FIRE') { a.status = 'ARRIVED'; a.eta = '0 min'; }
+                    if (a.type === 'AMBULANCE') { a.status = 'EN_ROUTE'; a.eta = '2 min'; }
+                    if (a.type === 'POLICE') { a.status = 'EN_ROUTE'; a.eta = '1 min'; }
+                });
+                this.activeEvent.status = 'RESPONDING';
+                this.activeEvent.timeline.unshift({
+                    time: timeStr,
+                    text: `[${timeStr}] ✓ FIRE ARRIVED ON SCENE (Fire Unit F-07). Flame knockdown initiated.`
+                });
+            } else if (step === 5) {
+                // Step 14-15: Ambulance & Police arrive
+                this.departments.forEach(d => {
+                    if (['DEP-FIR', 'DEP-MED', 'DEP-SAF'].includes(d.id)) d.status = 'ON_SCENE';
                 });
                 this.agencies.forEach(a => {
                     if (a.type === 'FIRE') a.status = 'ON_SCENE';
-                    if (a.type === 'AMBULANCE') a.status = 'ON_SCENE';
+                    if (a.type === 'AMBULANCE') { a.status = 'ARRIVED'; a.eta = '0 min'; }
+                    if (a.type === 'POLICE') { a.status = 'ARRIVED'; a.eta = '0 min'; }
+                    if (a.type === 'HOSPITAL') a.status = 'RECEIVING';
                 });
                 this.activeEvent.status = 'ON_SCENE';
                 this.activeEvent.timeline.unshift({
                     time: timeStr,
-                    text: `[${timeStr}] Units ON SCENE at Gate 01 / Zone B. Flame knockdown in progress; patient stabilized.`
+                    text: `[${timeStr}] ✓ AMBULANCE ARRIVED ON SCENE (ALS 04) & ✓ POLICE ARRIVED (PCR-14). Patient triage underway.`
                 });
-            } else if (step === 5) {
-                // Hospital Handover
+            } else if (step === 6) {
+                // Step 16: Hospital Handover
                 this.agencies.forEach(a => {
                     if (a.type === 'AMBULANCE') a.status = 'HANDOVER_COMPLETE';
                     if (a.type === 'HOSPITAL') a.status = 'PATIENT_RECEIVED';
@@ -525,16 +625,16 @@
                 this.activeEvent.status = 'HANDOVER';
                 this.activeEvent.timeline.unshift({
                     time: timeStr,
-                    text: `[${timeStr}] Patient successfully transferred to RGGGH Trauma Bay 1. Vital signs stable.`
+                    text: `[${timeStr}] Hospital Handover Complete: Patient received at Rajiv Gandhi Hospital Trauma Bay 1. Vital signs stable.`
                 });
-            } else if (step === 6) {
-                // Resolved
+            } else if (step === 7) {
+                // Step 17: Incident Resolved
                 this.departments.forEach(d => d.status = 'STANDBY');
                 this.agencies.forEach(a => a.status = 'STANDBY');
                 this.activeEvent.status = 'RESOLVED';
                 this.activeEvent.timeline.unshift({
                     time: timeStr,
-                    text: `[${timeStr}] Emergency incident RESOLVED. Zone B de-smoked; transition to Lockout/Tagout recovery.`
+                    text: `[${timeStr}] Incident SX-INC-1042 RESOLVED. Scene secured, atmosphere de-smoked, plant safe.`
                 });
             }
 

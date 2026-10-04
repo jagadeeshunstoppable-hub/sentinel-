@@ -199,9 +199,9 @@
                     <span>DISASTER READY</span>
                 </div>
 
-                <!-- Headline (Section 4) -->
+                <!-- Headline (Clean Dual Platform Architecture) -->
                 <div class="space-y-2">
-                    <div class="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">SENTINEL-X — DUAL OPERATIONAL DISASTER INTELLIGENCE</div>
+                    <div class="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">SENTINEL-X &bull; INTELLIGENT SAFETY &amp; EMERGENCY RESPONSE PLATFORM</div>
                     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white leading-[1.10] tracking-tight">
                         PREDICT RISK.<br/>
                         <span class="text-emerald-400">RESPOND EARLY.</span><br/>
@@ -209,58 +209,64 @@
                     </h1>
                 </div>
 
-                <!-- Supporting Copy (Section 4) -->
+                <!-- Supporting Copy -->
                 <p class="text-sm sm:text-base text-slate-300 font-sans leading-relaxed max-w-lg">
-                    A unified disaster intelligence ecosystem integrating automated public civilian emergency response (108/112) with real-time industrial 3D digital twins and hardware-driven edge resilience.
+                    A unified disaster intelligence ecosystem integrating automated public civilian emergency response with real-time industrial 3D digital twins and hardware-driven edge resilience.
                 </p>
 
-                <!-- DUAL OPERATIONAL PLATFORM LAUNCHERS -->
-                <div class="space-y-3 pt-1">
-                    <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                        <span>SELECT OPERATIONAL PLATFORM:</span>
+                <!-- DUAL OPERATIONAL PLATFORM DECISION GATE -->
+                <div class="space-y-3 pt-2">
+                    <div class="p-2.5 rounded-lg bg-slate-900/90 border border-white/10 flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                            <span>WHICH SYSTEM DO YOU WANT TO ENTER?</span>
+                        </span>
+                        <span class="text-[10px] font-mono text-emerald-400 font-semibold">2 PLATFORMS ACTIVE</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <!-- PLATFORM 1: CIVILIAN EMERGENCY -->
-                        <a href="civilian/index.html" class="group p-4 rounded-xl bg-gradient-to-br from-rose-950/70 via-slate-900/90 to-slate-900 border border-rose-500/50 hover:border-rose-400 hover:shadow-xl hover:shadow-rose-950/50 transition-all flex flex-col justify-between space-y-3 active:scale-95">
-                            <div class="space-y-1.5">
+                    <!-- TWO LARGE PROFESSIONAL CHOICES ONLY -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- CHOICE 1: INDUSTRIAL -->
+                        <div class="group p-5 rounded-2xl bg-gradient-to-br from-emerald-950/80 via-slate-900/95 to-slate-900 border-2 border-emerald-500/50 hover:border-emerald-400 hover:shadow-2xl hover:shadow-emerald-950/60 transition-all flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[10px] font-bold">108 / 112 TN</span>
-                                    <span class="text-rose-400 text-xs font-bold group-hover:translate-x-1 transition-transform">OPEN →</span>
+                                    <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold">SCADA / IOT</span>
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                                 </div>
-                                <h3 class="text-white font-bold text-sm tracking-wide flex items-center gap-1.5">
-                                    <span>🚨</span> CIVILIAN AID
+                                <h3 class="text-white font-display font-black text-xl tracking-wide flex items-center gap-2">
+                                    <span>🏭</span>
+                                    <span>INDUSTRIAL</span>
                                 </h3>
                                 <p class="text-slate-300 text-xs leading-relaxed">
-                                    Citizen 1-Tap SOS, Multilingual Speech AI (Tamil/En/Hi), Automated Triage, GPS Fleet Dispatch &amp; Hospital Vitals.
+                                    Industrial Safety, Risk Monitoring &amp; Digital Twin. 3D spatial twin, real-time telemetry, risk engine &amp; autonomous safety interlocks.
                                 </p>
                             </div>
-                            <div class="pt-1 flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                <span>Citizen &amp; Dispatcher Ready</span>
-                            </div>
-                        </a>
+                            <button type="button" onclick="openIndustrialAccessModal()" id="btn-enter-industrial" class="w-full py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-display font-extrabold text-xs tracking-wider transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer uppercase">
+                                <span>ENTER INDUSTRIAL</span>
+                                <span>&rarr;</span>
+                            </button>
+                        </div>
 
-                        <!-- PLATFORM 2: INDUSTRIAL 3D TWIN -->
-                        <a href="app.html" class="group p-4 rounded-xl bg-gradient-to-br from-emerald-950/70 via-slate-900/90 to-slate-900 border border-emerald-500/50 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-950/50 transition-all flex flex-col justify-between space-y-3 active:scale-95">
-                            <div class="space-y-1.5">
+                        <!-- CHOICE 2: CIVILIAN -->
+                        <div class="group p-5 rounded-2xl bg-gradient-to-br from-rose-950/80 via-slate-900/95 to-slate-900 border-2 border-rose-500/50 hover:border-rose-400 hover:shadow-2xl hover:shadow-rose-950/60 transition-all flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold">SCADA / IOT</span>
-                                    <span class="text-emerald-400 text-xs font-bold group-hover:translate-x-1 transition-transform">OPEN →</span>
+                                    <span class="px-2.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[10px] font-bold">108 / 112 TN AID</span>
+                                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
                                 </div>
-                                <h3 class="text-white font-bold text-sm tracking-wide flex items-center gap-1.5">
-                                    <span>🏭</span> INDUSTRIAL TWIN
+                                <h3 class="text-white font-display font-black text-xl tracking-wide flex items-center gap-2">
+                                    <span>🚨</span>
+                                    <span>CIVILIAN</span>
                                 </h3>
                                 <p class="text-slate-300 text-xs leading-relaxed">
-                                    Real-Time 3D Digital Twin, Hazard Raycasting, MQTT Sensor Telemetry &amp; Byzantine Edge Consensus.
+                                    Emergency Help, Dispatch &amp; Public Safety. 1-Tap Citizen SOS, Multilingual Speech AI (Tamil/En/Hi), CAD fleet dispatch &amp; hospital vitals.
                                 </p>
                             </div>
-                            <div class="pt-1 flex items-center gap-1.5 text-[11px] font-mono text-cyan-400">
-                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-                                <span>Digital Twin Live (14ms)</span>
-                            </div>
-                        </a>
+                            <a href="civilian/index.html" id="btn-enter-civilian" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-display font-extrabold text-xs tracking-wider transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer uppercase text-center">
+                                <span>ENTER CIVILIAN</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
                     </div>
 
                     <!-- INTEGRATED PLATFORM QUICK-LINKS -->
@@ -1386,6 +1392,25 @@
                 window.location.href = `auth.html?mode=${mode}`;
             }, 1050);
         }
+
+        // ========================================================
+        // 9. INDUSTRIAL ACCESS MODAL (Role Selection Gate)
+        // ========================================================
+        function openIndustrialAccessModal() {
+            const modal = document.getElementById('modal-industrial-access');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeIndustrialAccessModal() {
+            const modal = document.getElementById('modal-industrial-access');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
     </script>
 
     <!-- ======================================================== -->
@@ -1432,6 +1457,109 @@
                 <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/10">
                     <div id="transition-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 w-0 transition-all duration-300"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- INDUSTRIAL ACCESS ROLE SELECTION MODAL (PROMPT SECTION 2)-->
+    <!-- ======================================================== -->
+    <div id="modal-industrial-access" class="fixed inset-0 z-50 bg-[#060913]/92 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 hidden select-none overflow-y-auto" onclick="if(event.target===this)closeIndustrialAccessModal()">
+        <div class="w-full max-w-2xl bg-[#0c1017] border border-emerald-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-5 my-auto">
+            <div class="flex items-start justify-between border-b border-white/10 pb-4">
+                <div>
+                    <div class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>INDUSTRIAL ACCESS</span>
+                    </div>
+                    <h3 class="text-2xl font-display font-extrabold text-white mt-1">Select your role</h3>
+                    <p class="text-xs text-slate-400 font-sans mt-0.5">Choose your authorized profile to proceed to role-specific authentication.</p>
+                </div>
+                <button type="button" onclick="closeIndustrialAccessModal()" class="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors" aria-label="Close modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <!-- 1. WORKER -->
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 hover:border-amber-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">👷</span>
+                            <h4 class="font-display font-bold text-white text-base">WORKER</h4>
+                            <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold">SAFETY &amp; SOS</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">Worker safety, personal alerts, SOS, assigned area and evacuation.</p>
+                    </div>
+                    <a href="auth.html?mode=industrial&role=Worker" class="px-4 py-2.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 font-bold text-xs font-mono whitespace-nowrap text-center transition-all group-hover:scale-105 active:scale-95">
+                        CONTINUE AS WORKER &rarr;
+                    </a>
+                </div>
+
+                <!-- 2. SUPERVISOR -->
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 hover:border-cyan-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">👷‍♂️</span>
+                            <h4 class="font-display font-bold text-white text-base">SUPERVISOR</h4>
+                            <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono text-[10px] font-bold">TEAM &amp; AREA</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">Team safety, area monitoring, incidents, escalation and emergency response.</p>
+                    </div>
+                    <a href="auth.html?mode=industrial&role=Supervisor" class="px-4 py-2.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 font-bold text-xs font-mono whitespace-nowrap text-center transition-all group-hover:scale-105 active:scale-95">
+                        CONTINUE AS SUPERVISOR &rarr;
+                    </a>
+                </div>
+
+                <!-- 3. ADMIN -->
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 hover:border-blue-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">⚙️</span>
+                            <h4 class="font-display font-bold text-white text-base">ADMIN</h4>
+                            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold">SYSTEM OPERATIONS</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">System operations, users, devices, sensors, departments and configuration.</p>
+                    </div>
+                    <a href="auth.html?mode=industrial&role=Admin" class="px-4 py-2.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 font-bold text-xs font-mono whitespace-nowrap text-center transition-all group-hover:scale-105 active:scale-95">
+                        CONTINUE AS ADMIN &rarr;
+                    </a>
+                </div>
+
+                <!-- 4. OWNER -->
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 hover:border-purple-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">🏢</span>
+                            <h4 class="font-display font-bold text-white text-base">OWNER</h4>
+                            <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono text-[10px] font-bold">EXECUTIVE SAFETY</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">Enterprise safety, risk, resilience, business continuity and reports.</p>
+                    </div>
+                    <a href="auth.html?mode=industrial&role=Owner" class="px-4 py-2.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 font-bold text-xs font-mono whitespace-nowrap text-center transition-all group-hover:scale-105 active:scale-95">
+                        CONTINUE AS OWNER &rarr;
+                    </a>
+                </div>
+
+                <!-- 5. MULTI-DEPARTMENT -->
+                <div class="p-4 rounded-xl bg-gradient-to-r from-rose-950/40 to-slate-900 border-2 border-rose-500/50 hover:border-rose-400 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg animate-pulse">🚨</span>
+                            <h4 class="font-display font-bold text-white text-base">MULTI-DEPARTMENT</h4>
+                            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[10px] font-bold">EMERGENCY COMMAND</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">Emergency command, multi-agency coordination, dispatch, rescue and response management.</p>
+                    </div>
+                    <a href="auth.html?mode=industrial&role=Coordinator" class="px-4 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs font-mono whitespace-nowrap text-center transition-all shadow-md shadow-rose-900/50 group-hover:scale-105 active:scale-95">
+                        CONTINUE AS EMERGENCY COORDINATOR &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between text-xs font-mono text-slate-500">
+                <span>Authentication: Role-based cryptographic session tokens</span>
+                <button type="button" onclick="closeIndustrialAccessModal()" class="text-slate-400 hover:text-slate-200">Cancel</button>
             </div>
         </div>
     </div>
